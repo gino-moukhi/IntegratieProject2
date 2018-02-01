@@ -1,3 +1,5 @@
+defaultTasks 'build'
+
 buildscript {
 	ext {
 		springBootVersion = '1.5.10.RELEASE'
