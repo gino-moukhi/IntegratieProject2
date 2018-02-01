@@ -1,0 +1,24 @@
+image: java:8-jdk
+
+stages:
+  - build
+  - test
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+cache:
+  paths:
+    - .cache/gradle/caches
+    - .cache/gradle/wrapper
+
+build:
+  allow_failure: false
+  script:
+    - ./gradlew -g .cache/gradle clean assemble
+  stage: build
+
+test:
+  script:
+    - ./gradlew -g .cache/gradle check --stacktrace
+  stage: test
