@@ -20,5 +20,5 @@ build:
 
 test:
   script:
-    - ./gradlew -g .cache/gradle check --stacktrace
+    - ./gradlew -g .cache/gradle --stacktrace
   stage: test
