@@ -3,10 +3,7 @@ image: java:8-jdk
 stages:
   - build
   - test
-
-variables:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-
+  
 cache:
   paths:
     - .cache/gradle/caches
