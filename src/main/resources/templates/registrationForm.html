@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Registration</title>
+</head>
+<body>
+    <form action="/" th:object="${user}" method="POST" enctype="UTF8">
+        <div>
+            <label th:text="#{form.registration.name.first}"></label>
+            <input th:type="text"/>
+        </div>
+        <div>
+            <label th:text="#{form.registration.name.last}"></label>
+            <input th:type="text"/>
+        </div>
+        <div>
+            <label th:text="#{form.registration.age}"></label>
+            <input type="number"/>
+        </div>
+        <div>
+            <label th:text="#{form.registration.email}"></label>
+            <input type="text" />
+        </div>
+        <div>
+            <label th:text="#{form.registration.username}"></label>
+            <input type="text"/>
+        </div>
+        <div>
+            <label th:text="#{form.registration.password}"></label>
+            <input type="password"/>
+        </div>
+        <input type="submit"/>
+    </form>
+</body>
+</html>
