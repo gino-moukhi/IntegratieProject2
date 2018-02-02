@@ -13,6 +13,7 @@ cache:
     - .cache/gradle/wrapper
 
 build:
+  chmod +x gradlew
   allow_failure: false
   script:
     - ./gradlew -g .cache/gradle clean assemble
