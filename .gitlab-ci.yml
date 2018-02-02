@@ -13,11 +13,12 @@ cache:
     - .cache/gradle/caches
     - .cache/gradle/wrapper
 run:
-    name: 
-     - chmod permissions
-    command:
+  name: 
+    - chmod permissions
+  command:
     - chmod +x ./gradlew
-    stage: run
+  stage: run
+    
 build:
   allow_failure: false
   script:
