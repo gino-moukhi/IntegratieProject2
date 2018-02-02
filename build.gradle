@@ -34,3 +34,15 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 }
+    compileJava {
+        options.compilerArgs += ["-Xlint:all", "-Werror"]
+        options.deprecation = true
+        options.warnings = true
+    }
+
+    compileTestJava {
+        options.compilerArgs += ["-Xlint:all", "-Werror"]
+        options.deprecation = true
+        options.warnings = true
+    }
+
