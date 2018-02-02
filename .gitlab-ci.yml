@@ -1,7 +1,7 @@
 image: java:8-jdk
 
 stages:
-  -run
+  - run
   - build
   - test
 
