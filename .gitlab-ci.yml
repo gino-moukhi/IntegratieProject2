@@ -3,6 +3,7 @@ image: java:8-jdk
 stages:
   - build
   - test
+  - deploy
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -24,3 +25,9 @@ test:
     - chmod +x ./gradlew
     - ./gradlew -g .cache/gradle check --stacktrace
   stage: test
+ 
+deploy:
+  script:
+    - git remote add heroku https://heroku:$1f812ae7-e18d-4f60-89c8-ebd0f1fb9b05@git.heroku.com/kandoe.git
+    - git push -f heroku master
+  stage: deploy
