@@ -1,7 +1,6 @@
 image: java:8-jdk
 
 stages:
-  - run
   - build
   - test
 
@@ -12,10 +11,6 @@ cache:
   paths:
     - .cache/gradle/caches
     - .cache/gradle/wrapper
-run:
-  script: 
-    - chmod +x ./gradlew
-  stage: run
     
 build:
   allow_failure: false
