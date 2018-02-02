@@ -26,5 +26,6 @@ build:
 
 test:
   script:
+    - chmod +x ./gradlew
     - ./gradlew -g .cache/gradle check --stacktrace
   stage: test
