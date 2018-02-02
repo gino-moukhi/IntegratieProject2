@@ -17,7 +17,6 @@ run:
     command: chmod +x ./gradlew
     stage: run
 build:
-  chmod +x gradlew
   allow_failure: false
   script:
     - ./gradlew -g .cache/gradle clean assemble
