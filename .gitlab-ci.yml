@@ -29,9 +29,9 @@ test:
 deploy:
   script:
     - apt-get update -y
-    - apt-get install software-properties-common python-software-properties
+    - apt-get install software-properties-common python-software-properties -y
     - add-apt-repository ppa:git-core/ppa
-    - apt-get install git
+    - apt-get install git -y
     - add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
     - curl -L https://cli-assets.heroku.com/apt/release.key | sudo apt-key add -
     - apt-get update
