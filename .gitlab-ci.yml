@@ -34,6 +34,7 @@ deploy:
     - apt-get install git -y
     - add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
     - curl -L https://cli-assets.heroku.com/apt/release.key | apt-key add -
+    - apt-get install apt-transport-https -y
     - apt-get update
     - apt-get install heroku
     - heroku buildpacks:set heroku/java
