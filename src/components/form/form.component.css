@@ -1,0 +1,21 @@
+.form {
+  margin: 50px 3%;
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  color: #fff;
+  background-color: #000;
+  border-color: #000;
+}
+
+button:hover {
+
+}
+
+.active {
+  background-color: red;
+  border-color: red;
+}
+

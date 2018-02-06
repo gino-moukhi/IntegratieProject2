@@ -1,0 +1,13 @@
+<div class="row form">
+  <div class="col-md-6 align-items-center">
+    <button class="customButton" [className]="loginForm ? 'active' : ''" type="submit" (click)="clickLoginForm()">Login</button>
+  </div>
+  <div class="col-md-6">
+    <button class="customButton" [className]="!loginForm ? 'active' : ''" type="submit" (click)="clickSignUpForm()">Sign up</button>
+  </div>
+</div>
+
+<div class="row" *ngIf="loginForm;then login_content else signup_content"></div>
+
+<ng-template #login_content><login-form></login-form></ng-template>
+<ng-template #signup_content><signup-form></signup-form></ng-template>

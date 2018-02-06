@@ -1,0 +1,90 @@
+<form [formGroup]="form">
+  <div class="form-group">
+    <label for="firstName">First name:</label>
+    <input
+      formControlName="firstName"
+      id="firstName"
+      type="text"
+      class="form-control">
+<!--    <div *ngIf="firstName.touched && firstName.invalid" class="alert alert-danger">
+      <div *ngIf="firstName.errors.required">Username is required</div>
+      <div *ngIf="firstName.errors.minlength">Username must be {{firstName.errors.minlength.requiredLength}}</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="lastName">Last name:</label>
+    <input
+      formControlName="lastName"
+      id="lastName"
+      type="text"
+      class="form-control">
+<!--    <div *ngIf="lastName.touched && lastName.invalid" class="alert alert-danger">
+      <div *ngIf="lastName.errors.required">Username is required</div>
+      <div *ngIf="lastName.errors.minlength">Username must be {{lastName.errors.minlength.requiredLength}}</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="birthday">Birthday (dd/mm/yyyy):</label>
+    <input
+      formControlName="birthday"
+      id="birthday"
+      type="date"
+      class="form-control">
+<!--    <div *ngIf="birthday.touched && birthday.invalid" class="alert alert-danger">
+      <div *ngIf="birthday.errors.required">Birthday is required</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="gender">Gender:</label>
+    <input
+      formControlName="gender"
+      id="gender"
+      type="text"
+      class="form-control">
+<!--    <div *ngIf="gender.touched && gender.invalid" class="alert alert-danger">
+      <div *ngIf="gender.errors.required">Birthday is required</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input
+      formControlName="email"
+      id="email"
+      type="email"
+      class="form-control">
+<!--    <div *ngIf="email.touched && email.invalid" class="alert alert-danger">
+      <div *ngIf="email.errors.required">Email is required</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input
+      formControlName="username"
+      id="username"
+      type="text"
+      class="form-control">
+<!--    <div *ngIf="username.touched && username.invalid" class="alert alert-danger">
+      <div *ngIf="username.errors.required">Username is required</div>
+      <div *ngIf="username.errors.minlength">Username must be {{username.errors.minlength.requiredLength}}</div>
+    </div>-->
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input
+      formControlName="password"
+      id="password"
+      type="text"
+      class="form-control">
+<!--    <div *ngIf="password.touched && password.invalid" class="alert alert-danger">
+      <div *ngIf="password.errors.required">Password is required</div>
+      <div *ngIf="password.errors.minlength">Password must be {{password.errors.minlength.requiredLength}}</div>
+    </div>-->
+  </div>
+  <button class="btn btn-primary" type="submit">Sign Up</button>
+</form>
