@@ -79,7 +79,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public User addUser(User user) throws UserServiceException {
-        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
+        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
         return this.saveUser(user);
     }
 
@@ -95,9 +95,17 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public void checkLogin(Long userId, String currentPassword) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
         if (u == null || !passwordEncoder.matches(currentPassword, u.getEncryptedPassword())) {
-            throw new UserServiceException(("Gebruikersnaam of password foutief voor gebruiker " + userId));
+            throw new UserServiceException(("Username or password are wrong for user " + userId));
+        }
+    }
+
+
+    @Override
+    public void checkLogin(String username, String password) throws UserServiceException {
+        User u = userRepository.findUserByUsername(username);
+        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
+            throw new UserServiceException("Username and password are incorrect for user " + username);
         }
     }
 
@@ -115,4 +123,6 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         if (u == null) throw new UsernameNotFoundException("No such user: " + username);
         return u;
     }
+
+
 }

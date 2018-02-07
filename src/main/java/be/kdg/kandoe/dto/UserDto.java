@@ -2,6 +2,10 @@ package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.user.Gender;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class UserDto {
     private String username;
     private String password;
@@ -10,17 +14,20 @@ public class UserDto {
     private String email;
     private int age;
     private Gender gender;
+//    private Date birthday;
+    private Calendar birthday;
 
     public UserDto() {
     }
 
-    public UserDto(String username, String password, String firstName, String lastName, String email, int age, Gender gender) {
+    public UserDto(String username, String password, String firstName, String lastName, String email, int age, Gender gender, Calendar birthday) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.age = age;
+        this.birthday = birthday;
         this.gender = gender;
     }
 
@@ -78,5 +85,26 @@ public class UserDto {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public Calendar getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Calendar birthday) {
+        this.birthday = birthday;
+    }
+
+    public int getYear(){
+        return birthday.get(Calendar.YEAR);
+    }
+
+    public int getMonth(){
+        //The months in calendar go from {0-11} (so we have to add 1)
+        return birthday.get(Calendar.MONTH) + 1;
+    }
+
+    public int getDay(){
+        return birthday.get(Calendar.DAY_OF_MONTH);
     }
 }

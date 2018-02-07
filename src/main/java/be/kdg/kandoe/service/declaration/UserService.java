@@ -28,5 +28,7 @@ public interface UserService extends UserDetailsService{
 
     void checkLogin(Long userId, String currentPassword) throws UserServiceException;
 
+    void checkLogin(String username, String password) throws UserServiceException;
+
     void updatePassword(Long userId, String oldPassword, String newPassword) throws UserServiceException;
 }

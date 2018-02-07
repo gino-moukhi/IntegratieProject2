@@ -57,7 +57,15 @@ public class User implements UserDetails {
     }
 
     public User(UserDto userDto){
-
+        this.firstName = userDto.getFirstName();
+        this.lastName = userDto.getLastName();
+        this.username = userDto.getUsername();
+        this.email = userDto.getEmail();
+        this.year = userDto.getYear();
+        this.month = userDto.getMonth();
+        this.day = userDto.getDay();
+        this.gender = userDto.getGender();
+        this.encryptedPassword = userDto.getPassword();
     }
 
     public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Role> roles) {
