@@ -35,7 +35,7 @@ deploy:
     - add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
     - curl -L https://cli-assets.heroku.com/apt/release.key | apt-key add -
     - apt-get install apt-transport-https -y
-    - remove "deb http://ppa.launchpad.net/ubuntugis/ppa/ubuntu/dists/trusty/main/binary-amd64/Packages"
+    - rm "deb http://ppa.launchpad.net/ubuntugis/ppa/ubuntu/dists/trusty/main/binary-amd64/Packages"
     - apt-get update -y
     - apt-get install heroku
     - heroku buildpacks:set heroku/java
