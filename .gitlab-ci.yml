@@ -37,7 +37,7 @@ deploy:
     - apt-get install apt-transport-https -y
     - rm /etc/apt/sources.list.d/your_ppa.list
     - rm /etc/apt/sources.list.d/your_ppa.list.save
-    - apt-key del KEY_ID
+    - docker run -it --rm debian:jessie apt-get update
     - apt-get update -y
     - apt-get install heroku
     - heroku buildpacks:set heroku/java
