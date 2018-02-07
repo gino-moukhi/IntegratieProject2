@@ -4,9 +4,6 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
-import com.sun.javaws.exceptions.InvalidArgumentException;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 
 public class ThemeServiceImpl implements ThemeService {
