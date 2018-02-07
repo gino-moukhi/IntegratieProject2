@@ -32,13 +32,21 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    private int age;
+    private int day;
+
+    @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
+    private int year;
+
 
     @Column(nullable = false)
     private String encryptedPassword;
 
     @Column(nullable = false)
     private Gender gender;
+
 
     @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
@@ -52,16 +60,18 @@ public class User implements UserDetails {
 
     }
 
-    public User(String firstName, String lastName, String username, String email, int age, String password, Gender gender) {
+    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
-        this.age = age;
-        this.encryptedPassword = password;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.encryptedPassword = encryptedPassword;
         this.gender = gender;
+        this.roles = roles;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -131,14 +141,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public String getEncryptedPassword(){
