@@ -35,8 +35,6 @@ deploy:
     - add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
     - curl -L https://cli-assets.heroku.com/apt/release.key | apt-key add -
     - apt-get install apt-transport-https -y
-    - rm /etc/apt/sources.list.d/your_ppa.list
-    - rm /etc/apt/sources.list.d/your_ppa.list.save
     - docker run -it --rm debian:jessie apt-get update
     - apt-get update -y
     - apt-get install heroku
