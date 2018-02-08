@@ -21,13 +21,13 @@ public class UserRestController {
     }
 
     //GET ALL USERS
-    @GetMapping("/api/users")
+    @GetMapping("/api/private/users")
     public List<User> getUsers(){
         return userService.findUsers();
     }
 
     //GET ONE USER
-    @GetMapping("/api/{userId}")
+    @GetMapping("/api/private/users/{userId}")
     public ResponseEntity<User> getUser(@PathVariable long userId){
         User user = userService.findUserById(userId);
         if(user == null){
@@ -37,13 +37,13 @@ public class UserRestController {
     }
 
     //CREATE USER
-    @PostMapping("/api/users")
+    @PostMapping("/api/private/users")
     public User createUser(@Valid @RequestBody User user){
         return userService.addUser(user);
     }
 
     //UPDATE
-    @PostMapping("/api/users/{userId}")
+    @PostMapping("/api/private/users/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Long userId, @Valid @RequestBody User changedUser){
         User user = userService.findUserById(userId);
 
@@ -58,7 +58,7 @@ public class UserRestController {
     }
 
     //DELETE
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("api/private/users/{userId}")
     public ResponseEntity<User> deleteUser(@PathVariable long userId){
         User user = userService.findUserById(userId);
 

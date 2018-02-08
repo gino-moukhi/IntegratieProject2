@@ -25,11 +25,14 @@ public class RegistrationController {
 
     @PostMapping("/api/public/login")
     public ResponseEntity login(@RequestBody UserDto userDto){
-        try{
-            userService.checkLogin(userDto.getUsername(), userDto.getPassword());
-        }catch (UserServiceException e){
+        if(!userService.checkLogin(userDto.getUsername(), userDto.getPassword())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Credentials are wrong!");
         }
+//        try{
+//            userService.checkLogin(userDto.getUsername(), userDto.getPassword());
+//        }catch (UserServiceException e){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body("Credentials are wrong!");
+//        }
         return ResponseEntity.ok().build();
     }
 

@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,9 +49,11 @@ public class User implements UserDetails {
     private Gender gender;
 
 
+    @Column(nullable = false)
     @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
+
 
 
     public User() {
@@ -80,6 +83,7 @@ public class User implements UserDetails {
         this.gender = gender;
         this.roles = roles;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

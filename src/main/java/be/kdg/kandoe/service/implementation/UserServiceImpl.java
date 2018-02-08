@@ -1,6 +1,7 @@
 package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.domain.user.User;
+import be.kdg.kandoe.domain.user.role.Client;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.exception.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -80,7 +82,10 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public User addUser(User user) throws UserServiceException {
+        Client client = new Client();
         user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList(client));
+        client.setUser(user);
         return this.saveUser(user);
     }
 
@@ -102,12 +107,21 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     }
 
 
+//    @Override
+//    public void checkLogin(String username, String password) throws UserServiceException {
+//        User u = userRepository.findUserByUsername(username);
+//        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
+//            throw new UserServiceException("Username and password are incorrect for user " + username);
+//        }
+//    }
+
     @Override
-    public void checkLogin(String username, String password) throws UserServiceException {
+    public boolean checkLogin(String username, String password) throws UserServiceException {
         User u = userRepository.findUserByUsername(username);
         if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
-            throw new UserServiceException("Username and password are incorrect for user " + username);
+            return false;
         }
+        return true;
     }
 
     @Override
@@ -144,9 +158,5 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     public boolean checkEmailCredentials(String email){
         User sameEmailUser = userRepository.findUserByEmail(email);
         return sameEmailUser == null;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 }
