@@ -13,6 +13,7 @@ public class ThemeDto {
         this.name="default";
         this.description="default";
     }
+
     public ThemeDto(long themeId, String name, String description) {
         this.themeId=themeId;
         this.name = name;
