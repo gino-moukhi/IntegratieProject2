@@ -1,7 +1,9 @@
 package be.kdg.kandoe.repository.declaration;
 
 import be.kdg.kandoe.domain.theme.Theme;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 public interface ThemeRepository {
     Theme findThemeByName(String name);
@@ -10,4 +12,10 @@ public interface ThemeRepository {
 
 
     Theme editTheme(Theme theme);
+
+    Theme deleteTheme(Theme themeToDelete);
+
+    Theme deleteThemeById(long themeId);
+
+    List<Theme> findAllThemes();
 }

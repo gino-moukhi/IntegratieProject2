@@ -27,6 +27,7 @@ repositories {
 
 dependencies {
 	compile('io.ratpack:ratpack-spring-boot:1.1.1')
+	compile group: 'com.google.code.gson', name:'gson',version:'2.7'
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.springframework.boot:spring-boot-devtools')

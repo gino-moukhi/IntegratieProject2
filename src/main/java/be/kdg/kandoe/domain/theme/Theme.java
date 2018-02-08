@@ -1,13 +1,13 @@
 package be.kdg.kandoe.domain.theme;
 
-import be.kdg.kandoe.dto.ThemeDTO;
+import be.kdg.kandoe.dto.ThemeDto;
 
 public class Theme {
     private long themeId;
     private String name;
     private String description;
 
-    public Theme(ThemeDTO themeDto){
+    public Theme(ThemeDto themeDto){
         this.themeId=themeDto.getThemeId();
         this.name=themeDto.getName();
         this.description=themeDto.getDescription();

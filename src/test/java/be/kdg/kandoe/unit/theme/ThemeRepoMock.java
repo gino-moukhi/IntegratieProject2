@@ -2,7 +2,10 @@ package be.kdg.kandoe.unit.theme;
 
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
+import be.kdg.kandoe.service.exception.ThemeServiceException;
+import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +52,43 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         return themeToReturn;
+    }
+
+    @Override
+    public Theme deleteTheme(Theme themeToDelete) {
+        Theme deletedTheme = null;
+        for(Theme t:themes){
+            if(themeToDelete.getThemeId()==t.getThemeId()){
+                deletedTheme=t;
+            }
+        }
+        if(deletedTheme==null){
+            throw new ThemeServiceException("Theme with id: "+themeToDelete.getThemeId()+" not found");
+        }
+        themes.remove(deletedTheme);
+        return deletedTheme;
+    }
+
+    @Override
+    public Theme deleteThemeById(long themeId) {
+        Theme deletedTheme = null;
+        for(Theme t:themes){
+            if(t.getThemeId()==themeId){
+                deletedTheme=t;
+            }
+        }
+        if(deletedTheme==null){
+            throw new ThemeServiceException("Theme with id: "+themeId+" not found");
+        }
+        themes.remove(deletedTheme);
+        return deletedTheme;
+    }
+
+    @Override
+    public List<Theme> findAllThemes() {
+        if(themes!=null){
+            return themes;
+        }
+        else throw new NullPointerException("Arraylist 'themes' equals null");
     }
 }

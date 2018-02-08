@@ -1,13 +1,20 @@
 package be.kdg.kandoe.dto;
 
-public class ThemeDTO {
+/**
+ * Mediate Object-class to translate JSON-objects to Theme-objects
+ */
+public class ThemeDto {
     private long themeId;
     private String name;
     private String description;
 
-    public ThemeDTO(long themeId, String name, String description) {
+    public ThemeDto(){
+        this.themeId=0;
+        this.name="default";
+        this.description="default";
+    }
+    public ThemeDto(long themeId, String name, String description) {
         this.themeId=themeId;
-
         this.name = name;
         this.description = description;
     }
