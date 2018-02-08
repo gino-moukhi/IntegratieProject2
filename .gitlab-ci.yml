@@ -38,6 +38,6 @@ deploy:
    - git config --global user.name "Lander Tuyteleers"
    - git push -f heroku master
    - echo "Deployed to staging server"
-   only:
-    - master
+  only:
+   - master
   stage: deploy
