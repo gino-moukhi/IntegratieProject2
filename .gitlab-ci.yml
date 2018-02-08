@@ -30,7 +30,6 @@ deploy:
   script:
    - git remote add heroku https://heroku:1f812ae7-e18d-4f60-89c8-ebd0f1fb9b05@git.heroku.com/kandoe.git
    - chmod +x ./gradlew
-   - ./gradlew stage
    - heroku local web
    - git push -f heroku master
    - echo "Deployed to staging server"
