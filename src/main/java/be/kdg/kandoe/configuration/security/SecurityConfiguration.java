@@ -49,10 +49,22 @@ public class SecurityConfiguration {
 
         protected void configure(HttpSecurity http) throws Exception {
                 http.authorizeRequests()
-                        .antMatchers(HttpMethod.GET, "/api").permitAll()
+                        .antMatchers("/api/public/**").permitAll()
+                        .antMatchers("/api/private/**").authenticated()
+                        .antMatchers("/api/admin/**").authenticated()
                             .and()
                             .csrf()
                             .disable();
+
+//                http.authorizeRequests()
+//                        .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+//                        .antMatchers(HttpMethod.POST, "/api/login").permitAll()
+//                        .antMatchers(HttpMethod.POST, "/api/register").permitAll()
+//                        .antMatchers(HttpMethod.POST, "/api/admin/**").authenticated().and().authorizeRequests().anyRequest().hasRole("ADMIN")
+//                            .and()
+//                            .csrf()
+//                            .disable();
+
 //            http.authorizeRequests()
 //                    .antMatchers(HttpMethod.POST, "/api/login").permitAll()
 //                    .antMatchers(HttpMethod.GET, "/api/logout").authenticated()

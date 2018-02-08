@@ -17,6 +17,7 @@ import java.util.List;
 public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserService {
 
     private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -61,7 +62,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
-    //TODO Not sure if correct
+    //TODO fix
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
@@ -70,7 +71,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
             throw new UserServiceException("User not found");
         }
 
-        if(user.getUserId() != user.getUserId()){
+        if(user.getUserId() != u.getUserId()){
             throw new UserServiceException("User is not the same user");
         }
 
@@ -117,6 +118,15 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         userRepository.save(u);
     }
 
+
+    @Override
+    public User findUserByEmail(String email) throws UserServiceException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null)
+            throw new UserServiceException("User not found");
+        return user;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findUserByUsername(username);
@@ -124,5 +134,19 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
+    @Override
+    public boolean checkUsernameCredentials(String username){
+        User sameUsernameUser = userRepository.findUserByUsername(username);
+        return sameUsernameUser == null;
+    }
 
+    @Override
+    public boolean checkEmailCredentials(String email){
+        User sameEmailUser = userRepository.findUserByEmail(email);
+        return sameEmailUser == null;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }
