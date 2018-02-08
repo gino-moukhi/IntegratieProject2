@@ -29,6 +29,8 @@ test:
 deploy:
   script:
    - git remote add heroku https://heroku:1f812ae7-e18d-4f60-89c8-ebd0f1fb9b05@git.heroku.com/kandoe.git
+   - git config --global user.email "lander.tuyteleers@student.kdg.be"
+   - git config --global user.name "Lander Tuyteleers"
    - git pull https://heroku:1f812ae7-e18d-4f60-89c8-ebd0f1fb9b05@git.heroku.com/kandoe.git master
    - git push -f heroku master
    - echo "Deployed to staging server"
