@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(SpringRunner.class)
+/*@RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserRepositoryTest {
 //    @Autowired
@@ -96,3 +96,4 @@ public class UserRepositoryTest {
 
 
 }
+*/
