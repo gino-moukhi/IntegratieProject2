@@ -15,6 +15,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
 
 group = 'be.kdg'
 version = '0.0.1-SNAPSHOT'
@@ -46,4 +47,13 @@ dependencies {
         options.deprecation = true
         options.warnings = true
     }
+    
+    // Put this at the bottom of the build.gradle file
+task generatePom << {
+    pom {
+        project {
+            inceptionYear = '2015'
+        }
+    }.writeTo("pom.xml")
+}
 
