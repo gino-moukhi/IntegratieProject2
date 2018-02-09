@@ -47,13 +47,13 @@ dependencies {
         options.deprecation = true
         options.warnings = true
     }
-    
-    // Put this at the bottom of the build.gradle file
-task generatePom << {
-    pom {
-        project {
-            inceptionYear = '2015'
-        }
-    }.writeTo("pom.xml")
+
+task writeNewPom << {
+	pom {
+		project {
+			inceptionYear '2018'
+		}
+	}.writeTo("pom.xml")
 }
+
 
