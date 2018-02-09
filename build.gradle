@@ -49,12 +49,5 @@ dependencies {
         options.warnings = true
     }
 
-task writeNewPom << {
-	pom {
-		project {
-			inceptionYear '2018'
-		}
-	}.writeTo("pom.xml")
-}
 
 
