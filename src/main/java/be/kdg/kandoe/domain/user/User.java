@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,7 +33,14 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    private int age;
+    private int day;
+
+    @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
+    private int year;
+
 
     @Column(nullable = false)
     private String encryptedPassword;
@@ -40,26 +48,40 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
+
+    @Column(nullable = false)
     @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
+
 
 
     public User() {
     }
 
     public User(UserDto userDto){
-
+        this.firstName = userDto.getFirstName();
+        this.lastName = userDto.getLastName();
+        this.username = userDto.getUsername();
+        this.email = userDto.getEmail();
+        this.year = userDto.getYear();
+        this.month = userDto.getMonth();
+        this.day = userDto.getDay();
+        this.gender = userDto.getGender();
+        this.encryptedPassword = userDto.getPassword();
     }
 
-    public User(String firstName, String lastName, String username, String email, int age, String password, Gender gender) {
+    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
-        this.age = age;
-        this.encryptedPassword = password;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.encryptedPassword = encryptedPassword;
         this.gender = gender;
+        this.roles = roles;
     }
 
 
@@ -131,14 +153,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public String getEncryptedPassword(){

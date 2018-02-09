@@ -48,44 +48,60 @@ public class SecurityConfiguration {
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         protected void configure(HttpSecurity http) throws Exception {
+                http.authorizeRequests()
+                        .antMatchers("/api/public/**").permitAll()
+                        .antMatchers("/api/private/**").authenticated()
+                        .antMatchers("/api/admin/**").authenticated()
+                            .and()
+                            .csrf()
+                            .disable();
 
-            http.authorizeRequests()
+//                http.authorizeRequests()
+//                        .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+//                        .antMatchers(HttpMethod.POST, "/api/login").permitAll()
+//                        .antMatchers(HttpMethod.POST, "/api/register").permitAll()
+//                        .antMatchers(HttpMethod.POST, "/api/admin/**").authenticated().and().authorizeRequests().anyRequest().hasRole("ADMIN")
+//                            .and()
+//                            .csrf()
+//                            .disable();
+
+//            http.authorizeRequests()
 //                    .antMatchers(HttpMethod.POST, "/api/login").permitAll()
 //                    .antMatchers(HttpMethod.GET, "/api/logout").authenticated()
-                    .antMatchers(HttpMethod.GET, "/api/").permitAll()
-                    .anyRequest().authenticated()
-                    .and()
-                    .formLogin()
-                    .loginPage("/api/login")
-                    .successHandler(new SimpleUrlAuthenticationSuccessHandler() {
-                        @Override
-                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-                            clearAuthenticationAttributes(request);
-                        }
-                    })
-                    .failureHandler(new SimpleUrlAuthenticationFailureHandler() {
-                        @Override
-                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                            super.onAuthenticationFailure(request, response, exception);
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getOutputStream().println("{ \"error\": \"" + exception.getMessage() + "\" }");
-                        }
-                    })
-                    .and()
-                    .logout()
-                    .logoutUrl("/api/logout")
-                    .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
-                    .and()
-                    .exceptionHandling()
-                    .authenticationEntryPoint((request, response, authException) -> {
-                        response.setContentType("application/json");
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getOutputStream().println("{ \"error\": \"" + authException.getMessage() + "\" }");
-                    })
-                    .and()
-                    .csrf()
-                    .disable();
+//                    .antMatchers(HttpMethod.GET, "/api/").permitAll()
+//                    .anyRequest().authenticated()
+//                    .and()
+//                    .formLogin()
+//                    .loginPage("/api/login")
+//                    .successHandler(new SimpleUrlAuthenticationSuccessHandler() {
+//                        @Override
+//                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+//                            clearAuthenticationAttributes(request);
+//                        }
+//                    })
+//                    .failureHandler(new SimpleUrlAuthenticationFailureHandler() {
+//                        @Override
+//                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+//                            super.onAuthenticationFailure(request, response, exception);
+//                            response.setContentType("application/json");
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.getOutputStream().println("{ \"error\": \"" + exception.getMessage() + "\" }");
+//                        }
+//                    })
+//                    .and()
+//                    .logout()
+//                    .logoutUrl("/api/logout")
+//                    .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+//                    .and()
+//                    .exceptionHandling()
+//                    .authenticationEntryPoint((request, response, authException) -> {
+//                        response.setContentType("application/json");
+//                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                        response.getOutputStream().println("{ \"error\": \"" + authException.getMessage() + "\" }");
+//                    })
+//                    .and()
+//                    .csrf()
+//                    .disable();
         }
     }
 }

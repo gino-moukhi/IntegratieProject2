@@ -1,6 +1,7 @@
 package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.domain.user.User;
+import be.kdg.kandoe.domain.user.role.Client;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.exception.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -17,6 +19,7 @@ import java.util.List;
 public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserService {
 
     private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -61,7 +64,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
-    //TODO Not sure if correct
+    //TODO fix
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
@@ -70,7 +73,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
             throw new UserServiceException("User not found");
         }
 
-        if(user.getUserId() != user.getUserId()){
+        if(user.getUserId() != u.getUserId()){
             throw new UserServiceException("User is not the same user");
         }
 
@@ -79,7 +82,10 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public User addUser(User user) throws UserServiceException {
-        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
+        Client client = new Client();
+        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList(client));
+        client.setUser(user);
         return this.saveUser(user);
     }
 
@@ -95,10 +101,27 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public void checkLogin(Long userId, String currentPassword) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
         if (u == null || !passwordEncoder.matches(currentPassword, u.getEncryptedPassword())) {
-            throw new UserServiceException(("Gebruikersnaam of password foutief voor gebruiker " + userId));
+            throw new UserServiceException(("Username or password are wrong for user " + userId));
         }
+    }
+
+
+//    @Override
+//    public void checkLogin(String username, String password) throws UserServiceException {
+//        User u = userRepository.findUserByUsername(username);
+//        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
+//            throw new UserServiceException("Username and password are incorrect for user " + username);
+//        }
+//    }
+
+    @Override
+    public boolean checkLogin(String username, String password) throws UserServiceException {
+        User u = userRepository.findUserByUsername(username);
+        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -109,10 +132,31 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         userRepository.save(u);
     }
 
+
+    @Override
+    public User findUserByEmail(String email) throws UserServiceException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null)
+            throw new UserServiceException("User not found");
+        return user;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findUserByUsername(username);
         if (u == null) throw new UsernameNotFoundException("No such user: " + username);
         return u;
+    }
+
+    @Override
+    public boolean checkUsernameCredentials(String username){
+        User sameUsernameUser = userRepository.findUserByUsername(username);
+        return sameUsernameUser == null;
+    }
+
+    @Override
+    public boolean checkEmailCredentials(String email){
+        User sameEmailUser = userRepository.findUserByEmail(email);
+        return sameEmailUser == null;
     }
 }
