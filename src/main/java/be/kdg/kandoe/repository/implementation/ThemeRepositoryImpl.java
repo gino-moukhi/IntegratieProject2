@@ -1,10 +1,15 @@
 package be.kdg.kandoe.repository.implementation;
 
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.DtoConverter;
+import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
+import org.hibernate.Query;
 import org.hibernate.jpa.internal.EntityManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityManager;
@@ -30,8 +35,11 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     }
 
     @Override
-    public Theme createTheme(Theme theme) {
-        throw new NotImplementedException();
+    @Transactional
+    public Theme createTheme(Theme theme) throws DataAccessException {
+        ThemeDto dto = DtoConverter.toThemeDto(theme);
+        em.persist(dto);
+        return theme;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class UnitTestThemeRestController {
     @Test
     public void TestCreateTheme(){
         ThemeDto themeDto = new ThemeDto(2,"JSONTheme","Theme created via JSON");
-       ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/themes", themeDto, ThemeDto.class);
+        ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/themes", themeDto, ThemeDto.class);
         //ResponseEntity<ThemeDto> response2 = restTemplate.exchange("http://localhost:9090/api/themes", HttpMethod.POST, new HttpEntity<>(""), ThemeDto.class);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }

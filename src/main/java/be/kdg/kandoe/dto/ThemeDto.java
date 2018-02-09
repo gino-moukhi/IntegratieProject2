@@ -1,11 +1,22 @@
 package be.kdg.kandoe.dto;
 
+import be.kdg.kandoe.domain.theme.Theme;
+
+import javax.persistence.*;
+
 /**
  * Mediate Object-class to translate JSON-objects to Theme-objects
  */
+@Entity
+@Table
 public class ThemeDto {
+    @Column
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long themeId;
+    @Column
     private String name;
+    @Column
     private String description;
 
     public ThemeDto(){
@@ -43,4 +54,6 @@ public class ThemeDto {
     public void setThemeId(long themeId) {
         this.themeId = themeId;
     }
+
+
 }
