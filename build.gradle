@@ -25,6 +25,9 @@ repositories {
 	mavenCentral()
 }
 
+tasks.withType(Jar) {
+	destinationDir = file("$rootDir/")
+}
 
 dependencies {
 	compile('io.ratpack:ratpack-spring-boot:1.1.1')
@@ -49,5 +52,15 @@ dependencies {
         options.warnings = true
     }
 
+task fatJar(type: Jar) {
+	manifest {
+		attributes 'Kandoe': 'kandoe spel',
+				'test-version': version,
+				'KandoeApplication': 'be.kdg.kandoe.KandoeApplication'
+	}
+	baseName = project.name
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
 
 
