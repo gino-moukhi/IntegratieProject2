@@ -35,6 +35,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile("io.jsonwebtoken:jjwt:0.7.0")
+	compile group: 'com.auth0', name: 'auth0-spring-security-api', version: '1.0.0'
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')

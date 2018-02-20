@@ -8,6 +8,9 @@ import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.declaration.UserService;
 import be.kdg.kandoe.service.exception.UserServiceException;
 import be.kdg.kandoe.service.implementation.UserServiceImpl;
+import com.google.common.base.CharMatcher;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +25,9 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -55,7 +60,14 @@ public class UserServiceTest {
         users.add(mindy);
 
         when(userRepository.findAll()).thenReturn(users);
-        assertThat(userService.findUsers().size(), is(3));
+        List<User> returnedUsers = userService.findUsers();
+
+        assertThat(returnedUsers.size(), is(3));
+        returnedUsers.forEach(u -> assertThat(u, is(instanceOf(User.class))));
+        assertThat(returnedUsers, IsIterableContainingInAnyOrder.containsInAnyOrder(users.toArray()));
+        assertThat(returnedUsers.get(0), Matchers.samePropertyValuesAs(bob));
+        assertThat(returnedUsers.get(1), Matchers.samePropertyValuesAs(plop));
+        assertThat(returnedUsers.get(2), Matchers.samePropertyValuesAs(mindy));
     }
 
     @Test
@@ -63,15 +75,22 @@ public class UserServiceTest {
         List<User> users = new ArrayList<>();
         User bob = new User("Bob", "de bouwer", "bobdb", "bob.db@gmail.com",1, 2,1998,"", Gender.Male, null);
         users.add(bob);
+
         when(userRepository.findAll()).thenReturn(users);
-        assertThat(userService.findUsers().size(), is(1));
+
+        List<User> returnedUsers = userService.findUsers();
+
+        assertThat(returnedUsers.size(), is(1));
+        assertThat(returnedUsers.get(0), is(instanceOf(User.class)));
+        assertThat(returnedUsers, IsIterableContainingInAnyOrder.containsInAnyOrder(users.toArray()));
+        assertThat(returnedUsers.get(0), Matchers.samePropertyValuesAs(bob));
     }
 
     @Test
     public void getAllUsersWhenThereAreNoneTest(){
-        List<User> users = new ArrayList<>();
-        when(userRepository.findAll()).thenReturn(users);
-        assertThat(userService.findUsers().size(), is(0));
+        List<User> returnedUsers = userService.findUsers();
+        assertThat(returnedUsers, is(notNullValue()));
+        assertThat(returnedUsers.size(), is(0));
     }
 
 
@@ -79,8 +98,10 @@ public class UserServiceTest {
     public void addUserTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
         when(userRepository.save(spongebob)).thenReturn(spongebob);
-        userService.addUser(spongebob);
+        User savedUser = userService.addUser(spongebob);
         verify(userRepository, times(1)).save(spongebob);
+        assertThat(savedUser, is(instanceOf(User.class)));
+        assertThat(savedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
     //TODO Not sure if these should be here since these conditions are tested in the controller
@@ -123,9 +144,12 @@ public class UserServiceTest {
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
         spongebob.setUserId(1);
         when(userRepository.findOne((long) 1)).thenReturn(spongebob);
-        User user = userService.findUserById((long) 1);
+
+        User returnedUser = userService.findUserById((long) 1);
+
         verify(userRepository, times(1)).findOne((long)1);
-        assertThat(user, is(spongebob));
+        assertThat(returnedUser, is(instanceOf(User.class)));
+        assertThat(returnedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
     @Test(expected = UserServiceException.class)
@@ -138,9 +162,12 @@ public class UserServiceTest {
     public void getUserByUsernameTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
         when(userRepository.findUserByUsername(spongebob.getUsername())).thenReturn(spongebob);
-        User user = userService.findUserByUsername(spongebob.getUsername());
+
+        User returnedUser = userService.findUserByUsername(spongebob.getUsername());
+
         verify(userRepository, times(1)).findUserByUsername(spongebob.getUsername());
-        assertThat(user, is(spongebob));
+        assertThat(returnedUser, is(instanceOf(User.class)));
+        assertThat(returnedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
     @Test(expected = UserServiceException.class)
@@ -162,9 +189,12 @@ public class UserServiceTest {
     public void getUserByEmailTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
         when(userRepository.findUserByEmail(spongebob.getEmail())).thenReturn(spongebob);
-        User user = userService.findUserByEmail(spongebob.getEmail());
+
+        User returnedUser = userService.findUserByEmail(spongebob.getEmail());
+
         verify(userRepository, times(1)).findUserByEmail(spongebob.getEmail());
-        assertThat(user, is(spongebob));
+        assertThat(returnedUser, is(instanceOf(User.class)));
+        assertThat(returnedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
     //TODO Uncomment once query in UserRepository is not case sensitive
@@ -180,19 +210,31 @@ public class UserServiceTest {
     @Test
     public void getUserByRoleTest(){
         List<User> defaultUsers = new ArrayList<>();
+
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
         User bob = new User("Bob", "de bouwer", "bobdb", "bob.db@gmail.com",1, 2,1998,"", Gender.Male, null);
+
         defaultUsers.add(spongebob);
         defaultUsers.add(bob);
+
         when(userRepository.findUsersByRole(Client.class)).thenReturn(defaultUsers);
-        userService.findUsersByRole(Client.class);
+
+        List<User> returnedUsers =  userService.findUsersByRole(Client.class);
         verify(userRepository, times(1)).findUsersByRole(Client.class);
+
+        assertThat(returnedUsers.size(), is(2));
+        returnedUsers.forEach(u -> assertThat(u, is(instanceOf(User.class))));
+        assertThat(returnedUsers, IsIterableContainingInAnyOrder.containsInAnyOrder(defaultUsers.toArray()));
+        assertThat(returnedUsers.get(0), Matchers.samePropertyValuesAs(spongebob));
+        assertThat(returnedUsers.get(1), Matchers.samePropertyValuesAs(bob));
+
     }
 
     @Test
     public void removeUserTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
         when(userRepository.findOne((long) 1)).thenReturn(spongebob);
+
         userService.deleteUser((long) 1);
         verify(userRepository, times(1)).delete(spongebob);
     }
@@ -205,21 +247,29 @@ public class UserServiceTest {
     @Test
     public void updateUserTest(){
         User spongebob = new User("sponge", "square", "sponge", "sp@hotmail.com7",15, 8,1987,"", Gender.Female, null);
-        when(userRepository.findOne((long) 1)).thenReturn(spongebob);
         User updatedSpongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
-        userService.updateUser((long) 1, updatedSpongebob);
+
+        when(userRepository.findOne((long) 1)).thenReturn(spongebob);
+        when(userRepository.save(updatedSpongebob)).thenReturn(updatedSpongebob);
+
+        User returnedUser = userService.updateUser((long) 1, updatedSpongebob);
+
         verify(userRepository, times(1)).save(updatedSpongebob);
+        assertThat(returnedUser, is(instanceOf(User.class)));
+        assertThat(returnedUser, Matchers.samePropertyValuesAs(updatedSpongebob));
     }
 
     @Test(expected = UserServiceException.class)
     public void updateUserTestWhereIdDoesNotMatchUser(){
         User spongebob = new User("sponge", "square", "sponge", "sp@hotmail.com7",15, 8,1987,"", Gender.Female, null);
         spongebob.setUserId(1);
+
         when(userRepository.findOne((long) 1)).thenReturn(spongebob);
+
         User updatedSpongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
         updatedSpongebob.setUserId(2);
+
         userService.updateUser((long) 1, updatedSpongebob);
-        verify(userRepository, times(1)).save(updatedSpongebob);
     }
 
     @Test(expected = UserServiceException.class)
