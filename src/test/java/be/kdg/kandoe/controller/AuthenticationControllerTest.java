@@ -93,7 +93,7 @@ public class AuthenticationControllerTest {
                 .andExpect(content().string(containsString("Username and email already used!")));
     }
 
-    @Test
+    /*@Test
     public void tryLoginTest() throws Exception{
         JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
         when(userService.checkLogin("bobdb", "bobdbPassword")).thenReturn(true);
@@ -102,7 +102,7 @@ public class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(user.toString()))
                 .andExpect(status().isOk());
-    }
+    }*/
 
     @Test
     public void tryLoginWithWrongCredentialsTest() throws Exception{
