@@ -48,13 +48,18 @@ public class SecurityConfiguration {
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         protected void configure(HttpSecurity http) throws Exception {
+
+            //OLD
                 http.authorizeRequests()
                         .antMatchers("/api/public/**").permitAll()
-                        .antMatchers("/api/private/**").authenticated()
-                        .antMatchers("/api/admin/**").authenticated()
+//                        .antMatchers("/api/private/**").authenticated()
+//                        .antMatchers("/api/admin/**").authenticated()
                             .and()
                             .csrf()
                             .disable();
+
+
+
 
 //                http.authorizeRequests()
 //                        .antMatchers(HttpMethod.GET, "/api/**").authenticated()

@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +39,13 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public List<User> findUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        if(users == null){
+            return new ArrayList<>();
+        }
+        else{
+            return users;
+        }
     }
 
     @Override
