@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public class ThemeRepositoryImpl implements ThemeRepository {
 
- //   @PersistenceContext
+     @PersistenceContext
     private final EntityManager em;
 
     @Autowired
@@ -31,52 +31,57 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme findThemeByName(@Param("name")String name) {
-        Query query = em.createQuery("SELECT themeId, name, description from ThemeDto WHERE name = :name",ThemeDto.class).setParameter("name",name);
+        Query query = em.createQuery("SELECT theme from Theme theme WHERE name = :name",Theme.class).setParameter("name",name);
+        System.out.println(query.getResultList().get(0));
         if(query.getResultList()==null || query.getResultList().get(0)==null){
             throw new ThemeRepositoryException("Query for findThemeByName: "+name+" threw an exception: ResultList empty");
         }
-        return new Theme((ThemeDto)query.getResultList().get(0));
+        return (Theme)query.getResultList().get(0);
     }
 
     @Transactional
     @Override
-    public Theme findThemeById(Long themeId) {
-        Query query= em.createQuery("SELECT theme FROM ThemeDto theme WHERE themeId=:themeId",ThemeDto.class).setParameter("themeId",themeId);
-        System.out.println(query.getResultList().get(0).getClass());
-        if(query.getResultList()==null || query.getResultList().get(0)==null){
-            throw new ThemeRepositoryException("Query for findThemeById: "+themeId+" threw an exception: ResultList empty");
+    public Theme findThemeById(@Param("themeId")Long themeId) {
+        Query query= em.createQuery("SELECT theme FROM Theme theme WHERE themeId=:themeId",Theme.class).setParameter("themeId",themeId);
+        if(query.getResultList().isEmpty() || query.getResultList().get(0)==null){
+            return null;
         }
-        return new Theme((ThemeDto)query.getResultList().get(0));
+        return (Theme)query.getResultList().get(0);
     }
 
     @Transactional
     @Override
     public Theme createTheme(Theme theme) {
-        em.persist(DtoConverter.toThemeDto(theme));
+        em.persist(theme);
         return theme;
     }
     @Transactional
     @Override
-    public Theme editTheme(Long themeId, String name, String description) {
-        return null;
+    public Theme editTheme(Theme theme) {
+        em.persist(theme);
+        return theme;
     }
 
     @Transactional
     @Override
-    public Theme deleteThemeByName(String name) {
-        return null;
+    public Theme deleteTheme(Theme theme){
+        em.remove(theme);
+        return theme;
     }
-
     @Transactional
     @Override
-    public Theme deleteThemeByThemeId(Long themeId) {
-        return null;
+    public void deleteAll(){
+        em.createQuery("DELETE FROM Theme").executeUpdate();
+        em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
+        Query query2 = em.createQuery("SELECT theme FROM Theme theme");
+        System.out.println(query2.getResultList().size());
     }
 
     @Transactional
     @Override
     public List<Theme> findAllThemes() {
-        return null;
+        Query query = em.createQuery("SELECT theme FROM Theme theme");
+        return query.getResultList();
     }
 }
 

@@ -42,19 +42,18 @@ public class ThemeRepoMock implements ThemeRepository {
         return themes.get(themes.indexOf(theme));
     }
 
-    @Query("UPDATE THEME SET name = :name, description = :description WHERE themeId= :themeId")
-    public Theme editTheme(Long themeId, String name, String description) {
+    public Theme editTheme(Theme theme) {
         Theme themeToFind =null;
         for (Theme t:themes
              ) {
-            if(t.getThemeId()==themeId){
-                t.setName(name);
-                t.setDescription(description);
+            if(t.getThemeId()==theme.getThemeId()){
+                t.setName(theme.getName());
+                t.setDescription(theme.getDescription());
                 themeToFind=t;
             }
         }
         if (themeToFind==null){
-            throw new NullPointerException("No theme found for ID: "+themeId);
+            throw new NullPointerException("No theme found for ID: "+theme.getThemeId());
         }
         return themeToFind;
     }
@@ -74,7 +73,7 @@ public class ThemeRepoMock implements ThemeRepository {
         return themeToFind;
     }
 
-    @Override
+
     public Theme deleteThemeByThemeId(Long themeId) {
         Theme themeToFind =null;
         for (Theme t: themes
@@ -90,7 +89,16 @@ public class ThemeRepoMock implements ThemeRepository {
         return themeToFind;
     }
 
+    @Override
+    public Theme deleteTheme(Theme theme) {
+        themes.remove(theme);
+        return theme;
+    }
 
+    @Override
+    public void deleteAll(){
+        themes = new ArrayList<>();
+    }
     public List<Theme> findAllThemes() {
         if(themes!=null){
             return themes;

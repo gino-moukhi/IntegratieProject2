@@ -2,92 +2,94 @@ package be.kdg.kandoe.unit.theme;
 
 import be.kdg.kandoe.controller.rest.ThemeRestController;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.DtoConverter;
 import be.kdg.kandoe.dto.ThemeDto;
+import be.kdg.kandoe.repository.declaration.ThemeRepository;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UnitTestThemeRestController {
+    static ThemeRestController controller;
 
-    ThemeRestController controller;
+    static ThemeDto theme1;
+    static ThemeDto theme2;
 
-    ThemeDto theme1;
-    ThemeDto theme2;
-
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    private static TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Before
-    public void Setup(){
+    public void init(){
         controller = new ThemeRestController(new ThemeServiceImpl(new ThemeRepoMock()));
-        theme1= new ThemeDto(0,"School","TestTheme Everything to do with school");
-        theme2= new ThemeDto(1, "Industry","TestTheme Everything to do with Industry");
-        restTemplate.postForEntity("http://localhost:9090/api/themes",theme1,ThemeDto.class);
-        restTemplate.postForEntity("http://localhost:9090/api/themes",theme2,ThemeDto.class);
+        theme1= new ThemeDto(1,"School","TestTheme Everything to do with school");
+        theme2= new ThemeDto(2, "Industry","TestTheme Everything to do with Industry");
+        setupDb();
     }
 
     @Test
     public void TestCreateTheme(){
-        ThemeDto themeDto = new ThemeDto(2,"JSONTheme","Theme created via JSON");
+        ThemeDto themeDto = new ThemeDto(3,"JSONTheme","Theme created via JSON");
         ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/themes", themeDto, ThemeDto.class);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
+        setupDb();
     }
 
     @Test
     public void TestGetAllThemes(){
-        ResponseEntity<Theme[]> response = restTemplate.getForEntity("http://localhost:9090/api/themes",Theme[].class);
-        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertNotNull(response.getBody());
-        Assert.assertThat(response.getBody()[0].getClass(),equalTo(Theme.class));
-        Assert.assertThat(response.getBody().length,equalTo(2));
+        ParameterizedTypeReference<List<ThemeDto>> typeref = new ParameterizedTypeReference<List<ThemeDto>>() {
+        };
+        List<ThemeDto> themeDtos =  restTemplate.exchange("http://localhost:9090/api/themes",HttpMethod.GET,null,typeref).getBody();
+        for (ThemeDto t:themeDtos
+             ) {
+            System.out.println(t.getName()+" - "+t.getDescription());
+        }
+        Assert.assertNotNull(themeDtos);
+        Assert.assertThat(themeDtos.size(),equalTo(2));
+        setupDb();
     }
 
     @Test
     public void TestGetThemeById(){
 
-        System.out.println("Value Analysis: ");
-        List<Theme> themes=controller.getAllThemes();
-        for (Theme t:themes
-             ) {
-            System.out.printf("\t%s - %s\n",t.getName(),t.getDescription());
-        }
-        ResponseEntity<Theme> response1=restTemplate.getForEntity("http://localhost:9090/api/theme/0",Theme.class);
+        ResponseEntity<Theme> response1=restTemplate.getForEntity("http://localhost:9090/api/theme/1",Theme.class);
         Assert.assertThat(response1.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response1.getBody().getClass(), equalTo(Theme.class));
         Assert.assertThat(response1.getBody().getName(),equalTo(theme1.getName()));
-        ResponseEntity<Theme> response2=restTemplate.getForEntity("http://localhost:9090/api/theme/1",Theme.class);
+        System.out.println(response1.getBody().getName());
+        ResponseEntity<Theme> response2=restTemplate.getForEntity("http://localhost:9090/api/theme/2",Theme.class);
         Assert.assertThat(response2.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response2.getBody().getClass(), equalTo(Theme.class));
         Assert.assertThat(response2.getBody().getName(),equalTo(theme2.getName()));
-
+        System.out.println(response2.getBody().getName());
     }
 
     @Test
     public void TestGetThemeByName(){
-        ResponseEntity<Theme> response=restTemplate.getForEntity("http://localhost:9090/api/themes/",Theme.class);
+        ResponseEntity<Theme> response=restTemplate.getForEntity("http://localhost:9090/api/theme?name=School",Theme.class);
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
         Assert.assertThat(response.getBody().getDescription(),equalTo(theme1.getDescription()));
@@ -95,14 +97,15 @@ public class UnitTestThemeRestController {
 
     @Test
     public void TestEditTheme(){
-        Theme newTheme = new Theme(theme1);
-        newTheme.setName("School010");
-        newTheme.setDescription("Test Theme that has been updated!");
-        ResponseEntity<Theme> response = restTemplate.postForEntity("http://localhost:9090/api/theme/1",newTheme,Theme.class);
+        ThemeDto themeDto = restTemplate.getForEntity("http://localhost:9090/api/theme/1",ThemeDto.class).getBody();
+        themeDto.setName("SchoolUpdatec");
+        themeDto.setDescription("Updated Theme of School");
+        HttpEntity<ThemeDto> httpEntity = new HttpEntity<ThemeDto>(themeDto);
+        ResponseEntity<ThemeDto> response = restTemplate.exchange("http://localhost:9090/api/theme/1",HttpMethod.PUT,httpEntity,ThemeDto.class);
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
-        Assert.assertThat(response.getBody().getDescription(),equalTo("Test Theme that has been updated!"));
-        Assert.assertThat(response.getBody().getName(),equalTo("School010"));
+        Assert.assertThat(response.getBody().getName(),not(theme1.getName()));
+        Assert.assertThat(response.getBody().getDescription(),not(theme1.getDescription()));
+        Assert.assertThat(response.getBody().getThemeId(),equalTo(theme1.getThemeId()));
     }
 
     @Test
@@ -110,11 +113,26 @@ public class UnitTestThemeRestController {
         ResponseEntity<Theme> response = restTemplate.exchange("http://localhost:9090/api/theme/1", HttpMethod.DELETE,null,Theme.class);
         Assert.assertNotNull(response.getBody());
         Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
-        Assert.assertThat(response.getBody().getName(),equalTo("Industry"));
+        Assert.assertThat(response.getBody().getName(),equalTo("School"));
     }
 
     @Test
     public void TestRemoveThemeById(){
-        //deleteForEntity?????
+        ResponseEntity<Theme> responseDelete = restTemplate.exchange("http://localhost:9090/api/theme/2", HttpMethod.DELETE,null,Theme.class);
+        ResponseEntity<Theme> responseGet = restTemplate.getForEntity("http://localhost:9090/api/theme/2",Theme.class);
+        Assert.assertThat("Found theme should be NULL", responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
+    }
+    @Test
+    public void TestGetThemeNonExistent(){
+        ResponseEntity<Theme> responseDelete = restTemplate.exchange("http://localhost:9090/api/theme/2", HttpMethod.DELETE,null,Theme.class);
+        ResponseEntity<Theme> responseGet = restTemplate.getForEntity("http://localhost:9090/api/theme/2",Theme.class);
+        Assert.assertThat(responseDelete.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    private void setupDb(){
+        restTemplate.exchange("http://localhost:9090/api/themes",HttpMethod.DELETE,null,String.class);
+        restTemplate.postForEntity("http://localhost:9090/api/themes", theme1, ThemeDto.class);
+        restTemplate.postForEntity("http://localhost:9090/api/themes", theme2, ThemeDto.class);
     }
 }

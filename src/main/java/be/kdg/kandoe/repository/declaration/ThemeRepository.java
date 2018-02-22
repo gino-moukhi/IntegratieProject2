@@ -2,6 +2,7 @@ package be.kdg.kandoe.repository.declaration;
 
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,14 +17,10 @@ public interface ThemeRepository {
     Theme findThemeById(Long id);
     Theme createTheme(Theme theme);
 
-    Theme deleteThemeByName(String name);
-    Theme deleteThemeByThemeId(Long themeId);
+    Theme deleteTheme(Theme theme);
+    void deleteAll();
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE THEME SET name = :name, description = :description WHERE themeId= :themeId")
-    Theme editTheme(@Param("themeId")Long themeId, @Param("name")String name, @Param("description")String description);
+    Theme editTheme(Theme theme);
 
-    @Query("SELECT t FROM THEME")
     List<Theme> findAllThemes();
 }

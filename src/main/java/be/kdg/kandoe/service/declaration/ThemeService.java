@@ -15,6 +15,7 @@ public interface ThemeService {
     Theme editTheme(Theme theme);
     Theme removeTheme(Theme themeToDelete);
     Theme removeThemeById(long themeId);
+    void removeAllThemes();
 
     List<Theme> getAllThemes();
 }

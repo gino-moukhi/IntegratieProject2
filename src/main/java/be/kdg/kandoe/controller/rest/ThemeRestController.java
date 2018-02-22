@@ -1,6 +1,7 @@
 package be.kdg.kandoe.controller.rest;
 
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.DtoConverter;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.implementation.ThemeRepositoryImpl;
 import be.kdg.kandoe.service.declaration.ThemeService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ThemeRestController {
@@ -24,35 +26,37 @@ public class ThemeRestController {
     public ThemeRestController(ThemeService themeService){
         this.themeService=themeService;
     }
-    @GetMapping("api/themes")
-    public List<Theme> getAllThemes(){
-        return themeService.getAllThemes();
+    @RequestMapping(value = "api/themes", method = RequestMethod.GET)
+    public ResponseEntity<List<ThemeDto>> getAllThemes(){
+        System.out.println("CALL RECEIVED: getAllThemes");
+        List<Theme> allThemes =themeService.getAllThemes();
+        return ResponseEntity.ok().body(allThemes.stream().map(t-> DtoConverter.toThemeDto(t)).collect(Collectors.toList()));
     }
 
     @RequestMapping(value= "api/theme/{themeId}", method = RequestMethod.GET)
-    public ResponseEntity<Theme> getThemeById(@PathVariable Long themeId){
+    public ResponseEntity<ThemeDto> getThemeById(@PathVariable Long themeId){
         System.out.println("CALLED RECEIVED: getThemeById: "+themeId);
         Theme theme = themeService.getThemeById(themeId);
         if(theme !=null){
-            return ResponseEntity.ok().body(theme);
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
         }else{
             return ResponseEntity.notFound().build();
         }
     }
 
-    @RequestMapping(value= "api/theme/", method = RequestMethod.GET)
-    public ResponseEntity<Theme> getThemeByName(@RequestParam(name = "name") String name){
+    @RequestMapping(value= "api/theme", method = RequestMethod.GET)
+    public ResponseEntity<ThemeDto> getThemeByName(@RequestParam(name = "name") String name){
         System.out.println("CALLED RECEIVED: getThemeByName: "+name);
         Theme theme = themeService.getThemeByName(name);
         if(theme !=null){
-            return ResponseEntity.ok().body(theme);
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
         }else{
             return ResponseEntity.notFound().build();
         }
     }
 
     @RequestMapping(value = "api/themes", method = RequestMethod.POST)
-    public ResponseEntity<Theme> CreateTheme(@Valid @RequestBody ThemeDto theme){
+    public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto theme){
         System.out.println("CALL RECEIVED: CreateTheme");
         logger.log(Priority.INFO,"API CALL: CreateTheme");
         Theme createdTheme = themeService.addTheme(new Theme(theme));
@@ -61,42 +65,53 @@ public class ThemeRestController {
             return ResponseEntity.badRequest().build();
         }else{
             logger.log(Priority.INFO,"Successfully created new Theme");
-            return ResponseEntity.ok().body(createdTheme);
-
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme));
         }
-
     }
 
-    @RequestMapping(value = "api/theme/{themeId}", method = RequestMethod.POST)
-    public ResponseEntity<Theme> updateTheme(@PathVariable Long id, @Valid @RequestBody Theme theme){
-        logger.log(Priority.INFO,"API CALL: updateTheme: "+id);
-        Theme foundTheme = themeService.getThemeById(id);
+    @RequestMapping(value = "api/theme/{themeId}", method = RequestMethod.PUT)
+    public ResponseEntity<ThemeDto> updateTheme(@PathVariable Long themeId, @Valid @RequestBody ThemeDto theme){
+        System.out.println("CALL RECEIVED: updateTheme: "+themeId);
+        logger.log(Priority.INFO,"API CALL: updateTheme: "+themeId);
+        Theme foundTheme = themeService.getThemeById(themeId);
         if(foundTheme == null){
-            logger.log(Priority.ERROR,"No theme found for Id: "+id);
+            logger.log(Priority.ERROR,"No theme found for Id: "+themeId);
             return ResponseEntity.notFound().build();
         }
         foundTheme.setDescription(theme.getDescription());
         foundTheme.setName(theme.getName());
         Theme updatedTheme=themeService.editTheme(foundTheme);
-        logger.log(Priority.INFO,"Updated Theme for id: "+id);
-        return ResponseEntity.ok().body(updatedTheme);
+        logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme));
     }
     @RequestMapping(value = "api/theme/{themeId}",method = RequestMethod.DELETE)
-    public ResponseEntity<Theme> deleteThemeByThemeId(@PathVariable Long id){
-        Theme foundTheme =themeService.getThemeById(id);
+    public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
+        System.out.println("CALLED deleteTheByThemeId: "+themeId);
+        Theme foundTheme =themeService.getThemeById(themeId);
         if(foundTheme==null){
             return ResponseEntity.notFound().build();
         }
-        themeService.removeThemeById(foundTheme.getThemeId());
-        return ResponseEntity.ok().body(foundTheme);
+        Theme deletedTheme=themeService.removeTheme(foundTheme);
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
     }
+
     @RequestMapping(value = "api/theme", method = RequestMethod.DELETE)
-    public ResponseEntity<Theme> deleteThemeByName(@RequestParam(value = "name") String name){
+    public ResponseEntity<ThemeDto> deleteThemeByName(@RequestParam(value = "name") String name){
         Theme foundTheme = themeService.getThemeByName(name);
         if(foundTheme==null){
             return ResponseEntity.notFound().build();
         }
         themeService.removeThemeById(foundTheme.getThemeId());
-        return ResponseEntity.ok().body(foundTheme);
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
+    }
+
+    /**
+     * Temporary Testing Method to ensure clean database data.
+     * @return
+     */
+    @RequestMapping(value = "api/themes", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteThemes(){
+       themeService.removeAllThemes();
+       return ResponseEntity.ok().body("All good!");
     }
 }

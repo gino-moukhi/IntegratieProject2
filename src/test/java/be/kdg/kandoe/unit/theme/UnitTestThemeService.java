@@ -4,6 +4,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import org.junit.Assert;
@@ -101,11 +102,12 @@ public class UnitTestThemeService {
 
     @Test
     public void TestDeleteTheme(){
+        assertEquals(themeService.getAllThemes().size(),2);
         Theme themeToDelete = theme2;
         themeService.removeTheme(themeToDelete);
-        assertEquals("Returned theme should be NULL",themeService.getThemeByName(themeToDelete.getName()),null);
+        assertEquals(themeService.getAllThemes().size(),1);
     }
-    @Test
+    @Test(expected = ThemeRepositoryException.class)
     public void TestDeleteThemeById(){
         Theme themeToDelete = theme1;
         themeService.removeThemeById(themeToDelete.getThemeId());

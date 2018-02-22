@@ -2,16 +2,26 @@ package be.kdg.kandoe.domain.theme;
 
 import be.kdg.kandoe.dto.ThemeDto;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "THEME")
 public class Theme {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private long themeId;
+
+    @Column(length = 50,nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String description;
 
     public Theme(){
 
     }
     public Theme(ThemeDto themeDto){
-        this.themeId=themeDto.getThemeId();
         this.name=themeDto.getName();
         this.description=themeDto.getDescription();
     }
@@ -35,9 +45,4 @@ public class Theme {
     public long getThemeId() {
         return themeId;
     }
-
-    public void setThemeId(long themeId) {
-        this.themeId = themeId;
-    }
-
 }
