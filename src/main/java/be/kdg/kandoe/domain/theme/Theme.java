@@ -22,6 +22,7 @@ public class Theme {
 
     }
     public Theme(ThemeDto themeDto){
+        this.themeId=themeDto.getThemeId();
         this.name=themeDto.getName();
         this.description=themeDto.getDescription();
     }

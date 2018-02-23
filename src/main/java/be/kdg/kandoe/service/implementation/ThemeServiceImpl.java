@@ -39,6 +39,10 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Override
     public Theme getThemeById(long id) {
+        Theme foundTheme = themeRepo.findThemeById(id);
+        if(foundTheme==null){
+            throw new ThemeServiceException("No theme found by id: "+id);
+        }
         return themeRepo.findThemeById(id);
     }
 

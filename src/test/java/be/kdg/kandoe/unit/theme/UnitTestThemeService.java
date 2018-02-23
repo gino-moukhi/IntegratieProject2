@@ -64,12 +64,12 @@ public class UnitTestThemeService {
 
     @Test
     public void TestGetAllThemes(){
-        Theme theme = new Theme(new ThemeDto(2,"Schoonheid","Thema ivm met schoonheid"));
+        Theme theme = new Theme(new ThemeDto(3,"Schoonheid","Thema ivm met schoonheid"));
         themeService.addTheme(theme);
         assertEquals("Length of themes should be 3",themeService.getAllThemes().size(),3);
-        assertEquals("Values of themes should match",themeService.getThemeById(0).getName(),"Jeugd");
-        assertEquals("Values of themes should match",themeService.getThemeById(1).getName(),"Sport");
-        assertEquals("Values of themes should match",themeService.getThemeById(2).getName(),"Schoonheid");
+        assertEquals("Values of themes should match",themeService.getThemeById(1).getName(),"Jeugd");
+        assertEquals("Values of themes should match",themeService.getThemeById(2).getName(),"Sport");
+        assertEquals("Values of themes should match",themeService.getThemeById(3).getName(),"Schoonheid");
 
     }
 
@@ -107,11 +107,11 @@ public class UnitTestThemeService {
         themeService.removeTheme(themeToDelete);
         assertEquals(themeService.getAllThemes().size(),1);
     }
-    @Test(expected = ThemeRepositoryException.class)
+    @Test(expected = ThemeServiceException.class)
     public void TestDeleteThemeById(){
-        Theme themeToDelete = theme1;
-        themeService.removeThemeById(themeToDelete.getThemeId());
-        assertEquals("Returned theme should be NULL",themeService.getThemeById(themeToDelete.getThemeId()),null);
+        themeService.removeThemeById(1);
+        Theme theme = themeService.getThemeById(1);
+        assertEquals("Returned theme should be NULL",theme,null);
     }
 
     /**

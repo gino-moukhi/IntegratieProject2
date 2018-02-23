@@ -117,6 +117,12 @@ public class UnitTestThemeRestController {
     }
 
     @Test
+    public void TestRemoveNonExistingTheme(){
+        ResponseEntity<Theme> response = restTemplate.exchange("http://localhost:9090/api/theme/5",HttpMethod.DELETE,null,Theme.class);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
     public void TestRemoveThemeById(){
         ResponseEntity<Theme> responseDelete = restTemplate.exchange("http://localhost:9090/api/theme/2", HttpMethod.DELETE,null,Theme.class);
         ResponseEntity<Theme> responseGet = restTemplate.getForEntity("http://localhost:9090/api/theme/2",Theme.class);

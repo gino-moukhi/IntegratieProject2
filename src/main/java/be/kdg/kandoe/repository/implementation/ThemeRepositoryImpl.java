@@ -34,7 +34,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         Query query = em.createQuery("SELECT theme from Theme theme WHERE name = :name",Theme.class).setParameter("name",name);
         System.out.println(query.getResultList().get(0));
         if(query.getResultList()==null || query.getResultList().get(0)==null){
-            throw new ThemeRepositoryException("Query for findThemeByName: "+name+" threw an exception: ResultList empty");
+            return null;
         }
         return (Theme)query.getResultList().get(0);
     }
@@ -74,7 +74,6 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         em.createQuery("DELETE FROM Theme").executeUpdate();
         em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
         Query query2 = em.createQuery("SELECT theme FROM Theme theme");
-        System.out.println(query2.getResultList().size());
     }
 
     @Transactional

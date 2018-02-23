@@ -4,6 +4,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
@@ -53,7 +54,7 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         if (themeToFind==null){
-            throw new NullPointerException("No theme found for ID: "+theme.getThemeId());
+            return null;
         }
         return themeToFind;
     }
@@ -67,7 +68,7 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         if(themeToFind==null){
-            throw new ThemeServiceException("No theme found for name: "+name);
+            return null;
         }
         themes.remove(themeToFind);
         return themeToFind;
@@ -83,7 +84,7 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         if(themeToFind==null){
-            throw new ThemeServiceException("No theme found for ID: "+themeId);
+            return null;
         }
         themes.remove(themeToFind);
         return themeToFind;
@@ -103,6 +104,6 @@ public class ThemeRepoMock implements ThemeRepository {
         if(themes!=null){
             return themes;
         }
-        else throw new NullPointerException("Arraylist 'themes' equals null");
+        else return null;
     }
 }
