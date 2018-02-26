@@ -1,21 +1,12 @@
 package be.kdg.kandoe.domain.theme;
 
 import be.kdg.kandoe.dto.ThemeDto;
+import be.kdg.kandoe.repository.jpa.ThemeJpa;
 
 import javax.persistence.*;
-
-@Entity
-@Table(name = "THEME")
 public class Theme {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
     private long themeId;
-
-    @Column(length = 50,nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String description;
 
     public Theme(){
@@ -46,4 +37,8 @@ public class Theme {
     public long getThemeId() {
         return themeId;
     }
+    public void setThemeId(Long id){
+        this.themeId=id;
+    }
+
 }

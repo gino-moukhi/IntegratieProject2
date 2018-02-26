@@ -1,4 +1,4 @@
-package be.kdg.kandoe.unit.theme;
+package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
@@ -7,6 +7,7 @@ import be.kdg.kandoe.service.exception.InputValidationException;
 import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
+import be.kdg.kandoe.unit.theme.ThemeRepoMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

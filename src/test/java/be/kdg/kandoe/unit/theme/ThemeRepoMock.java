@@ -39,8 +39,11 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     public Theme createTheme(Theme theme) {
-        themes.add(theme);
-        return themes.get(themes.indexOf(theme));
+        Theme themeToAdd = theme;
+        Long size = Long.parseLong(String.valueOf(themes.size()+1));
+        themeToAdd.setThemeId(size);
+        themes.add(themeToAdd);
+        return themes.get(themes.indexOf(themeToAdd));
     }
 
     public Theme editTheme(Theme theme) {

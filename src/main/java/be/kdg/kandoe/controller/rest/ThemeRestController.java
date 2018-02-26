@@ -5,6 +5,7 @@ import be.kdg.kandoe.dto.DtoConverter;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.implementation.ThemeRepositoryImpl;
 import be.kdg.kandoe.service.declaration.ThemeService;
+import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -36,12 +37,13 @@ public class ThemeRestController {
     @RequestMapping(value= "api/theme/{themeId}", method = RequestMethod.GET)
     public ResponseEntity<ThemeDto> getThemeById(@PathVariable Long themeId){
         System.out.println("CALLED RECEIVED: getThemeById: "+themeId);
-        Theme theme = themeService.getThemeById(themeId);
-        if(theme !=null){
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
-        }else{
+        Theme theme;
+        try{
+            theme = themeService.getThemeById(themeId);
+        }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok().body(ThemeDto.fromTheme(theme));
     }
 
     @RequestMapping(value= "api/theme", method = RequestMethod.GET)
@@ -49,23 +51,23 @@ public class ThemeRestController {
         System.out.println("CALLED RECEIVED: getThemeByName: "+name);
         Theme theme = themeService.getThemeByName(name);
         if(theme !=null){
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
+            return ResponseEntity.ok().body(ThemeDto.fromTheme(theme));
         }else{
             return ResponseEntity.notFound().build();
         }
     }
 
     @RequestMapping(value = "api/themes", method = RequestMethod.POST)
-    public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto theme){
+    public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto themeDto){
         System.out.println("CALL RECEIVED: CreateTheme");
         logger.log(Priority.INFO,"API CALL: CreateTheme");
-        Theme createdTheme = themeService.addTheme(new Theme(theme));
+        Theme createdTheme = themeService.addTheme(themeDto.toTheme());
         if(createdTheme==null){
             logger.log(Priority.ERROR,"ThemeService.addTheme returns NULL..");
             return ResponseEntity.badRequest().build();
         }else{
             logger.log(Priority.INFO,"Successfully created new Theme");
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme));
+            return ResponseEntity.ok().body(ThemeDto.fromTheme(createdTheme));
         }
     }
 
@@ -82,17 +84,19 @@ public class ThemeRestController {
         foundTheme.setName(theme.getName());
         Theme updatedTheme=themeService.editTheme(foundTheme);
         logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme));
+        return ResponseEntity.ok().body(ThemeDto.fromTheme(updatedTheme));
     }
     @RequestMapping(value = "api/theme/{themeId}",method = RequestMethod.DELETE)
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
         System.out.println("CALLED deleteTheByThemeId: "+themeId);
-        Theme foundTheme =themeService.getThemeById(themeId);
-        if(foundTheme==null){
+        Theme foundTheme;
+        try{
+            foundTheme =themeService.getThemeById(themeId);
+        }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
         }
         Theme deletedTheme=themeService.removeTheme(foundTheme);
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
+        return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
     }
 
     @RequestMapping(value = "api/theme", method = RequestMethod.DELETE)
@@ -102,7 +106,7 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
         themeService.removeThemeById(foundTheme.getThemeId());
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
+        return ResponseEntity.ok().body(ThemeDto.fromTheme(foundTheme));
     }
 
     /**

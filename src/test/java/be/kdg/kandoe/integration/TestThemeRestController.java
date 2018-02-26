@@ -1,29 +1,23 @@
-package be.kdg.kandoe.unit.theme;
+package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.controller.rest.ThemeRestController;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.DtoConverter;
 import be.kdg.kandoe.dto.ThemeDto;
-import be.kdg.kandoe.repository.declaration.ThemeRepository;
-import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DbUnitConfiguration;
-import com.github.springtestdbunit.annotation.ExpectedDatabase;
-import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.junit.*;
+import be.kdg.kandoe.unit.theme.ThemeRepoMock;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,7 +27,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UnitTestThemeRestController {
+public class TestThemeRestController {
     static ThemeRestController controller;
 
     static ThemeDto theme1;
@@ -44,8 +38,8 @@ public class UnitTestThemeRestController {
     @Before
     public void init(){
         controller = new ThemeRestController(new ThemeServiceImpl(new ThemeRepoMock()));
-        theme1= new ThemeDto(1,"School","TestTheme Everything to do with school");
-        theme2= new ThemeDto(2, "Industry","TestTheme Everything to do with Industry");
+        theme1= new ThemeDto(0,"School","TestTheme Everything to do with school");
+        theme2= new ThemeDto(0, "Industry","TestTheme Everything to do with Industry");
         setupDb();
     }
 
@@ -62,9 +56,9 @@ public class UnitTestThemeRestController {
     public void TestGetAllThemes(){
         ParameterizedTypeReference<List<ThemeDto>> typeref = new ParameterizedTypeReference<List<ThemeDto>>() {
         };
-        List<ThemeDto> themeDtos =  restTemplate.exchange("http://localhost:9090/api/themes",HttpMethod.GET,null,typeref).getBody();
+        List<ThemeDto> themeDtos =  restTemplate.exchange("http://localhost:9090/api/themes", HttpMethod.GET,null,typeref).getBody();
         for (ThemeDto t:themeDtos
-             ) {
+                ) {
             System.out.println(t.getName()+" - "+t.getDescription());
         }
         Assert.assertNotNull(themeDtos);

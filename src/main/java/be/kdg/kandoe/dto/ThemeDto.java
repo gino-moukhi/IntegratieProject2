@@ -60,4 +60,15 @@ public class ThemeDto {
         sb.append("}");
         return sb.toString();
     }
+    public Theme toTheme(){
+        Theme theme = new Theme();
+        theme.setDescription(this.description);
+        theme.setThemeId(this.themeId);
+        theme.setName(this.getName());
+        return theme;
+    }
+
+    public static ThemeDto fromTheme(Theme theme){
+        return new ThemeDto(theme.getThemeId(),theme.getName(),theme.getDescription());
+    }
 }
