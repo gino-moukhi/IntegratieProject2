@@ -1,7 +1,9 @@
 package be.kdg.kandoe.domain.theme;
 
 import be.kdg.kandoe.dto.ThemeDto;
+import be.kdg.kandoe.repository.jpa.ThemeJpa;
 
+import javax.persistence.*;
 public class Theme {
     private long themeId;
     private String name;
@@ -35,9 +37,8 @@ public class Theme {
     public long getThemeId() {
         return themeId;
     }
-
-    public void setThemeId(long themeId) {
-        this.themeId = themeId;
+    public void setThemeId(Long id){
+        this.themeId=id;
     }
 
 }

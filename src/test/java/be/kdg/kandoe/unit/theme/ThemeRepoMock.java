@@ -4,6 +4,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
@@ -38,23 +39,25 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     public Theme createTheme(Theme theme) {
-        themes.add(theme);
-        return themes.get(themes.indexOf(theme));
+        Theme themeToAdd = theme;
+        Long size = Long.parseLong(String.valueOf(themes.size()+1));
+        themeToAdd.setThemeId(size);
+        themes.add(themeToAdd);
+        return themes.get(themes.indexOf(themeToAdd));
     }
 
-    @Query("UPDATE THEME SET name = :name, description = :description WHERE themeId= :themeId")
-    public Theme editTheme(Long themeId, String name, String description) {
+    public Theme editTheme(Theme theme) {
         Theme themeToFind =null;
         for (Theme t:themes
              ) {
-            if(t.getThemeId()==themeId){
-                t.setName(name);
-                t.setDescription(description);
+            if(t.getThemeId()==theme.getThemeId()){
+                t.setName(theme.getName());
+                t.setDescription(theme.getDescription());
                 themeToFind=t;
             }
         }
         if (themeToFind==null){
-            throw new NullPointerException("No theme found for ID: "+themeId);
+            return null;
         }
         return themeToFind;
     }
@@ -68,13 +71,13 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         if(themeToFind==null){
-            throw new ThemeServiceException("No theme found for name: "+name);
+            return null;
         }
         themes.remove(themeToFind);
         return themeToFind;
     }
 
-    @Override
+
     public Theme deleteThemeByThemeId(Long themeId) {
         Theme themeToFind =null;
         for (Theme t: themes
@@ -84,17 +87,26 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         if(themeToFind==null){
-            throw new ThemeServiceException("No theme found for ID: "+themeId);
+            return null;
         }
         themes.remove(themeToFind);
         return themeToFind;
     }
 
+    @Override
+    public Theme deleteTheme(Theme theme) {
+        themes.remove(theme);
+        return theme;
+    }
 
+    @Override
+    public void deleteAll(){
+        themes = new ArrayList<>();
+    }
     public List<Theme> findAllThemes() {
         if(themes!=null){
             return themes;
         }
-        else throw new NullPointerException("Arraylist 'themes' equals null");
+        else return null;
     }
 }

@@ -8,16 +8,11 @@ import javax.persistence.*;
 /**
  * Mediate Object-class to translate JSON-objects to Theme-objects
  */
-@Entity
-@Table(name = "THEME")
+
 public class ThemeDto {
-    @Column(name = "theme_id")
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private long themeId;
-    @Column(name = "name")
     private String name;
-    @Column(name = "description")
     private String description;
 
     public ThemeDto(){
@@ -52,6 +47,28 @@ public class ThemeDto {
         return themeId;
     }
 
+    public void setThemeId(Long themeId){
+        this.themeId=themeId;
+    }
 
+    public String toJsonString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"themeId\": \""+this.getThemeId()+"\",");
+        sb.append("\"name\": \""+this.getName()+"\",");
+        sb.append("\"description\": \""+this.getDescription()+"\",");
+        sb.append("}");
+        return sb.toString();
+    }
+    public Theme toTheme(){
+        Theme theme = new Theme();
+        theme.setDescription(this.description);
+        theme.setThemeId(this.themeId);
+        theme.setName(this.getName());
+        return theme;
+    }
 
+    public static ThemeDto fromTheme(Theme theme){
+        return new ThemeDto(theme.getThemeId(),theme.getName(),theme.getDescription());
+    }
 }
