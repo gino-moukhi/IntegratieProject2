@@ -92,14 +92,15 @@ public class TestThemeRestController {
     @Test
     public void TestEditTheme(){
         ThemeDto themeDto = restTemplate.getForEntity("http://localhost:9090/api/theme/1",ThemeDto.class).getBody();
-        themeDto.setName("SchoolUpdatec");
+        themeDto.setName("SchoolUpdated");
         themeDto.setDescription("Updated Theme of School");
         HttpEntity<ThemeDto> httpEntity = new HttpEntity<ThemeDto>(themeDto);
         ResponseEntity<ThemeDto> response = restTemplate.exchange("http://localhost:9090/api/theme/1",HttpMethod.PUT,httpEntity,ThemeDto.class);
+
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getName(),not(theme1.getName()));
         Assert.assertThat(response.getBody().getDescription(),not(theme1.getDescription()));
-        Assert.assertThat(response.getBody().getThemeId(),equalTo(theme1.getThemeId()));
+        Assert.assertThat(response.getBody().getThemeId(),equalTo(themeDto.getThemeId()));
     }
 
     @Test
