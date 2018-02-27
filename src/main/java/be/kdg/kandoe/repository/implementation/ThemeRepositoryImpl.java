@@ -58,14 +58,14 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public Theme createTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.persist(jpa);
+        em.merge(jpa);
         return jpa.toTheme();
     }
     @Transactional
     @Override
     public Theme editTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.persist(jpa);
+        em.merge(jpa);
         return jpa.toTheme();
     }
 
@@ -73,7 +73,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public Theme deleteTheme(Theme theme){
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.remove(jpa);
+        em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
         return jpa.toTheme();
     }
     @Transactional

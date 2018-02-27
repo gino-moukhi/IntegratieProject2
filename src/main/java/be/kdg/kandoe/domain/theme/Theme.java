@@ -4,10 +4,14 @@ import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
 
 import javax.persistence.*;
+import java.util.List;
+
 public class Theme {
     private long themeId;
     private String name;
     private String description;
+    private List<SubTheme> subThemes;
+
 
     public Theme(){
 
@@ -16,6 +20,7 @@ public class Theme {
         this.themeId=themeDto.getThemeId();
         this.name=themeDto.getName();
         this.description=themeDto.getDescription();
+        //this.subThemes = themeDto.getSubThemes();
     }
 
     public String getName() {

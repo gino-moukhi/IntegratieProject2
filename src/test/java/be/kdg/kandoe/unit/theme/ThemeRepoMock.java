@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThemeRepoMock implements ThemeRepository {
-    @Autowired
-    ThemeRepository repository;
     List<Theme> themes = new ArrayList<>();
 
     public Theme findThemeByName(String name) {

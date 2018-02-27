@@ -22,6 +22,11 @@ import javax.persistence.*;
         public ThemeJpa(){
 
         }
+        public ThemeJpa(Theme theme){
+            this.themeId=theme.getThemeId();
+            this.name=theme.getName();
+            this.description=theme.getDescription();
+        }
 
         public String getName() {
             return name;
