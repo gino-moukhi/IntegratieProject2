@@ -33,9 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.web.context.WebApplicationContext;
@@ -289,7 +287,7 @@ public class UserRestControllerTest {
 
 
 
-    //getUser based on userId tests
+    //getUser based on userId tests (we do send the jwt token here because we use some data from the token in the session)
     @Test
     @WithAnonymousUser
     public void getUserByUserIdWithAnonymousAccount() throws Exception{
@@ -434,7 +432,7 @@ public class UserRestControllerTest {
 
 
 
-    //getUser based on username tests
+    //getUser based on username tests (we do send the jwt token here because we use some data from the token in the session)
     @Test
     @WithAnonymousUser
     public void getUserByUsernameWithAnonymousAccount() throws Exception{
@@ -582,32 +580,35 @@ public class UserRestControllerTest {
     //updateUser tests
 //    @Test
 //    public void updateUser() throws Exception{
-//        User updatedBobUser = new User ("bobina", "het bouwertje", "bobinahb", "bobina@gmail.com", 1, 2, 1990, "bobyWachtwoord", Gender.Female, null);
+//        User updatedBobUser = new User ("bobina", "het bouwertje", "bobdb", "bobdb@gmail.com", 1, 2, 1990, "bobyWachtwoord", Gender.Female, null);
 //
 //        JSONObject updatedBob = new JSONObject();
 //        updatedBob.put("firstName", "bobina");
 //        updatedBob.put("lastName", "het bouwertje");
-//        updatedBob.put("username", "bobinahb");
-//        updatedBob.put("email", "bobina@gmail.com");
+//        updatedBob.put("username", "bobdb");
 //        updatedBob.put("year", 1990);
 //        updatedBob.put("month", 2);
 //        updatedBob.put("day", 1);
 //        updatedBob.put("gender", "Female");
 //        updatedBob.put("password", "bobyWachtwoord");
 //
-//
 //        when(userDetailsService.loadUserByUsername(bob.getUsername())).thenReturn(bob);
 //        when(userService.findUserByUsername(bob.getUsername())).thenReturn(bob);
 //        when(userService.findUserById(bob.getUserId())).thenReturn(bob);
+//        when(userService.updateUser(bob.getUserId(), updatedBobUser)).thenReturn(updatedBobUser);
 //
 //        String jwtToken = createToken(String.valueOf(bob.getUsername()), "ROLE_USER");
-//
-//        mockMvc.perform(
-//                post("/api/private/users/" + bob.getUserId())
+//        MvcResult result = mockMvc.perform(
+//                put("/api/private/users/" + bob.getUserId())
 //                .content(updatedBob.toString())
-//                .header("Authorization", "Bearer " + jwtToken)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .header("Authorization", "Bearer " + jwtToken))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        String jsonResponse = result.getResponse().getContentAsString();
+//        assertThat(true, is(checkForUserDetails(jsonResponse, updatedBobUser)));
 //    }
 
 

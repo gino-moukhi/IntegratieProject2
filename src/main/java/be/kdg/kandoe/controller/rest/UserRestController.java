@@ -3,6 +3,7 @@ package be.kdg.kandoe.controller.rest;
 import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.RequestUserDto;
+import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import be.kdg.kandoe.service.declaration.UserService;
 import org.apache.log4j.Logger;
@@ -101,19 +102,37 @@ public class UserRestController {
 //    }
 
     //UPDATE
-    @PostMapping("/api/private/users/{userId}")
+    @PutMapping("/api/private/users/{userId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto changedUser){
-        User user = userService.findUserById(userId);
+    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable Long userId, @Valid @RequestBody UpdateuserDto changedUser, HttpServletRequest request){
+        User userBasedOnUrlUserId = userService.findUserById(userId);
 
-        if(user == null){
+        String usernameFromToken = (String) request.getAttribute("username");
+        User tokenUser = userService.findUserByUsername(usernameFromToken);
+
+        if(userBasedOnUrlUserId == null){
             return ResponseEntity.notFound().build();
         }
 
-        //Todo change user details to new details
+        if(!userBasedOnUrlUserId.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
+                !userBasedOnUrlUserId.getUsername().equalsIgnoreCase(usernameFromToken) ||
+                !changedUser.getUsername().equalsIgnoreCase(usernameFromToken)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
 
-        User updatedUser = userService.saveUser(user);
-        return ResponseEntity.ok(updatedUser);
+        //Omzetten DTO naar user object
+        User updatedUser = new User(changedUser);
+        updatedUser.setUserId(tokenUser.getUserId());
+        updatedUser.setUsername(tokenUser.getUsername());
+        updatedUser.setEmail(tokenUser.getEmail());
+        updatedUser.setAuthorities(tokenUser.getUserRoles());
+
+        User savedUser = userService.updateUser(userId, updatedUser);
+        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
+
+//        User savedUser = userService.saveUser(updatedUser);
+//        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
+        return ResponseEntity.ok(updateuserDto);
     }
 
     //DELETE

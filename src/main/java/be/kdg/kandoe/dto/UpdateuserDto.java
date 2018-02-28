@@ -1,33 +1,44 @@
 package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.user.Gender;
+import be.kdg.kandoe.domain.user.User;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
-public class UserDto {
+public class UpdateuserDto {
+    //Username can not be changed and is only used for checking if the user is trying to change the same user object
     private String username;
     private String password;
     private String firstName;
     private String lastName;
-    private String email;
-    private int age;
     private Gender gender;
-    private Calendar birthday;
+    private int year;
+    private int month;
+    private int day;
 
-    public UserDto() {
+    public UpdateuserDto() {
     }
 
-    public UserDto(String username, String password, String firstName, String lastName, String email, int age, Gender gender, Calendar birthday) {
+    public UpdateuserDto(String username, String password, String firstName, String lastName, Gender gender, int year, int month, int day) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-        this.age = age;
-        this.birthday = birthday;
         this.gender = gender;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+    }
+
+    public UpdateuserDto(User user){
+        this.username = user.getUsername();
+        this.password = "";
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.gender = user.getGender();
+        this.year = user.getYear();
+        this.month = user.getMonth();
+        this.day = user.getDay();
     }
 
     public String getUsername() {
@@ -62,22 +73,6 @@ public class UserDto {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public Gender getGender() {
         return gender;
     }
@@ -86,24 +81,27 @@ public class UserDto {
         this.gender = gender;
     }
 
-    public Calendar getBirthday() {
-        return birthday;
+    public int getYear() {
+        return year;
     }
 
-    public void setBirthday(Calendar birthday) {
-        this.birthday = birthday;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public int getYear(){
-        return birthday.get(Calendar.YEAR);
+    public int getMonth() {
+        return month;
     }
 
-    public int getMonth(){
-        //The months in calendar go from {0-11} (so we have to add 1)
-        return birthday.get(Calendar.MONTH) + 1;
+    public void setMonth(int month) {
+        this.month = month;
     }
 
-    public int getDay(){
-        return birthday.get(Calendar.DAY_OF_MONTH);
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
     }
 }

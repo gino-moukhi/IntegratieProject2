@@ -1,5 +1,6 @@
 package be.kdg.kandoe.domain.user;
 
+import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,6 +71,16 @@ public class User implements UserDetails {
         this.encryptedPassword = userDto.getPassword();
     }
 
+    public User(UpdateuserDto updateuserDto){
+        this.firstName = updateuserDto.getFirstName();
+        this.lastName = updateuserDto.getLastName();
+        this.encryptedPassword = updateuserDto.getPassword();
+        this.gender = updateuserDto.getGender();
+        this.year = updateuserDto.getYear();
+        this.month = updateuserDto.getMonth();
+        this.day = updateuserDto.getDay();
+    }
+
     public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Authority> authorities) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -82,7 +93,6 @@ public class User implements UserDetails {
         this.gender = gender;
         this.authorities = authorities;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -196,5 +206,9 @@ public class User implements UserDetails {
 
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public List<Authority> getUserRoles(){
+        return this.authorities;
     }
 }

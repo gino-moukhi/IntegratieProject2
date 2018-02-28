@@ -75,15 +75,6 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
-        if(u == null){
-            throw new UserServiceException("User not found");
-        }
-
-        if(user.getUserId() != u.getUserId()){
-            throw new UserServiceException("User is not the same user");
-        }
-
         return userRepository.save(user);
     }
 
