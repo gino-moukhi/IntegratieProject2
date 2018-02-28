@@ -1,9 +1,5 @@
 package be.kdg.kandoe.security.auth;
 
-/**
- * Created by fan.jin on 2016-11-12.
- */
-
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -12,9 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by fan.jin on 2016-11-07.
- */
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

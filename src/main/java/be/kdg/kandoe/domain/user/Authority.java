@@ -16,7 +16,16 @@ public class Authority implements GrantedAuthority{
     private String name;
 
     @ManyToOne(targetEntity = User.class)
+    @JsonIgnore
     private User user;
+
+    public Authority() {
+    }
+
+    public Authority(String name, User user) {
+        this.name = name;
+        this.user = user;
+    }
 
     @Override
     public String getAuthority() {
