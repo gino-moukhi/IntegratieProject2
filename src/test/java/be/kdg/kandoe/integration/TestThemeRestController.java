@@ -1,7 +1,9 @@
 package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.controller.rest.ThemeRestController;
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.SubThemeDto;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import be.kdg.kandoe.unit.theme.ThemeRepoMock;
@@ -33,6 +35,9 @@ public class TestThemeRestController {
     static ThemeDto theme1;
     static ThemeDto theme2;
 
+    static SubThemeDto subTheme1;
+    static SubThemeDto subTheme2;
+
     private static TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Before
@@ -40,6 +45,9 @@ public class TestThemeRestController {
         controller = new ThemeRestController(new ThemeServiceImpl(new ThemeRepoMock()));
         theme1= new ThemeDto(0,"School","TestTheme Everything to do with school");
         theme2= new ThemeDto(0, "Industry","TestTheme Everything to do with Industry");
+
+        subTheme1= new SubThemeDto(0,theme1,"Extra classroom","Build extra classrooms to expand student limit");
+        subTheme2=new SubThemeDto(0,theme1,"More recreation","Allow students to relax more while on break");
         setupDb();
     }
 
@@ -68,7 +76,6 @@ public class TestThemeRestController {
 
     @Test
     public void TestGetThemeById(){
-
         ResponseEntity<Theme> response1=restTemplate.getForEntity("http://localhost:9090/api/theme/1",Theme.class);
         Assert.assertThat(response1.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response1.getBody().getClass(), equalTo(Theme.class));
@@ -83,10 +90,23 @@ public class TestThemeRestController {
 
     @Test
     public void TestGetThemeByName(){
-        ResponseEntity<Theme> response=restTemplate.getForEntity("http://localhost:9090/api/theme?name=School",Theme.class);
+        ResponseEntity<ThemeDto> response=restTemplate.getForEntity("http://localhost:9090/api/theme?name=School",ThemeDto.class);
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
+        Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
         Assert.assertThat(response.getBody().getDescription(),equalTo(theme1.getDescription()));
+    }
+
+    @Test
+    public void TestGetSubThemeById(){
+        ResponseEntity<SubThemeDto> response = restTemplate.getForEntity("http://localhost:9090/api/subtheme/1",SubThemeDto.class);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(response.getBody().getSubThemeId(),equalTo(new Long(1)));
+        Assert.assertThat(response.getBody().getSubThemeName(),equalTo(subTheme1.getSubThemeName()));
+    }
+
+    @Test
+    public void TestGetSubThemesByThemeId(){
+        ResponseEntity<SubThemeDto> response;
     }
 
     @Test
@@ -101,6 +121,21 @@ public class TestThemeRestController {
         Assert.assertThat(response.getBody().getName(),not(theme1.getName()));
         Assert.assertThat(response.getBody().getDescription(),not(theme1.getDescription()));
         Assert.assertThat(response.getBody().getThemeId(),equalTo(themeDto.getThemeId()));
+    }
+
+    @Test
+    public void TestEditSubTheme(){
+        SubThemeDto subThemeDto = restTemplate.getForEntity("http://localhost:9090/api/subtheme/1",SubThemeDto.class).getBody();
+        subThemeDto.setSubThemeName("Updated SubTheme");
+        subThemeDto.setSubThemeDescription("Updated Subtheme should not be equal to the old version");
+        subThemeDto.setTheme(theme2);
+        HttpEntity<SubThemeDto> httpEntity = new HttpEntity<>(subThemeDto);
+        ResponseEntity<SubThemeDto> response = restTemplate.exchange("http://localhost:9090/api/subtheme/1",HttpMethod.PUT,httpEntity,SubThemeDto.class);
+
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(response.getBody().getSubThemeName(),not(subTheme1.getSubThemeName()));
+        Assert.assertThat(response.getBody().getSubThemeDescription(),not(subTheme1.getSubThemeDescription()));
+        Assert.assertThat(response.getBody().getTheme().getThemeId(),equalTo(subTheme1.getTheme().getThemeId()));
     }
 
     @Test
@@ -121,7 +156,17 @@ public class TestThemeRestController {
     public void TestRemoveThemeById(){
         ResponseEntity<Theme> responseDelete = restTemplate.exchange("http://localhost:9090/api/theme/2", HttpMethod.DELETE,null,Theme.class);
         ResponseEntity<Theme> responseGet = restTemplate.getForEntity("http://localhost:9090/api/theme/2",Theme.class);
+        Assert.assertThat(responseDelete.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat("Found theme should be NULL", responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void TestRemoveSubThemesByThemeId(){
+        ParameterizedTypeReference<List<SubThemeDto>> typeref = new ParameterizedTypeReference<List<SubThemeDto>>() {
+        };
+        ResponseEntity<List<SubThemeDto>> responseDelete =  restTemplate.exchange("http://localhost:9090/api/subthemes/1", HttpMethod.DELETE,null,typeref);
+        Assert.assertThat(responseDelete.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(responseDelete.getBody().size(),equalTo(2));
     }
     @Test
     public void TestGetThemeNonExistent(){
@@ -135,5 +180,7 @@ public class TestThemeRestController {
         restTemplate.exchange("http://localhost:9090/api/themes",HttpMethod.DELETE,null,String.class);
         restTemplate.postForEntity("http://localhost:9090/api/themes", theme1, ThemeDto.class);
         restTemplate.postForEntity("http://localhost:9090/api/themes", theme2, ThemeDto.class);
+        restTemplate.postForEntity("http://localhost:9090/api/subthemes/1",subTheme1,SubThemeDto.class);
+        restTemplate.postForEntity("http://localhost:9090/api/subthemes/1",subTheme2,SubThemeDto.class);
     }
 }
