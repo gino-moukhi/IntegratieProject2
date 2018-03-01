@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -102,23 +104,72 @@ public class UserRestController {
 //    }
 
     //UPDATE
-    @PutMapping("/api/private/users/{userId}")
+//    @PutMapping("/api/private/users/{username}")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable String username, @Valid @RequestBody UpdateuserDto changedUser, HttpServletRequest request){
+//        User userBasedOnUrlUserId = userService.findUserById(user);
+//
+//        String usernameFromToken = (String) request.getAttribute("username");
+//        User tokenUser = userService.findUserByUsername(usernameFromToken);
+//
+//        if(userBasedOnUrlUserId == null){
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        if(!userBasedOnUrlUserId.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
+//                !userBasedOnUrlUserId.getUsername().equalsIgnoreCase(usernameFromToken) ||
+//                !changedUser.getUsername().equalsIgnoreCase(usernameFromToken)){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//        }
+//
+//        //Omzetten DTO naar user object
+//        User updatedUser = new User(changedUser);
+//        updatedUser.setUserId(tokenUser.getUserId());
+//        updatedUser.setUsername(tokenUser.getUsername());
+//        updatedUser.setEmail(tokenUser.getEmail());
+//        updatedUser.setAuthorities(tokenUser.getUserRoles());
+//
+//        User savedUser = userService.updateUser(userId, updatedUser);
+//        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
+//
+////        User savedUser = userService.saveUser(updatedUser);
+////        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
+//        return ResponseEntity.ok(updateuserDto);
+//    }
+
+
+
+    //TEST
+    @PostMapping(value = "/api/private/users/{username}/uploadImage")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable Long userId, @Valid @RequestBody UpdateuserDto changedUser, HttpServletRequest request){
-        User userBasedOnUrlUserId = userService.findUserById(userId);
+    public ResponseEntity uploadProfilePicture(@RequestParam MultipartFile file){
+        String t = "";
+
+        return ResponseEntity.ok().build();
+    }
+
+
+
+    //UPDATE
+    @PutMapping("/api/private/users/{username}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable String username, @Valid @RequestBody UserDto changedUser, HttpServletRequest request){
+        User userBasedOnUsername = userService.findUserByUsername(username);
 
         String usernameFromToken = (String) request.getAttribute("username");
         User tokenUser = userService.findUserByUsername(usernameFromToken);
 
-        if(userBasedOnUrlUserId == null){
+        if(userBasedOnUsername == null){
             return ResponseEntity.notFound().build();
         }
 
-        if(!userBasedOnUrlUserId.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
-                !userBasedOnUrlUserId.getUsername().equalsIgnoreCase(usernameFromToken) ||
+        if(!userBasedOnUsername.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
+                !userBasedOnUsername.getUsername().equalsIgnoreCase(usernameFromToken) ||
                 !changedUser.getUsername().equalsIgnoreCase(usernameFromToken)){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+
+
 
         //Omzetten DTO naar user object
         User updatedUser = new User(changedUser);
@@ -127,7 +178,7 @@ public class UserRestController {
         updatedUser.setEmail(tokenUser.getEmail());
         updatedUser.setAuthorities(tokenUser.getUserRoles());
 
-        User savedUser = userService.updateUser(userId, updatedUser);
+        User savedUser = userService.updateUser(userBasedOnUsername.getUserId(), updatedUser);
         UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
 
 //        User savedUser = userService.saveUser(updatedUser);
@@ -135,19 +186,23 @@ public class UserRestController {
         return ResponseEntity.ok(updateuserDto);
     }
 
+
+
+
+
     //DELETE
-    @DeleteMapping("api/private/users/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<User> deleteUser(@PathVariable Long userId){
-        User user = userService.findUserById(userId);
-
-        if(user == null){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-
-        userService.deleteUser(userId);
-        return ResponseEntity.ok().build();
-    }
+//    @DeleteMapping("api/private/users/{userId}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    public ResponseEntity<User> deleteUser(@PathVariable Long userId){
+//        User user = userService.findUserById(userId);
+//
+//        if(user == null){
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//        }
+//
+//        userService.deleteUser(userId);
+//        return ResponseEntity.ok().build();
+//    }
 
 
 

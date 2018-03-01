@@ -1,13 +1,13 @@
 package be.kdg.kandoe.configuration.security;
 
-
 import be.kdg.kandoe.security.TokenHelper;
 import be.kdg.kandoe.security.auth.RestAuthenticationEntryPoint;
 import be.kdg.kandoe.security.auth.TokenAuthenticationFilter;
-import be.kdg.kandoe.service.declaration.UserService;
 
 import be.kdg.kandoe.service.implementation.CustomUserDetailsService;
+import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,18 +20,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -64,22 +57,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 passwordEncoder(passwordEncoder());
     }
 
-
     @Autowired
     private TokenHelper tokenHelper;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint( restAuthenticationEntryPoint).and()
                 .authorizeRequests()
                 .antMatchers("/api/public/**").permitAll()
                 .antMatchers("/api/private/**").authenticated()
-//                .antMatchers("/api/private/**").access("hasRole('ROLE_ADMIN')") //TODO THIS WORKS WHEN TESTING FOR ROLE ACCESS
                 .anyRequest().authenticated().and()
-                .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), BasicAuthenticationFilter.class)
+                //.addFilterBefore(new be.kdg.kandoe.configuration.cors.CorsFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();
     }
 

@@ -101,4 +101,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         return this.saveUser(user);
     }
 
+    public User updateUser(){
+
+        return null;
+    }
+
 }

@@ -75,6 +75,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
+        u.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -137,6 +138,8 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         if (u == null) throw new UsernameNotFoundException("No such user: " + username);
         return u;
     }
+
+
 
 
 }

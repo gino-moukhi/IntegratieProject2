@@ -12,22 +12,19 @@ public class UpdateuserDto {
     private String firstName;
     private String lastName;
     private Gender gender;
-    private int year;
-    private int month;
-    private int day;
+    private Calendar birthday;
+
 
     public UpdateuserDto() {
     }
 
-    public UpdateuserDto(String username, String password, String firstName, String lastName, Gender gender, int year, int month, int day) {
+    public UpdateuserDto(String username, String password, String firstName, String lastName, Gender gender, Calendar birthday) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        this.birthday = birthday;
     }
 
     public UpdateuserDto(User user){
@@ -36,9 +33,7 @@ public class UpdateuserDto {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.gender = user.getGender();
-        this.year = user.getYear();
-        this.month = user.getMonth();
-        this.day = user.getDay();
+        //TODO birthday
     }
 
     public String getUsername() {
@@ -81,27 +76,16 @@ public class UpdateuserDto {
         this.gender = gender;
     }
 
-    public int getYear() {
-        return year;
+    public int getYear(){
+        return birthday.get(Calendar.YEAR);
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public int getMonth(){
+        //The months in calendar go from {0-11} (so we have to add 1)
+        return birthday.get(Calendar.MONTH) + 1;
     }
 
-    public int getMonth() {
-        return month;
-    }
-
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
+    public int getDay(){
+        return birthday.get(Calendar.DAY_OF_MONTH);
     }
 }

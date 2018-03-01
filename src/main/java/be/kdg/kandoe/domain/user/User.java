@@ -211,4 +211,6 @@ public class User implements UserDetails {
     public List<Authority> getUserRoles(){
         return this.authorities;
     }
+
+
 }
