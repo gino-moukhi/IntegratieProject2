@@ -11,6 +11,15 @@ public class Card {
     private MultipartFile image;
     private String imagePath;
     private boolean isDefaultCard;
+    private int subthemeId;
+
+    public int getSubthemeId() {
+        return subthemeId;
+    }
+
+    public void setSubthemeId(int subthemeId) {
+        this.subthemeId = subthemeId;
+    }
 
     public long getCardId() {
         return cardId;

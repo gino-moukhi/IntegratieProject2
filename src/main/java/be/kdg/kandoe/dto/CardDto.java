@@ -1,5 +1,7 @@
 package be.kdg.kandoe.dto;
 
+import be.kdg.kandoe.domain.card.Card;
+
 import javax.persistence.*;
 import java.awt.image.BufferedImage;
 
@@ -15,6 +17,8 @@ public class CardDto {
     private String imagePath;
     private byte[] image;
     private boolean isDefaultCard;
+    private int subthemeId;
+
 
     public long getCardId() {
         return cardId;
@@ -50,5 +54,13 @@ public class CardDto {
 
     public void setDefaultCard(boolean defaultCard) {
         isDefaultCard = defaultCard;
+    }
+
+    public int getSubthemeId() {
+        return subthemeId;
+    }
+
+    public void setSubthemeId(int subthemeId) {
+        this.subthemeId = subthemeId;
     }
 }
