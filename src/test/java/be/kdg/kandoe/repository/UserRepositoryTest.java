@@ -2,9 +2,6 @@ package be.kdg.kandoe.repository;
 
 import be.kdg.kandoe.domain.user.Gender;
 import be.kdg.kandoe.domain.user.User;
-import be.kdg.kandoe.domain.user.role.Administrator;
-import be.kdg.kandoe.domain.user.role.Client;
-import be.kdg.kandoe.domain.user.role.Role;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import org.junit.After;
 import org.junit.Before;

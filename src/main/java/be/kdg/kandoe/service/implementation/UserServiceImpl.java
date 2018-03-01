@@ -1,7 +1,7 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.User;
-import be.kdg.kandoe.domain.user.role.Client;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.exception.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +39,13 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public List<User> findUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        if(users == null){
+            return new ArrayList<>();
+        }
+        else{
+            return users;
+        }
     }
 
     @Override
@@ -68,24 +75,16 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
-        if(u == null){
-            throw new UserServiceException("User not found");
-        }
-
-        if(user.getUserId() != u.getUserId()){
-            throw new UserServiceException("User is not the same user");
-        }
-
+        u.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public User addUser(User user) throws UserServiceException {
-        Client client = new Client();
+        Authority authority = new Authority();
         user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Arrays.asList(client));
-        client.setUser(user);
+        user.setAuthorities(Arrays.asList(authority));
+        authority.setUser(user);
         return this.saveUser(user);
     }
 
@@ -115,14 +114,6 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 //        }
 //    }
 
-    @Override
-    public boolean checkLogin(String username, String password) throws UserServiceException {
-        User u = userRepository.findUserByUsername(username);
-        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public void updatePassword(Long userId, String oldPassword, String newPassword) throws UserServiceException {
@@ -148,15 +139,7 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
-    @Override
-    public boolean checkUsernameCredentials(String username){
-        User sameUsernameUser = userRepository.findUserByUsername(username);
-        return sameUsernameUser == null;
-    }
 
-    @Override
-    public boolean checkEmailCredentials(String email){
-        User sameEmailUser = userRepository.findUserByEmail(email);
-        return sameEmailUser == null;
-    }
+
+
 }
