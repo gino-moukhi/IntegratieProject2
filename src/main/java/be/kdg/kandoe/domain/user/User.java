@@ -1,12 +1,13 @@
 package be.kdg.kandoe.domain.user;
 
-import be.kdg.kandoe.domain.user.role.Role;
+import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,7 +33,14 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    private int age;
+    private int day;
+
+    @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
+    private int year;
+
 
     @Column(nullable = false)
     private String encryptedPassword;
@@ -40,32 +48,55 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-    @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+
+    @Column(nullable = false)
+    @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Role> roles;
+    private List<Authority> authorities;
+
 
 
     public User() {
     }
 
     public User(UserDto userDto){
-
+        this.firstName = userDto.getFirstName();
+        this.lastName = userDto.getLastName();
+        this.username = userDto.getUsername();
+        this.email = userDto.getEmail();
+        this.year = userDto.getYear();
+        this.month = userDto.getMonth();
+        this.day = userDto.getDay();
+        this.gender = userDto.getGender();
+        this.encryptedPassword = userDto.getPassword();
     }
 
-    public User(String firstName, String lastName, String username, String email, int age, String password, Gender gender) {
+    public User(UpdateuserDto updateuserDto){
+        this.firstName = updateuserDto.getFirstName();
+        this.lastName = updateuserDto.getLastName();
+        this.encryptedPassword = updateuserDto.getPassword();
+        this.gender = updateuserDto.getGender();
+        this.year = updateuserDto.getYear();
+        this.month = updateuserDto.getMonth();
+        this.day = updateuserDto.getDay();
+    }
+
+    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Authority> authorities) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
-        this.age = age;
-        this.encryptedPassword = password;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.encryptedPassword = encryptedPassword;
         this.gender = gender;
+        this.authorities = authorities;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
@@ -133,14 +164,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public String getEncryptedPassword(){
         return this.encryptedPassword;
     }
@@ -157,11 +180,37 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public int getDay() {
+        return day;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setDay(int day) {
+        this.day = day;
     }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public List<Authority> getUserRoles(){
+        return this.authorities;
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.exception.UserServiceException;
@@ -10,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ import java.util.List;
 public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserService {
 
     private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -35,7 +39,13 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
 
     @Override
     public List<User> findUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        if(users == null){
+            return new ArrayList<>();
+        }
+        else{
+            return users;
+        }
     }
 
     @Override
@@ -61,25 +71,20 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
-    //TODO Not sure if correct
+    //TODO fix
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
-        if(u == null){
-            throw new UserServiceException("User not found");
-        }
-
-        if(user.getUserId() != user.getUserId()){
-            throw new UserServiceException("User is not the same user");
-        }
-
+        u.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public User addUser(User user) throws UserServiceException {
-        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
+        Authority authority = new Authority();
+        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAuthorities(Arrays.asList(authority));
+        authority.setUser(user);
         return this.saveUser(user);
     }
 
@@ -95,11 +100,20 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     @Override
     public void checkLogin(Long userId, String currentPassword) throws UserServiceException {
         User u = userRepository.findOne(userId);
-
         if (u == null || !passwordEncoder.matches(currentPassword, u.getEncryptedPassword())) {
-            throw new UserServiceException(("Gebruikersnaam of password foutief voor gebruiker " + userId));
+            throw new UserServiceException(("Username or password are wrong for user " + userId));
         }
     }
+
+
+//    @Override
+//    public void checkLogin(String username, String password) throws UserServiceException {
+//        User u = userRepository.findUserByUsername(username);
+//        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
+//            throw new UserServiceException("Username and password are incorrect for user " + username);
+//        }
+//    }
+
 
     @Override
     public void updatePassword(Long userId, String oldPassword, String newPassword) throws UserServiceException {
@@ -109,10 +123,23 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         userRepository.save(u);
     }
 
+
+    @Override
+    public User findUserByEmail(String email) throws UserServiceException {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null)
+            throw new UserServiceException("User not found");
+        return user;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findUserByUsername(username);
         if (u == null) throw new UsernameNotFoundException("No such user: " + username);
         return u;
     }
+
+
+
+
 }
