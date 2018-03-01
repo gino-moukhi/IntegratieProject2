@@ -1,16 +1,19 @@
 package be.kdg.kandoe.repository.jpa;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    @Entity
+@Entity
     @Table(name = "THEME")
     public class ThemeJpa {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        @Column
+        @Column(name="THEME_ID")
         private long themeId;
 
         @Column(length = 50,nullable = false)
@@ -18,6 +21,7 @@ import javax.persistence.*;
 
         @Column(nullable = false)
         private String description;
+
 
         public ThemeJpa(){
 
@@ -48,6 +52,10 @@ import javax.persistence.*;
             return themeId;
         }
 
+        /**public List<SubThemeJpa> getSubThemes() {
+            return subThemes;
+        }**/
+
         public Theme toTheme(){
             Theme theme = new Theme();
             theme.setThemeId(this.themeId);
@@ -56,7 +64,7 @@ import javax.persistence.*;
             return theme;
         }
 
-        public static ThemeJpa fromTheme(Theme theme){
+         public static ThemeJpa fromTheme(Theme theme){
             ThemeJpa jpa = new ThemeJpa();
             jpa.name=theme.getName();
             jpa.description=(theme.getDescription());

@@ -1,5 +1,6 @@
 package be.kdg.kandoe.repository.declaration;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -14,13 +15,20 @@ import java.util.List;
 
 public interface ThemeRepository {
     Theme findThemeByName(String name);
-    Theme findThemeById(Long id);
+    Theme findThemeById(long id);
+    SubTheme findSubThemeById(long subThemeId);
+
     Theme createTheme(Theme theme);
+    SubTheme createSubTheme(SubTheme subTheme);
 
     Theme deleteTheme(Theme theme);
+    SubTheme deleteSubTheme(SubTheme subTheme);
     void deleteAll();
 
     Theme editTheme(Theme theme);
+    SubTheme editSubTheme(SubTheme subTheme);
 
     List<Theme> findAllThemes();
+    List<SubTheme> findAllSubThemes();
+    List<SubTheme> findSubThemesByThemeId(long id);
 }

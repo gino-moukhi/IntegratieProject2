@@ -1,5 +1,6 @@
 package be.kdg.kandoe.unit.theme;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class ThemeRepoMock implements ThemeRepository {
     List<Theme> themes = new ArrayList<>();
+    List<SubTheme> subThemes = new ArrayList<>();
 
     public Theme findThemeByName(String name) {
         for (Theme t: themes
@@ -26,11 +28,21 @@ public class ThemeRepoMock implements ThemeRepository {
         return null;
     }
 
-    public Theme findThemeById(Long id) {
+    public Theme findThemeById(long id) {
         for (Theme t: themes
              ) {
             if(t.getThemeId() == id) {
                 return t;
+            }
+        }
+        return null;
+    }
+
+    public SubTheme findSubThemeById(long id){
+        for (SubTheme st:subThemes
+             ) {
+            if(st.getSubThemeId().equals(id)){
+                return st;
             }
         }
         return null;
@@ -42,6 +54,12 @@ public class ThemeRepoMock implements ThemeRepository {
         themeToAdd.setThemeId(size);
         themes.add(themeToAdd);
         return themes.get(themes.indexOf(themeToAdd));
+    }
+
+    @Override
+    public SubTheme createSubTheme(SubTheme subTheme) {
+        subThemes.add(subTheme);
+        return subThemes.get(subThemes.indexOf(subTheme));
     }
 
     public Theme editTheme(Theme theme) {
@@ -58,6 +76,18 @@ public class ThemeRepoMock implements ThemeRepository {
             return null;
         }
         return themeToFind;
+    }
+
+    @Override
+    public SubTheme editSubTheme(SubTheme subTheme) {
+        if(themes.contains(subTheme)){
+            SubTheme subTheme1 = subThemes.get(subThemes.indexOf(subTheme));
+            subTheme1.setSubThemeName(subTheme.getSubThemeName());
+            subTheme1.setSubThemeDescription(subTheme.getSubThemeDescription());
+            subTheme1.setTheme(subTheme.getTheme());
+            return subTheme1;
+        }
+        return null;
     }
 
     public Theme deleteThemeByName(String name) {
@@ -92,6 +122,17 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     @Override
+    public SubTheme deleteSubTheme(SubTheme subTheme){
+        for (SubTheme st:subThemes
+             ) {
+            if(st.equals(subTheme)){
+                subThemes.remove(subTheme);
+                return subTheme;
+            }
+        }
+        return null;
+    }
+    @Override
     public Theme deleteTheme(Theme theme) {
         themes.remove(theme);
         return theme;
@@ -101,10 +142,32 @@ public class ThemeRepoMock implements ThemeRepository {
     public void deleteAll(){
         themes = new ArrayList<>();
     }
+    @Override
     public List<Theme> findAllThemes() {
         if(themes!=null){
             return themes;
         }
         else return null;
     }
+
+    @Override
+    public List<SubTheme> findAllSubThemes() {
+        if(themes!=null){
+            return subThemes;
+        }
+        return null;
+    }
+
+    @Override
+    public List<SubTheme> findSubThemesByThemeId(long id){
+        List<SubTheme> subThemes = new ArrayList<>();
+        for(SubTheme st: this.subThemes){
+            if(st.getTheme().getThemeId()==id){
+                subThemes.add(st);
+            }
+        }
+        return subThemes;
+    }
+
+
 }

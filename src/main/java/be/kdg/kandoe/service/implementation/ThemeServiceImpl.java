@@ -1,5 +1,6 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
@@ -8,6 +9,8 @@ import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,7 +22,7 @@ public class ThemeServiceImpl implements ThemeService {
     public ThemeServiceImpl(ThemeRepository repository){
         this.themeRepo=repository;
     }
-
+    //ADD-METHODS
     @Override
     public Theme addTheme(Theme theme) {
         if(checkNameLength(theme)) {
@@ -28,13 +31,22 @@ public class ThemeServiceImpl implements ThemeService {
             throw new InputValidationException("Theme name too long");
         }
     }
+
+    @Override
+    public SubTheme addSubThemeByThemeId(SubTheme subTheme,long themeId) {
+        Theme themeToAdd=themeRepo.findThemeById(themeId);
+        subTheme.setTheme(themeToAdd);
+        return themeRepo.createSubTheme(subTheme);
+    }
+    //ADD-METHODS
+    //GET-METHODS
     @Override
     public Theme getThemeByName(String name) {
-        Theme themeToDelete = themeRepo.findThemeByName(name);
-        if(themeToDelete==null){
+        Theme themeToFind = themeRepo.findThemeByName(name);
+        if(themeToFind==null){
             throw new ThemeServiceException("No theme found for name: "+name);
         }
-        return themeRepo.deleteTheme(themeToDelete);
+        return themeToFind;
     }
 
     @Override
@@ -47,13 +59,51 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
+    public SubTheme getSubThemeById(long subThemeId){
+        SubTheme foundSubTheme = themeRepo.findSubThemeById(subThemeId);
+        if(foundSubTheme==null){
+            throw new ThemeServiceException("No subtheme found by id: "+subThemeId);
+        }
+        return foundSubTheme;
+    }
+
+    @Override
+    public List<Theme> getAllThemes() {
+        return themeRepo.findAllThemes();
+    }
+
+    @Override
+    public List<SubTheme> getAllSubThemes() {
+        return themeRepo.findAllSubThemes();
+    }
+
+    @Override
+    public List<SubTheme> getSubThemesByThemeId(long id){
+        return themeRepo.findSubThemesByThemeId(id);
+    }
+    //GET-METHODS
+    //EDIT-METHODS
+    @Override
     public Theme editTheme(Theme theme) {
         if (checkNameLength(theme)) return themeRepo.editTheme(theme);
         throw new InputValidationException("Themename too long");
     }
+
+    @Override
+    public SubTheme editSubtheme(SubTheme subTheme) {
+        return themeRepo.editSubTheme(subTheme);
+    }
+
+    //EDIT-METHODS
+    //REMOVE-METHODS
     @Override
     public Theme removeTheme(Theme themeToDelete) {
         Theme theme = getThemeById(themeToDelete.getThemeId());
+        for(SubTheme s: themeRepo.findAllSubThemes()){
+            if(s.getTheme().getThemeId()==theme.getThemeId()){
+                themeRepo.deleteSubTheme(s);
+            }
+        }
         if(theme==null){
             throw new ThemeServiceException("No Theme found for ID: "+themeToDelete.getThemeId());
         }
@@ -67,6 +117,11 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public Theme removeThemeById(long themeId) {
         Theme themeToDelete = themeRepo.findThemeById(themeId);
+        for (SubTheme s :themeRepo.findAllSubThemes()){
+            if(s.getTheme().getThemeId()==themeId){
+                themeRepo.deleteSubTheme(s);
+            }
+        }
         if(themeToDelete==null){
             throw new ThemeServiceException("No Theme found for ID: "+themeId);
         }
@@ -74,9 +129,32 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public List<Theme> getAllThemes() {
-        return themeRepo.findAllThemes();
+    public SubTheme removeSubThemeById(long subThemeId){
+        SubTheme subThemeToDelete = themeRepo.findSubThemeById(subThemeId);
+        if(subThemeToDelete==null){
+            throw new ThemeServiceException("No SubTheme found for ID: "+subThemeId);
+        }
+        return themeRepo.deleteSubTheme(subThemeToDelete);
     }
+
+    @Override
+    public List<SubTheme> removeSubThemesByThemeId(long themeId) {
+        Theme theme = themeRepo.findThemeById(themeId);
+        if(theme==null){
+            throw new ThemeServiceException("No theme found for id: "+themeId);
+        }
+        List<SubTheme> subThemes = themeRepo.findAllSubThemes();
+        List<SubTheme> deletedSubThemes= new ArrayList<>();
+        for (SubTheme st:subThemes
+             ) {
+            if(st.getTheme().getThemeId()==themeId){
+                deletedSubThemes.add(st);
+                themeRepo.deleteSubTheme(st);
+            }
+        }
+        return deletedSubThemes;
+    }
+    //REMOVE-METHODS
 
     /**
      * Checks if the themeName is not longer than 50 characters

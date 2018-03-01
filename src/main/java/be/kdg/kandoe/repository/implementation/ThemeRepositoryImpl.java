@@ -1,13 +1,11 @@
 package be.kdg.kandoe.repository.implementation;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.DtoConverter;
-import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
+import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
-import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +43,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
 
     @Transactional
     @Override
-    public Theme findThemeById(@Param("themeId")Long themeId) {
+    public Theme findThemeById(@Param("themeId")long themeId) {
         Query query= em.createQuery("SELECT theme FROM ThemeJpa theme WHERE themeId=:themeId",ThemeJpa.class).setParameter("themeId",themeId);
         if(query.getResultList().isEmpty() || query.getResultList().get(0)==null){
             return null;
@@ -56,11 +54,31 @@ public class ThemeRepositoryImpl implements ThemeRepository {
 
     @Transactional
     @Override
+    public SubTheme findSubThemeById(@Param("subThemeId")long subThemeId){
+        Query query= em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subThemeId=:subThemeId").setParameter("subThemeId",subThemeId);
+        if (query.getResultList().isEmpty()){
+            return null;
+        }
+        SubThemeJpa jpa = (SubThemeJpa)query.getResultList().get(0);
+        return jpa.toSubTheme();
+    }
+
+    @Transactional
+    @Override
     public Theme createTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
         em.merge(jpa);
         return jpa.toTheme();
     }
+
+    @Transactional
+    @Override
+    public SubTheme createSubTheme(SubTheme subTheme) {
+        SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
+        em.merge(jpa);
+        return jpa.toSubTheme();
+    }
+
     @Transactional
     @Override
     public Theme editTheme(Theme theme) {
@@ -71,6 +89,15 @@ public class ThemeRepositoryImpl implements ThemeRepository {
 
     @Transactional
     @Override
+    public SubTheme editSubTheme(SubTheme subTheme){
+        SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
+        em.merge(jpa);
+        return jpa.toSubTheme();
+    }
+
+
+    @Transactional
+    @Override
     public Theme deleteTheme(Theme theme){
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
         em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
@@ -78,7 +105,17 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     }
     @Transactional
     @Override
+    public SubTheme deleteSubTheme(SubTheme subTheme){
+        SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
+        em.remove(em.contains(jpa) ? jpa:em.merge(jpa));
+        return jpa.toSubTheme();
+    }
+
+    @Transactional
+    @Override
     public void deleteAll(){
+        em.createQuery("DELETE from SubThemeJpa").executeUpdate();
+        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN sub_Theme_id RESTART WITH 1").executeUpdate();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
         em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
     }
@@ -93,6 +130,19 @@ public class ThemeRepositoryImpl implements ThemeRepository {
             themes.add(jpa.toTheme());
         }
         return themes;
+    }
+    @Transactional
+    @Override
+    public List<SubTheme> findAllSubThemes(){
+        Query query= em.createQuery("SELECT subtheme FROM SubThemeJpa subtheme");
+        List<SubThemeJpa> jpas = query.getResultList();
+        return jpas.stream().map(jpa->jpa.toSubTheme()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public List<SubTheme> findSubThemesByThemeId(long id){
+        throw new NotImplementedException();
     }
 }
 

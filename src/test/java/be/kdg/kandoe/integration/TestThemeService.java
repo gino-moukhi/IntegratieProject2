@@ -1,10 +1,11 @@
 package be.kdg.kandoe.integration;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.SubThemeDto;
 import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
-import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import be.kdg.kandoe.unit.theme.ThemeRepoMock;
@@ -15,7 +16,14 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.validation.constraints.Null;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -25,15 +33,26 @@ public class TestThemeService {
     private Theme theme1;
     private Theme theme2;
 
+    private SubTheme subTheme1;
+    private SubTheme subTheme2;
+
     @Before
     public void Setup(){
         themeService = new ThemeServiceImpl(new ThemeRepoMock());
         ThemeDto theme1DTO=new ThemeDto(1,"Jeugd","Acties voor de jeugd");
         ThemeDto theme2DTO= new ThemeDto(2,"Sport","Acties voor sport");
+
         theme1 = new Theme(theme1DTO);
         theme2 = new Theme(theme2DTO);
+
+        subTheme1= new SubTheme(new SubThemeDto(1,null,"Speelplein","Speelplein aanleggen"));
+        subTheme2 = new SubTheme(new SubThemeDto(2,null,"Voetbalplein","Voetbalplein aanleggen"));
+
         themeService.addTheme(theme1);
         themeService.addTheme(theme2);
+
+        themeService.addSubThemeByThemeId(subTheme1,theme1.getThemeId());
+        themeService.addSubThemeByThemeId(subTheme2,theme1.getThemeId());
     }
 
     @Test
@@ -131,5 +150,41 @@ public class TestThemeService {
     public void TestDeleteNonExistingTheme(){
         Theme unknownTheme = new Theme(new ThemeDto(3,"Armoede", "Thema ivm armoeden enzo"));
         themeService.removeTheme(unknownTheme);
+    }
+
+    @Test
+    public void TestCreateSubTheme(){
+        SubTheme subThemeToAdd = new SubTheme(new SubThemeDto(3,null,"Activiteiten","Subthema voor Sport"));
+        SubTheme subThemeReceived = themeService.addSubThemeByThemeId(subThemeToAdd,theme2.getThemeId());
+        Assert.assertThat(subThemeReceived.getSubThemeId(),equalTo(subThemeToAdd.getSubThemeId()));
+        Assert.assertThat(subThemeReceived.getTheme(),equalTo(subThemeToAdd.getTheme()));
+        Assert.assertThat(subThemeReceived.getSubThemeDescription(),equalTo(subThemeToAdd.getSubThemeDescription()));
+        Assert.assertThat(subThemeReceived.getSubThemeName(),equalTo(subThemeToAdd.getSubThemeName()));
+    }
+
+    @Test
+    public void TestGetSubThemesByThemeId(){
+        long themeId = 1;
+        List<SubTheme> subthemes= themeService.getSubThemesByThemeId(themeId);
+        Assert.assertThat(subthemes.size(),equalTo(2));
+        Assert.assertThat(subthemes.get(0).getSubThemeName(),equalTo("Speelplein"));
+    }
+
+    @Test
+    public void TestGetSubThemeById(){
+        long subThemeId=2;
+        SubTheme subTheme = themeService.getSubThemeById(subThemeId);
+        assertNotNull(subTheme);
+        assertThat(subTheme.getSubThemeName(),equalTo("Voetbalplein"));
+        assertThat(subTheme.getSubThemeId(),equalTo(new Long(2)));
+        assertThat(subTheme.getSubThemeDescription(),equalTo("Voetbalplein aanleggen"));
+        assertNotNull(subTheme.getTheme());
+    }
+
+    @Test(expected = ThemeServiceException.class)
+    public void TestDeleteSubThemeById(){
+        long subThemeId=2;
+        themeService.removeSubThemeById(subThemeId);
+        themeService.getSubThemeById(2);
     }
 }
