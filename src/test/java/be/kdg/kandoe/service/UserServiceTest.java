@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class UserServiceTest {
 
-    private UserService userService;
+/*    private UserService userService;
 
     private UserRepository userRepository;
 
@@ -137,7 +137,7 @@ public class UserServiceTest {
 
     }
     */
-
+/*
     @Test
     public void getUserByIdTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
@@ -205,7 +205,7 @@ public class UserServiceTest {
 //        verify(userRepository, times(1)).findUserByEmail(spongebob.getEmail());
 //        assertThat(user, is(spongebob));
 //    }
-
+/*
     @Test
     public void getUserByRoleTest(){
         List<User> defaultUsers = new ArrayList<>();
@@ -302,4 +302,5 @@ public class UserServiceTest {
 
         userService.updatePassword((long) 2, spongebob.getPassword(), updatedSpongebob.getPassword());
     }
+    */
 }
