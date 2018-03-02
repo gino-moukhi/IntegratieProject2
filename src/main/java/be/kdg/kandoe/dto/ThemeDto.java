@@ -19,13 +19,12 @@ public class ThemeDto {
     private long themeId;
     private String name;
     private String description;
-    private List<SubThemeDto> subThemes;
 
     public ThemeDto(){
         this.themeId=0;
         this.name="default";
         this.description="default";
-        this.subThemes= new ArrayList<>();
+
     }
 
     public ThemeDto(long themeId, String name, String description) {
@@ -58,17 +57,6 @@ public class ThemeDto {
         this.themeId=themeId;
     }
 
-    public List<SubThemeDto> getSubThemes() {
-        return subThemes;
-    }
-
-    public void setSubThemes(List<SubThemeDto> subThemes){
-        this.subThemes=subThemes;
-    }
-
-    public void addSubTheme(SubThemeDto dto){
-        this.subThemes.add(dto);
-    }
 
     public String toJsonString(){
         String JSON = new Gson().toJson(this);
