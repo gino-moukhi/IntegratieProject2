@@ -71,12 +71,14 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
-    //TODO fix
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
         User u = userRepository.findOne(userId);
-        u.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+
+        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+
+
+        return this.saveUser(user);
     }
 
     @Override
