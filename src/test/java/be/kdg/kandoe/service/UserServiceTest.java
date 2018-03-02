@@ -1,9 +1,8 @@
 package be.kdg.kandoe.service;
 
+import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.Gender;
 import be.kdg.kandoe.domain.user.User;
-import be.kdg.kandoe.domain.user.role.Administrator;
-import be.kdg.kandoe.domain.user.role.Client;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.declaration.UserService;
 import be.kdg.kandoe.service.exception.UserServiceException;
@@ -217,10 +216,10 @@ public class UserServiceTest {
         defaultUsers.add(spongebob);
         defaultUsers.add(bob);
 
-        when(userRepository.findUsersByRole(Client.class)).thenReturn(defaultUsers);
+        when(userRepository.findUsersByRole(Authority.class)).thenReturn(defaultUsers);
 
-        List<User> returnedUsers =  userService.findUsersByRole(Client.class);
-        verify(userRepository, times(1)).findUsersByRole(Client.class);
+        List<User> returnedUsers =  userService.findUsersByRole(Authority.class);
+        verify(userRepository, times(1)).findUsersByRole(Authority.class);
 
         assertThat(returnedUsers.size(), is(2));
         returnedUsers.forEach(u -> assertThat(u, is(instanceOf(User.class))));
