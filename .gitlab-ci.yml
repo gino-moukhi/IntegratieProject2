@@ -18,26 +18,35 @@ build:
   script:
     - chmod +x ./gradlew
     - ./gradlew -g .cache/gradle clean assemble
+  only:
+    - master
   stage: build
+ 
 
 test:
   script:
     - chmod +x ./gradlew
     - ./gradlew -g .cache/gradle check --stacktrace
+  only:
+    - master
   stage: test
  
 deploy:
+  stage: deploy
+  image: ruby:2.3
   script:
-    - apt-get update -y
-    - apt-get install software-properties-common python-software-properties -y
-    - add-apt-repository ppa:git-core/ppa
-    - apt-get install git -y
-    - add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
-    - curl -L https://cli-assets.heroku.com/apt/release.key | apt-key add -
-    - apt-get install apt-transport-https -y
-    - apt-get update -y
-    - apt-get install heroku
-    - heroku buildpacks:set heroku/java
-    - git remote add heroku https://heroku:1f812ae7-e18d-4f60-89c8-ebd0f1fb9b05@git.heroku.com/kandoe.git
-    - git push -f heroku master
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=kandoe --buildpack=heroku/ruby --api-key=18715d98-89d3-423c-afbd-3e4ad51339ec
+  environment:
+    name: dev
+    url: https://vel-ci-api-dev.herokuapp.com
+  only:
+    - master
+  tags:
+    - docker
+    - shared
+  only:
+   - master
   stage: deploy
