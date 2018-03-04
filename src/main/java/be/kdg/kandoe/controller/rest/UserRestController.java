@@ -64,7 +64,7 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        RequestUserDto requestUserDto = new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
+        RequestUserDto requestUserDto = new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday(), user.getGender());
         return ResponseEntity.ok().body(requestUserDto);
     }
 
@@ -93,7 +93,7 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        RequestUserDto requestUserDto = new RequestUserDto(requestUser.getUsername(), requestUser.getFirstName(), requestUser.getLastName(), requestUser.getEmail());
+        RequestUserDto requestUserDto = new RequestUserDto(requestUser.getUsername(), requestUser.getFirstName(), requestUser.getLastName(), requestUser.getEmail(), requestUser.getBirthday(), requestUser.getGender());
         return ResponseEntity.ok().body(requestUserDto);
     }
 
@@ -153,7 +153,7 @@ public class UserRestController {
     //UPDATE
     @PutMapping("/api/private/users/{username}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable String username, @Valid @RequestBody UserDto changedUser, HttpServletRequest request){
+    public ResponseEntity<RequestUserDto> updateUser(@PathVariable String username, @Valid @RequestBody UserDto changedUser, HttpServletRequest request){
         User userBasedOnUsername = userService.findUserByUsername(username);
 
         String usernameFromToken = (String) request.getAttribute("username");
@@ -170,7 +170,6 @@ public class UserRestController {
         }
 
 
-
         //Omzetten DTO naar user object
         User updatedUser = new User(changedUser);
         updatedUser.setUserId(tokenUser.getUserId());
@@ -179,11 +178,8 @@ public class UserRestController {
         updatedUser.setAuthorities(tokenUser.getUserRoles());
 
         User savedUser = userService.updateUser(userBasedOnUsername.getUserId(), updatedUser);
-        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
-
-//        User savedUser = userService.saveUser(updatedUser);
-//        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
-        return ResponseEntity.ok(updateuserDto);
+        RequestUserDto requestUserDto = new RequestUserDto(savedUser.getUsername(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
+        return ResponseEntity.ok(requestUserDto);
     }
 
 

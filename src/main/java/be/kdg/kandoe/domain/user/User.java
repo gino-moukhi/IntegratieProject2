@@ -1,5 +1,7 @@
 package be.kdg.kandoe.domain.user;
 
+import be.kdg.kandoe.domain.GameSession;
+import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,12 +51,15 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-
     @Column(nullable = false)
     @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities;
 
+    @Column(nullable = false)
+    @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Fetch(org.hibernate.annotations.FetchMode.SELECT)
+    private List<UserGameSessionInfo> gameSessionInfos;
 
 
     public User() {
@@ -212,5 +218,9 @@ public class User implements UserDetails {
         return this.authorities;
     }
 
-
+    public Calendar getBirthday(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth() - 1, getDay());
+        return calendar;
+    }
 }
