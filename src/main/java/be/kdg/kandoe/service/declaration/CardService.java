@@ -1,6 +1,6 @@
 package be.kdg.kandoe.service.declaration;
 
-import be.kdg.kandoe.domain.card.Card;
+import be.kdg.kandoe.domain.theme.Card;
 
 import java.util.List;
 

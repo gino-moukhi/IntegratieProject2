@@ -1,22 +1,17 @@
 package be.kdg.kandoe.unit.theme;
 
+import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
-import be.kdg.kandoe.service.declaration.ThemeService;
-import be.kdg.kandoe.service.exception.ThemeRepositoryException;
-import be.kdg.kandoe.service.exception.ThemeServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ThemeRepoMock implements ThemeRepository {
     List<Theme> themes = new ArrayList<>();
     List<SubTheme> subThemes = new ArrayList<>();
+    List<Card> cards =new ArrayList<>();
 
     public Theme findThemeByName(String name) {
         for (Theme t: themes
@@ -41,7 +36,7 @@ public class ThemeRepoMock implements ThemeRepository {
     public SubTheme findSubThemeById(long id){
         for (SubTheme st:subThemes
              ) {
-            if(st.getSubThemeId().equals(id)){
+            if(st.getSubThemeId()==(id)){
                 return st;
             }
         }
@@ -49,11 +44,10 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     public Theme createTheme(Theme theme) {
-        Theme themeToAdd = theme;
         Long size = Long.parseLong(String.valueOf(themes.size()+1));
-        themeToAdd.setThemeId(size);
-        themes.add(themeToAdd);
-        return themes.get(themes.indexOf(themeToAdd));
+        theme.setThemeId(size);
+        themes.add(theme);
+        return themes.get(themes.indexOf(theme));
     }
 
     @Override
@@ -123,14 +117,15 @@ public class ThemeRepoMock implements ThemeRepository {
 
     @Override
     public SubTheme deleteSubTheme(SubTheme subTheme){
+        SubTheme stToDelete=null;
         for (SubTheme st:subThemes
              ) {
             if(st.equals(subTheme)){
-                subThemes.remove(subTheme);
-                return subTheme;
+                stToDelete=st;
             }
         }
-        return null;
+        subThemes.remove(stToDelete);
+        return stToDelete;
     }
     @Override
     public Theme deleteTheme(Theme theme) {
@@ -169,5 +164,63 @@ public class ThemeRepoMock implements ThemeRepository {
         return subThemes;
     }
 
+    @Override
+    public List<Card> findCardsByThemeId(long themeId) {
+        return null;
+    }
+
+    @Override
+    public List<Card> findCardsBySubthemeId(long subthemeId) {
+        return null;
+    }
+
+    @Override
+    public Card findCardById(long cardId) {
+        for (Card card:cards){
+            if(card.getCardId()==cardId){
+                return card;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Card createCard(Card card) {
+        cards.add(card);
+        return card;
+    }
+
+    @Override
+    public Card saveCard(Card card) {
+        for (Card c:cards
+             ) {
+            if(c.getCardId()==card.getCardId()){
+                c.setName(card.getName());
+                c.setDefaultCard(card.isDefaultCard());
+                c.setDescription(card.getDescription());
+                c.setSubThemes(card.getSubThemes());
+                return c;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Card delete(Card card) {
+        cards.remove(card);
+        return card;
+    }
+
+    public void setThemes(ArrayList<Theme> themes){
+        this.themes=themes;
+    }
+
+    public void setSubThemes(ArrayList<SubTheme> subThemes){
+        this.subThemes = subThemes;
+    }
+
+    public void setCards(ArrayList<Card> cards){
+        this.cards=cards;
+    }
 
 }

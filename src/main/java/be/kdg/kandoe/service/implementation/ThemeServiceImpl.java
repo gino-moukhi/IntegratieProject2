@@ -1,5 +1,6 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
@@ -43,27 +44,18 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public Theme getThemeByName(String name) {
         Theme themeToFind = themeRepo.findThemeByName(name);
-        if(themeToFind==null){
-            throw new ThemeServiceException("No theme found for name: "+name);
-        }
         return themeToFind;
     }
 
     @Override
     public Theme getThemeById(long id) {
         Theme foundTheme = themeRepo.findThemeById(id);
-        if(foundTheme==null){
-            throw new ThemeServiceException("No theme found by id: "+id);
-        }
         return themeRepo.findThemeById(id);
     }
 
     @Override
     public SubTheme getSubThemeById(long subThemeId){
         SubTheme foundSubTheme = themeRepo.findSubThemeById(subThemeId);
-        if(foundSubTheme==null){
-            throw new ThemeServiceException("No subtheme found by id: "+subThemeId);
-        }
         return foundSubTheme;
     }
 
@@ -81,6 +73,48 @@ public class ThemeServiceImpl implements ThemeService {
     public List<SubTheme> getSubThemesByThemeId(long id){
         return themeRepo.findSubThemesByThemeId(id);
     }
+
+    @Override
+    public List<Card> getCardsByThemeId(long themeId) {
+        return themeRepo.findCardsByThemeId(themeId);
+    }
+
+    @Override
+    public List<Card> getCardsBySubthemeId(long subthemeId) {
+        return themeRepo.findCardsBySubthemeId(subthemeId);
+    }
+
+    @Override
+    public Card getCardById(long cardId) {
+        Card card = themeRepo.findCardById(cardId);
+        return card;
+    }
+
+    @Override
+    public Card addCardBySubtheme(Card card,long subThemeId) {
+        SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
+        subThemeForCard.addCard(card);
+        card.addSubTheme(subThemeForCard);
+        themeRepo.editSubTheme(subThemeForCard);
+        return themeRepo.createCard(card);
+    }
+
+    @Override
+    public Card editCard(long cardId,Card card) {
+        Card cardToUpdate = themeRepo.findCardById(cardId);
+        cardToUpdate.setName(card.getName());
+        cardToUpdate.setDescription(card.getDescription());
+        cardToUpdate.setDefaultCard(card.isDefaultCard());
+        cardToUpdate.setSubThemes(card.getSubThemes());
+        return themeRepo.saveCard(cardToUpdate);
+    }
+
+    @Override
+    public Card removeCardById(long cardId) {
+        Card card = this.getCardById(cardId);
+        return themeRepo.delete(card);
+    }
+
     //GET-METHODS
     //EDIT-METHODS
     @Override
@@ -96,19 +130,6 @@ public class ThemeServiceImpl implements ThemeService {
 
     //EDIT-METHODS
     //REMOVE-METHODS
-    @Override
-    public Theme removeTheme(Theme themeToDelete) {
-        Theme theme = getThemeById(themeToDelete.getThemeId());
-        for(SubTheme s: themeRepo.findAllSubThemes()){
-            if(s.getTheme().getThemeId()==theme.getThemeId()){
-                themeRepo.deleteSubTheme(s);
-            }
-        }
-        if(theme==null){
-            throw new ThemeServiceException("No Theme found for ID: "+themeToDelete.getThemeId());
-        }
-        return themeRepo.deleteTheme(themeToDelete);
-    }
 
     public void removeAllThemes(){
         themeRepo.deleteAll();
@@ -122,27 +143,18 @@ public class ThemeServiceImpl implements ThemeService {
                 themeRepo.deleteSubTheme(s);
             }
         }
-        if(themeToDelete==null){
-            throw new ThemeServiceException("No Theme found for ID: "+themeId);
-        }
         return themeRepo.deleteTheme(themeToDelete);
     }
 
     @Override
     public SubTheme removeSubThemeById(long subThemeId){
         SubTheme subThemeToDelete = themeRepo.findSubThemeById(subThemeId);
-        if(subThemeToDelete==null){
-            throw new ThemeServiceException("No SubTheme found for ID: "+subThemeId);
-        }
         return themeRepo.deleteSubTheme(subThemeToDelete);
     }
 
     @Override
     public List<SubTheme> removeSubThemesByThemeId(long themeId) {
         Theme theme = themeRepo.findThemeById(themeId);
-        if(theme==null){
-            throw new ThemeServiceException("No theme found for id: "+themeId);
-        }
         List<SubTheme> subThemes = themeRepo.findAllSubThemes();
         List<SubTheme> deletedSubThemes= new ArrayList<>();
         for (SubTheme st:subThemes

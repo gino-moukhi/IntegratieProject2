@@ -1,50 +1,115 @@
 package be.kdg.kandoe.unit.theme;
 
+import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.SubThemeDto;
-import be.kdg.kandoe.dto.ThemeDto;
+import be.kdg.kandoe.dto.converter.DtoConverter;
+import be.kdg.kandoe.dto.theme.CardDto;
+import be.kdg.kandoe.dto.theme.SubThemeDto;
+import be.kdg.kandoe.dto.theme.ThemeDto;
+import be.kdg.kandoe.repository.jpa.CardJpa;
 import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
+import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class UnitTestThemeConversion {
+public class UnitTestObjectConversion {
     private Theme themeToTest;
     private ThemeDto themeDtoToTest;
     private ThemeJpa themeJpaToTest;
 
     private SubTheme subThemeToTest;
+    private SubTheme subThemeToTestCards;
+    private SubThemeJpa subThemeJpaToTestCards;
+    private SubThemeDto subThemeDtoToTestCards;
     private SubThemeDto subThemeDtoToTest;
     private SubThemeJpa subThemeJpaToTest;
 
+    private Card cardToTest;
+    private CardDto cardDtoToTest;
+    private CardJpa cardJpaToTest;
+
     @Before
     public void Setup(){
-        themeToTest= new Theme(new ThemeDto(1,"School","Theme to test conversion"));
-        themeDtoToTest=new ThemeDto(2,"Industry","Testing if this theme stays the same");
-        themeJpaToTest = new ThemeJpa(new Theme(new ThemeDto(3,"Building","Try to make the conversion equal all the time")));
+        themeToTest= new Theme();
+        themeToTest.setThemeId(new Long(1));
+        themeToTest.setName("School");
+        themeToTest.setDescription("Theme to test conversion");
 
-        subThemeToTest = new SubTheme(new SubThemeDto(1,themeDtoToTest,"Product quality","Subtheme for theme: Industry"));
-        subThemeDtoToTest = new SubThemeDto(2,themeDtoToTest,"Employee hapiness", "2nd subtheme for theme: Industry");
-        subThemeJpaToTest = new SubThemeJpa(new SubTheme(new SubThemeDto(3,themeDtoToTest,"Business expansion","3rd subtheme for theme: Industry")));
+        themeDtoToTest=new ThemeDto(2,"Industry","Testing if this theme stays the same");
+        themeJpaToTest = new ThemeJpa();
+        themeJpaToTest.setThemeId(3);
+        themeJpaToTest.setName("Building");
+        themeJpaToTest.setDescription("Try to make the conversion equal all the time");
+
+        subThemeToTest = new SubTheme();
+        subThemeToTest.setSubThemeId(new Long(1));
+        subThemeToTest.setSubThemeName("Product Quality");
+        subThemeToTest.setSubThemeDescription("Subtheme for theme: Industry");
+        subThemeToTest.setTheme(themeToTest);
+
+        subThemeDtoToTest = new SubThemeDto(2,themeDtoToTest,"Employee hapiness", "2nd subtheme for theme: Industry",new ArrayList<>());
+
+        subThemeJpaToTest = new SubThemeJpa();
+        subThemeJpaToTest.setSubThemeId(new Long(3));
+        subThemeJpaToTest.setSubThemeName("Business Expansion");
+        subThemeJpaToTest.setSubThemeDescription("3rd subtheme for theme: Industry");
+        subThemeJpaToTest.setTheme(themeJpaToTest);
+
+        subThemeToTestCards = new SubTheme();
+        subThemeToTestCards.setSubThemeId(new Long(4));
+        subThemeToTestCards.setSubThemeName("Development");
+        subThemeToTestCards.setSubThemeDescription("Improving development");
+        subThemeToTestCards.setTheme(themeToTest);
+
+        subThemeJpaToTestCards = new SubThemeJpa();
+        subThemeJpaToTestCards.setSubThemeId(new Long(5));
+        subThemeJpaToTestCards.setSubThemeName("Development");
+        subThemeJpaToTestCards.setSubThemeDescription("Improving development");
+        subThemeJpaToTestCards.setTheme(themeJpaToTest);
+
+        subThemeDtoToTestCards = new SubThemeDto(new Long(6),"Development","Improving development");
+
+        cardToTest = new Card();
+        cardToTest.setCardId(1);
+        cardToTest.setName("Better packaging");
+        cardToTest.setDescription("Longer lasting product");
+        cardToTest.setDefaultCard(false);
+        cardToTest.setSubThemes(Arrays.asList(new SubTheme[]{subThemeToTest,subThemeToTestCards}));
+
+        cardDtoToTest = new CardDto(2,"Bigger platform","Expanding platform size",false);
+        cardDtoToTest.setSubThemes(Arrays.asList(new SubThemeDto[]{subThemeDtoToTestCards}));
+        cardJpaToTest = new CardJpa();
+        cardJpaToTest.setCardId(3);
+        cardJpaToTest.setName("Losing weight");
+        cardJpaToTest.setDescription("Just fat");
+        cardJpaToTest.setDefaultCard(false);
+        cardJpaToTest.setSubThemes(Arrays.asList(new SubThemeJpa[]{subThemeJpaToTestCards}));
+
+        subThemeToTest.setCards(Arrays.asList(new Card[]{cardToTest}));
+        subThemeDtoToTest.setCards(Arrays.asList(new CardDto[]{cardDtoToTest}));
+        subThemeJpaToTest.setCards(Arrays.asList(new CardJpa[]{cardJpaToTest}));
     }
 
     @Test
     public void TestThemeToThemeDto(){
-        ThemeDto dto = ThemeDto.fromTheme(themeToTest);
+        ThemeDto dto = DtoConverter.toThemeDto(themeToTest);
         Assert.assertThat(dto.getThemeId(),equalTo(themeToTest.getThemeId()));
         Assert.assertThat(dto.getName(),equalTo(themeToTest.getName()));
         Assert.assertThat(dto.getDescription(),equalTo(themeToTest.getDescription()));
@@ -52,7 +117,7 @@ public class UnitTestThemeConversion {
 
     @Test
     public void TestThemeDtoToTheme(){
-        Theme theme = themeDtoToTest.toTheme();
+        Theme theme = DtoConverter.toTheme(themeDtoToTest);
         Assert.assertThat(theme.getThemeId(),equalTo(themeDtoToTest.getThemeId()));
         Assert.assertThat(theme.getName(),equalTo(themeDtoToTest.getName()));
         Assert.assertThat(theme.getDescription(),equalTo(themeDtoToTest.getDescription()));
@@ -60,7 +125,7 @@ public class UnitTestThemeConversion {
 
     @Test
     public void TestThemeJpaToTheme(){
-        Theme theme = themeJpaToTest.toTheme();
+        Theme theme = JpaConverter.toTheme(themeJpaToTest);
         Assert.assertThat(theme.getThemeId(),equalTo(themeJpaToTest.getThemeId()));
         Assert.assertThat(theme.getName(),equalTo(themeJpaToTest.getName()));
         Assert.assertThat(theme.getDescription(),equalTo(themeJpaToTest.getDescription()));
@@ -68,39 +133,28 @@ public class UnitTestThemeConversion {
 
     @Test
     public void TestThemeToThemeJpa(){
-        ThemeJpa jpa = ThemeJpa.fromTheme(themeToTest);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(themeToTest);
         Assert.assertThat(themeToTest.getThemeId(),equalTo(jpa.getThemeId()));
         Assert.assertThat(themeToTest.getName(),equalTo(jpa.getName()));
         Assert.assertThat(themeToTest.getDescription(),equalTo(jpa.getDescription()));
     }
 
     @Test
-    public void TestThemeDtoToJSON(){
-        String JSON = themeDtoToTest.toJsonString();
-        Assert.assertTrue(isJSONValid(JSON));
-    }
-
-     @Test
-     public void TestSubThemeDtoToJSON(){
-        String JSON = subThemeDtoToTest.toJsonString();
-        Assert.assertTrue(isJSONValid(JSON));
-     }
-
-    @Test
     public void TestSubThemeToSubThemeDto(){
-        SubThemeDto dto = SubThemeDto.fromSubTheme(subThemeToTest);
+        SubThemeDto dto = DtoConverter.toSubThemeDto(subThemeToTest,false);
         Assert.assertThat(dto.getTheme().getThemeId(),equalTo(subThemeToTest.getTheme().getThemeId()));
         Assert.assertThat(dto.getTheme().getName(),equalTo(subThemeToTest.getTheme().getName()));
         Assert.assertThat(dto.getTheme().getDescription(),equalTo(subThemeToTest.getTheme().getDescription()));
-        Assert.assertThat(dto.getTheme().getClass(),not(subThemeToTest.getTheme().getClass()));
         Assert.assertThat(dto.getSubThemeId(),equalTo(subThemeToTest.getSubThemeId()));
         Assert.assertThat(dto.getSubThemeName(),equalTo(subThemeToTest.getSubThemeName()));
         Assert.assertThat(dto.getSubThemeDescription(),equalTo(subThemeToTest.getSubThemeDescription()));
+        Assert.assertThat(dto.getCards().size(),equalTo(subThemeToTest.getCards().size()));
+        Assert.assertThat(dto.getCards().get(0).getCardId(),equalTo(cardToTest.getCardId()));
     }
 
     @Test
     public void TestSubThemeToSubThemeJpa(){
-        SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subThemeToTest);
+        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subThemeToTest,false);
         Assert.assertThat(jpa.getTheme().getThemeId(),equalTo(subThemeToTest.getTheme().getThemeId()));
         Assert.assertThat(jpa.getTheme().getName(),equalTo(subThemeToTest.getTheme().getName()));
         Assert.assertThat(jpa.getTheme().getDescription(),equalTo(subThemeToTest.getTheme().getDescription()));
@@ -112,7 +166,7 @@ public class UnitTestThemeConversion {
 
     @Test
     public void TestSubThemeDtoToSubTheme(){
-        SubTheme subTheme = subThemeDtoToTest.toSubTheme();
+        SubTheme subTheme = DtoConverter.toSubTheme(subThemeDtoToTest,false);
         Assert.assertThat(subTheme.getTheme().getClass(),not(subThemeDtoToTest.getTheme()));
         Assert.assertThat(subTheme.getTheme().getThemeId(),equalTo(subThemeDtoToTest.getTheme().getThemeId()));
         Assert.assertThat(subTheme.getTheme().getName(),equalTo(subThemeDtoToTest.getTheme().getName()));
@@ -124,7 +178,7 @@ public class UnitTestThemeConversion {
 
     @Test
     public void TestSubThemeJpaToSubTheme(){
-        SubTheme subThemeFromJpa = subThemeJpaToTest.toSubTheme();
+        SubTheme subThemeFromJpa = JpaConverter.toSubTheme(subThemeJpaToTest,false);
         Assert.assertThat(subThemeFromJpa.getTheme().getClass(),not(subThemeJpaToTest.getTheme()));
         Assert.assertThat(subThemeFromJpa.getTheme().getThemeId(),equalTo(subThemeJpaToTest.getTheme().getThemeId()));
         Assert.assertThat(subThemeFromJpa.getTheme().getName(),equalTo(subThemeJpaToTest.getTheme().getName()));

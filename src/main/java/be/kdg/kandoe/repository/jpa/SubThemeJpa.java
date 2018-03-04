@@ -1,12 +1,15 @@
 package be.kdg.kandoe.repository.jpa;
 
-import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.converter.DtoConverter;
+import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name="subtheme")
 public class SubThemeJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,7 +17,7 @@ public class SubThemeJpa {
     private long subThemeId;
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "THEME_ID")
+    @JoinColumn(name = "theme_id")
     private ThemeJpa theme;
 
     @Column
@@ -23,14 +26,12 @@ public class SubThemeJpa {
     @Column
     private String subThemeDescription;
 
+    @ManyToMany(mappedBy = "subThemes")
+    @JsonManagedReference
+    private List<CardJpa> cards;
+
     public SubThemeJpa(){
 
-    }
-    public SubThemeJpa(SubTheme subTheme){
-        this.subThemeId=subTheme.getSubThemeId();
-        this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
-        this.subThemeName=subTheme.getSubThemeName();
-        this.subThemeDescription=subTheme.getSubThemeDescription();
     }
 
     public Long getSubThemeId() {
@@ -45,8 +46,8 @@ public class SubThemeJpa {
         return this.theme;
     }
 
-    public void setTheme(Theme theme) {
-        this.theme = ThemeJpa.fromTheme(theme);
+    public void setTheme(ThemeJpa theme) {
+        this.theme = theme;
     }
 
     public String getSubThemeName() {
@@ -65,16 +66,11 @@ public class SubThemeJpa {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public static SubThemeJpa fromSubTheme(SubTheme subTheme){
-        return new SubThemeJpa(subTheme);
+    public List<CardJpa> getCards() {
+        return cards;
     }
 
-    public SubTheme toSubTheme(){
-        SubTheme subTheme = new SubTheme();
-        subTheme.setTheme(this.theme.toTheme());
-        subTheme.setSubThemeId(this.subThemeId);
-        subTheme.setSubThemeName(this.subThemeName);
-        subTheme.setSubThemeDescription(this.subThemeDescription);
-        return subTheme;
+    public void setCards(List<CardJpa> cards) {
+        this.cards = cards;
     }
 }

@@ -1,24 +1,30 @@
-package be.kdg.kandoe.domain.card;
+package be.kdg.kandoe.domain.theme;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Card {
     private long cardId;
     private String name;
     private String description;
-    private MultipartFile image;
-    private String imagePath;
+    //private MultipartFile image;
+    //private String imagePath;
     private boolean isDefaultCard;
-    private int subthemeId;
+    private List<SubTheme> subThemes;
 
-    public int getSubthemeId() {
-        return subthemeId;
+    public Card(){
+        subThemes= new ArrayList<>();
     }
 
-    public void setSubthemeId(int subthemeId) {
-        this.subthemeId = subthemeId;
+    public List<SubTheme> getSubThemes() {
+        return this.subThemes;
+    }
+
+    public void setSubThemes(List<SubTheme> subThemes) {
+        this.subThemes = subThemes;
     }
 
     public long getCardId() {
@@ -45,7 +51,7 @@ public class Card {
         this.description = description;
     }
 
-    public MultipartFile getImage() {
+    /*public MultipartFile getImage() {
         return image;
     }
 
@@ -59,7 +65,7 @@ public class Card {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-    }
+    }*/
 
     public boolean isDefaultCard() {
         return isDefaultCard;
@@ -68,4 +74,16 @@ public class Card {
     public void setDefaultCard(boolean defaultCard) {
         isDefaultCard = defaultCard;
     }
+
+    public void addSubTheme(SubTheme subTheme){
+        if(subTheme!=null){
+            subThemes.add(subTheme);
+        }
+    }
+    public void removeSubTheme(SubTheme subTheme){
+        if(subThemes.contains(subTheme)){
+            subThemes.remove(subTheme);
+        }
+    }
+
 }
