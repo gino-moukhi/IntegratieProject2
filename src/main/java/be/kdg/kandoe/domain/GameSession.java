@@ -45,7 +45,8 @@ public class GameSession {
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<UserGameSessionInfo> userGameSessionInfos = new ArrayList<>();
 
-
+    @Column
+    private String image = "default-session.png";
 
     public GameSession() {
     }
@@ -64,6 +65,7 @@ public class GameSession {
         notifications.add(Notification.StartGame);
         notifications.add(Notification.EndGame);
         notifications.add(Notification.YourTurn);
+        notifications.add(Notification.EndTurn);
 
         //Role
         GameSessionRole role;
@@ -144,5 +146,13 @@ public class GameSession {
                 return info.getUser().getUsername();
         }
         return "";
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

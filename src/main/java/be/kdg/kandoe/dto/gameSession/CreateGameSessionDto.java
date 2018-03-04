@@ -8,6 +8,7 @@ public class CreateGameSessionDto {
     private int limit; //add limit
     private int selectionLimit;
     private int timer; //Turn length
+    private Long gameSessionId;
 
     public CreateGameSessionDto() {
     }
@@ -77,4 +78,13 @@ public class CreateGameSessionDto {
     public void setTimer(int timer) {
         this.timer = timer;
     }
+
+    public Long getGameSessionId() {
+        return gameSessionId;
+    }
+
+    public void setGameSessionId(Long gameSessionId) {
+        this.gameSessionId = gameSessionId;
+    }
 }
+
