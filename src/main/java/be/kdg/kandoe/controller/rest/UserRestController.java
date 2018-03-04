@@ -5,30 +5,52 @@ import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.RequestUserDto;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
+import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
+import be.kdg.kandoe.service.declaration.StorageService;
 import be.kdg.kandoe.service.declaration.UserService;
+import com.google.common.net.MediaType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import sun.misc.IOUtils;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 @RestController
 public class UserRestController {
     private final Logger logger = Logger.getLogger(UserRestController.class);
     private final UserService userService;
+    private final StorageService storageService;
+    private final AuthenticationHelperService authenticationHelperService;
+
 
     @Autowired
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, StorageService storageService, AuthenticationHelperService authenticationHelperService) {
         this.userService = userService;
+        this.storageService = storageService;
+        this.authenticationHelperService = authenticationHelperService;
     }
 
 
@@ -40,60 +62,46 @@ public class UserRestController {
     }
 
 
-    //GET ONE USER
+    //GET ONE USER ON USERID
     @GetMapping("/api/private/userid/{userId}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<RequestUserDto> getUser(HttpServletRequest request, @PathVariable long userId){
-        String username = (String) request.getAttribute("username");
-        boolean isAdmin = false;
-        User tokenUser = userService.findUserByUsername(username);
 
-        for(GrantedAuthority authority : tokenUser.getAuthorities()){
-            if(authority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")){
-                isAdmin = true;
-            }
-        }
+        User requestUser = userService.findUserById(userId);
+        String username = "";
 
-        if(!isAdmin && tokenUser.getUserId() != userId){
+        if (requestUser != null) username = requestUser.getUsername();
+
+        if (!authenticationHelperService.userIsAllowedToAccessResource(request, username)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User user = userService.findUserById(userId);
-
-        if(user == null){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-
-        RequestUserDto requestUserDto = new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday(), user.getGender());
-        return ResponseEntity.ok().body(requestUserDto);
-    }
-
-
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @GetMapping("/api/private/users/username/{username}")
-    public ResponseEntity<RequestUserDto> getUser(@PathVariable String username, HttpServletRequest request){
-        //Token username
-        String usernameFromToken = (String) request.getAttribute("username");
-        User tokenUser = userService.findUserByUsername(usernameFromToken);
-        boolean isAdmin = false;
-        User requestUser = userService.findUserByUsername(username);
-
-
-        for(GrantedAuthority authority : tokenUser.getAuthorities()){
-            if(authority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")){
-                isAdmin = true;
-            }
-        }
-
-        if(!isAdmin && !tokenUser.getUsername().equalsIgnoreCase(username)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        };
 
         if(requestUser == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
         RequestUserDto requestUserDto = new RequestUserDto(requestUser.getUsername(), requestUser.getFirstName(), requestUser.getLastName(), requestUser.getEmail(), requestUser.getBirthday(), requestUser.getGender());
+
+        return ResponseEntity.ok().body(requestUserDto);
+    }
+
+
+    //GET ONE USER ON USERNAME
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/api/private/users/username/{username}")
+    public ResponseEntity<RequestUserDto> getUser(@PathVariable String username, HttpServletRequest request){
+        User requestUser = userService.findUserByUsername(username);
+
+        if (!authenticationHelperService.userIsAllowedToAccessResource(request, username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        };
+
+        if(requestUser == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        RequestUserDto requestUserDto = new RequestUserDto(requestUser.getUsername(), requestUser.getFirstName(), requestUser.getLastName(), requestUser.getEmail(), requestUser.getBirthday(), requestUser.getGender());
+
         return ResponseEntity.ok().body(requestUserDto);
     }
 
@@ -139,45 +147,48 @@ public class UserRestController {
 
 
 
-    //TEST
-    @PostMapping(value = "/api/private/users/{username}/uploadImage")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity uploadProfilePicture(@RequestParam MultipartFile file){
-        String t = "";
-
-        return ResponseEntity.ok().build();
-    }
-
-
-
-    //UPDATE
+    //UPDATE USER
     @PutMapping("/api/private/users/{username}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<RequestUserDto> updateUser(@PathVariable String username, @Valid @RequestBody UserDto changedUser, HttpServletRequest request){
-        User userBasedOnUsername = userService.findUserByUsername(username);
+//        User userBasedOnUsername = userService.findUserByUsername(username);
+//
+//        String usernameFromToken = (String) request.getAttribute("username");
+//        User tokenUser = userService.findUserByUsername(usernameFromToken);
+//
+//        if(userBasedOnUsername == null){
+//            return ResponseEntity.notFound().build();
+//        }
+
 
         String usernameFromToken = (String) request.getAttribute("username");
-        User tokenUser = userService.findUserByUsername(usernameFromToken);
+        User requestUser = userService.findUserByUsername(username);
 
-        if(userBasedOnUsername == null){
-            return ResponseEntity.notFound().build();
+        if (!authenticationHelperService.userIsAllowedToAccessResource(request, username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        };
+
+        if(requestUser == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
-        if(!userBasedOnUsername.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
-                !userBasedOnUsername.getUsername().equalsIgnoreCase(usernameFromToken) ||
+        if(!requestUser.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
+                !requestUser.getUsername().equalsIgnoreCase(usernameFromToken) ||
                 !changedUser.getUsername().equalsIgnoreCase(usernameFromToken)){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
 
+
+
         //Omzetten DTO naar user object
         User updatedUser = new User(changedUser);
-        updatedUser.setUserId(tokenUser.getUserId());
-        updatedUser.setUsername(tokenUser.getUsername());
-        updatedUser.setEmail(tokenUser.getEmail());
-        updatedUser.setAuthorities(tokenUser.getUserRoles());
+        updatedUser.setUserId(requestUser.getUserId());
+        updatedUser.setUsername(requestUser.getUsername());
+        updatedUser.setEmail(requestUser.getEmail());
+        updatedUser.setAuthorities(requestUser.getUserRoles());
 
-        User savedUser = userService.updateUser(userBasedOnUsername.getUserId(), updatedUser);
+        User savedUser = userService.updateUser(requestUser.getUserId(), updatedUser);
         RequestUserDto requestUserDto = new RequestUserDto(savedUser.getUsername(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
         return ResponseEntity.ok(requestUserDto);
     }

@@ -61,6 +61,10 @@ public class User implements UserDetails {
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<UserGameSessionInfo> gameSessionInfos;
 
+    @Column
+    private String profilePictureFileName = "default-profile.png";
+
+
 
     public User() {
     }
@@ -222,5 +226,21 @@ public class User implements UserDetails {
         Calendar calendar = Calendar.getInstance();
         calendar.set(getYear(), getMonth() - 1, getDay());
         return calendar;
+    }
+
+    public List<UserGameSessionInfo> getGameSessionInfos() {
+        return gameSessionInfos;
+    }
+
+    public void setGameSessionInfos(List<UserGameSessionInfo> gameSessionInfos) {
+        this.gameSessionInfos = gameSessionInfos;
+    }
+
+    public String getProfilePictureFileName() {
+        return profilePictureFileName;
+    }
+
+    public void setProfilePictureFileName(String profilePictureFileName) {
+        this.profilePictureFileName = profilePictureFileName;
     }
 }
