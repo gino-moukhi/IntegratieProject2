@@ -174,14 +174,14 @@ public class ThemeRestController {
  //   @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
         System.out.println("CALLED deleteTheByThemeId: "+themeId);
-        Theme foundTheme =null;
         try{
-            foundTheme =themeService.getThemeById(themeId);
+            Theme foundTheme =themeService.getThemeById(themeId);
+            Theme deletedTheme=themeService.removeTheme(foundTheme);
+            return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
         }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
         }
-        Theme deletedTheme=themeService.removeTheme(foundTheme);
-        return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
+
     }
 
     @RequestMapping(value = "api/public/theme", method = RequestMethod.DELETE)

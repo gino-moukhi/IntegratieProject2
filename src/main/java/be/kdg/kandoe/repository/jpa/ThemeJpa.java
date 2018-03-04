@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-    @Table(name = "THEME")
+    @Table(name = "theme")
     public class ThemeJpa {
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        @Column(name="THEME_ID")
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "subtheme_id")
         private long themeId;
 
         @Column(length = 50,nullable = false)

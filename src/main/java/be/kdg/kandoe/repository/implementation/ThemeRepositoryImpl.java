@@ -68,6 +68,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public Theme createTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
         em.merge(jpa);
+        em.flush();
         return jpa.toTheme();
     }
 
@@ -76,7 +77,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public SubTheme createSubTheme(SubTheme subTheme) {
         SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
         em.merge(jpa);
-        return jpa.toSubTheme();
+        em.flush();
+        return this.findSubThemeById(jpa.getSubThemeId());
     }
 
     @Transactional
@@ -84,6 +86,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public Theme editTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
         em.merge(jpa);
+        em.flush();
         return jpa.toTheme();
     }
 
@@ -92,6 +95,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public SubTheme editSubTheme(SubTheme subTheme){
         SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
         em.merge(jpa);
+        em.flush();
         return jpa.toSubTheme();
     }
 
@@ -101,6 +105,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public Theme deleteTheme(Theme theme){
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
         em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
+        em.flush();
         return jpa.toTheme();
     }
     @Transactional
@@ -108,16 +113,21 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public SubTheme deleteSubTheme(SubTheme subTheme){
         SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
         em.remove(em.contains(jpa) ? jpa:em.merge(jpa));
+        em.flush();
         return jpa.toSubTheme();
     }
 
     @Transactional
     @Override
     public void deleteAll(){
-        em.createQuery("DELETE from SubThemeJpa").executeUpdate();
-        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN sub_Theme_id RESTART WITH 1").executeUpdate();
+        em.createQuery("DELETE FROM SubThemeJpa").executeUpdate();
+        em.flush();
+        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN sub_theme_id RESTART WITH 1").executeUpdate();
+        em.flush();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
+        em.flush();
         em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
+        em.flush();
     }
 
     @Transactional

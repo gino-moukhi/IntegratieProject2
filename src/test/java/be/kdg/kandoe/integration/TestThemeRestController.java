@@ -53,11 +53,21 @@ public class TestThemeRestController {
 
     @Test
     public void TestCreateTheme(){
-        ThemeDto themeDto = new ThemeDto(3,"JSONTheme","Theme created via JSON");
+        ThemeDto themeDto = new ThemeDto(0,"JSONTheme","Theme created via JSON");
         ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/public/themes", themeDto, ThemeDto.class);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
+        Assert.assertThat(response.getBody().getThemeId(),equalTo(new Long(3)));
         setupDb();
+    }
+
+    @Test
+    public void TestCreateSubTheme(){
+        SubThemeDto subThemeDto = new SubThemeDto(0, null,"AddedSubTheme","This subtheme is added by Tests");
+        ResponseEntity<SubThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1", subThemeDto, SubThemeDto.class);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(response.getBody().getSubThemeId(),equalTo(new Long(3)));
+        Assert.assertThat(response.getBody().getTheme().getThemeId(),equalTo(theme1.getThemeId()));
     }
 
     @Test

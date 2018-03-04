@@ -6,15 +6,14 @@ import be.kdg.kandoe.domain.theme.Theme;
 import javax.persistence.*;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name="subtheme")
 public class SubThemeJpa {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long subThemeId;
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "THEME_ID")
+    @JoinColumn(name = "subtheme_theme_id")
     private ThemeJpa theme;
 
     @Column
@@ -28,7 +27,9 @@ public class SubThemeJpa {
     }
     public SubThemeJpa(SubTheme subTheme){
         this.subThemeId=subTheme.getSubThemeId();
-        this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
+        if(subTheme.getTheme()!=null){
+            this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
+        }
         this.subThemeName=subTheme.getSubThemeName();
         this.subThemeDescription=subTheme.getSubThemeDescription();
     }
@@ -71,7 +72,9 @@ public class SubThemeJpa {
 
     public SubTheme toSubTheme(){
         SubTheme subTheme = new SubTheme();
-        subTheme.setTheme(this.theme.toTheme());
+        if(this.theme!=null){
+            subTheme.setTheme(this.theme.toTheme());
+        }
         subTheme.setSubThemeId(this.subThemeId);
         subTheme.setSubThemeName(this.subThemeName);
         subTheme.setSubThemeDescription(this.subThemeDescription);
