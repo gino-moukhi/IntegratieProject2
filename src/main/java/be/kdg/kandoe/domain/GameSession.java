@@ -76,6 +76,14 @@ public class GameSession {
     }
 
 
+    public void addUserToGameSession(UserGameSessionInfo userGameSessionInfo){
+        this.userGameSessionInfos.add(userGameSessionInfo);
+    }
+
+    public void removeUserFromGameSession(UserGameSessionInfo userGameSessionInfo){
+        this.userGameSessionInfos.remove(userGameSessionInfo);
+    }
+
     public boolean isOrganisatorPlaying() {
         return isOrganisatorPlaying;
     }

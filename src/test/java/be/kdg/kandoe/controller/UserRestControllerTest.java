@@ -379,7 +379,7 @@ public class UserRestControllerTest {
         deviceDummy.setNormal(true);
 
         when(userDetailsService.loadUserByUsername(sven.getUsername())).thenReturn(sven);
-        when(userService.findUserByUsername(sven.getUsername())).thenReturn(sven);
+        when(userService.findUserByUsername(mindy.getUsername())).thenReturn(mindy);
         when(userService.findUserById(4l)).thenReturn(null);
 
         String jwtToken = createToken(sven.getUsername(), "ROLE_ADMIN");
@@ -577,87 +577,6 @@ public class UserRestControllerTest {
 
 
 
-    //updateUser tests
-//    @Test
-//    public void updateUser() throws Exception{
-//        User updatedBobUser = new User ("bobina", "het bouwertje", "bobdb", "bobdb@gmail.com", 1, 2, 1990, "bobyWachtwoord", Gender.Female, null);
-//
-//        JSONObject updatedBob = new JSONObject();
-//        updatedBob.put("firstName", "bobina");
-//        updatedBob.put("lastName", "het bouwertje");
-//        updatedBob.put("username", "bobdb");
-//        updatedBob.put("year", 1990);
-//        updatedBob.put("month", 2);
-//        updatedBob.put("day", 1);
-//        updatedBob.put("gender", "Female");
-//        updatedBob.put("password", "bobyWachtwoord");
-//
-//        when(userDetailsService.loadUserByUsername(bob.getUsername())).thenReturn(bob);
-//        when(userService.findUserByUsername(bob.getUsername())).thenReturn(bob);
-//        when(userService.findUserById(bob.getUserId())).thenReturn(bob);
-//        when(userService.updateUser(bob.getUserId(), updatedBobUser)).thenReturn(updatedBobUser);
-//
-//        String jwtToken = createToken(String.valueOf(bob.getUsername()), "ROLE_USER");
-//        MvcResult result = mockMvc.perform(
-//                put("/api/private/users/" + bob.getUserId())
-//                .content(updatedBob.toString())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .header("Authorization", "Bearer " + jwtToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        String jsonResponse = result.getResponse().getContentAsString();
-//        assertThat(true, is(checkForUserDetails(jsonResponse, updatedBobUser)));
-//    }
-
-
-
-
-
-    //deleteUser tests
-//    @Test
-//    public void deleteUserWithAdminAccount() throws Exception{
-//        when(userDetailsService.loadUserByUsername(sven.getUsername())).thenReturn(sven);
-//        when(userService.findUserByUsername(sven.getUsername())).thenReturn(sven);
-//        when(userService.findUserById(2l)).thenReturn(plop);
-//
-//        String jwtToken = createToken(sven.getUsername(), "ROLE_ADMIN");
-//
-//        MvcResult result = mockMvc.perform(
-//                delete("api/private/users/2")
-//                .with(csrf())
-//                        .header("Authorization", "Bearer " + jwtToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//    }
-
-
-
-
-
-
-    //createUser tests
-//    @Test
-//    public void createValidUser() throws Exception{
-//        //JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
-//        JSONObject user = new JSONObject();
-//        user.put("firstName", "sven");
-//        user.put("lastName", "matthys");
-//        user.put("username", "sveneman");
-//        user.put("email", "matthys.sven@gmail.com");
-//        user.put("year", 1997);
-//        user.put("month", 3);
-//        user.put("day", 6);
-//        user.put("gender", "Male");
-//        user.put("password", "mijnSuperSecretPassword");
-//
-//        mockMvc.perform(
-//                post("/api/private/users")
-//                .content(user.toString()))
-//                .andExpect(status().isOk());
-//
-//    }
 
 
 

@@ -114,30 +114,6 @@ public class AuthenticationControllerTest {
                 .andExpect(content().string(containsString("Username and email already used!")));
     }
 
-    /*
-    @Test
-    @WithMockUser(username = "bobdb", password = "bobdbPassword")
-    public void tryLoginTest() throws Exception{
 
-        JSONObject test= new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
-        when(userService.checkLogin("bobdb", "bobdbPassword")).thenReturn(true);
-
-        mockMvc.perform(post("/api/public/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(test.toString()))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void tryLoginWithWrongCredentialsTest() throws Exception{
-        JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
-        when(userService.checkLogin("bobbd", "bobdbPassword")).thenReturn(false);
-
-        mockMvc.perform(post("/api/public/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(user.toString()))
-                .andExpect(status().isConflict());
-    }
-*/
 
 }
