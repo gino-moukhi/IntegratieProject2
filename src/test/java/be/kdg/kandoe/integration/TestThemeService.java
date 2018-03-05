@@ -124,7 +124,7 @@ public class TestThemeService {
     public void TestDeleteTheme(){
         assertEquals(themeService.getAllThemes().size(),2);
         Theme themeToDelete = theme2;
-        themeService.removeTheme(themeToDelete);
+        themeService.removeThemeById(themeToDelete.getThemeId());
         assertEquals(themeService.getAllThemes().size(),1);
     }
     @Test(expected = ThemeServiceException.class)
@@ -149,7 +149,7 @@ public class TestThemeService {
     @Test(expected = ThemeServiceException.class)
     public void TestDeleteNonExistingTheme(){
         Theme unknownTheme = new Theme(new ThemeDto(3L,"Armoede", "Thema ivm armoeden enzo"));
-        themeService.removeTheme(unknownTheme);
+        themeService.removeThemeById(unknownTheme.getThemeId());
     }
 
     @Test

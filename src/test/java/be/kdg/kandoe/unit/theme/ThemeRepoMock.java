@@ -41,7 +41,7 @@ public class ThemeRepoMock implements ThemeRepository {
     public SubTheme findSubThemeById(long id){
         for (SubTheme st:subThemes
              ) {
-            if(st.getSubThemeId().equals(id)){
+            if(st.getSubThemeId()==(id)){
                 return st;
             }
         }

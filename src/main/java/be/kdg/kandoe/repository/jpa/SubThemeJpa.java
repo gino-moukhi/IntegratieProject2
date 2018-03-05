@@ -2,6 +2,8 @@ package be.kdg.kandoe.repository.jpa;
 
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -11,12 +13,13 @@ import javax.persistence.*;
 @Table(name="SUBTHEME")
 public class SubThemeJpa {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Generated(GenerationTime.INSERT)
-    @Column(name = "subtheme_id",columnDefinition = "serial")
-    private Long subThemeId;
+    @Column(nullable = false,name = "subthemeId")
+    private long subThemeId;
 
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "subtheme_theme_id")
+
+    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.REMOVE)
     private ThemeJpa theme;
 
     @Column
@@ -29,7 +32,6 @@ public class SubThemeJpa {
 
     }
     public SubThemeJpa(SubTheme subTheme){
-        this.subThemeId=subTheme.getSubThemeId();
         if(subTheme.getTheme()!=null){
             this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
         }
@@ -37,7 +39,7 @@ public class SubThemeJpa {
         this.subThemeDescription=subTheme.getSubThemeDescription();
     }
 
-    public Long getSubThemeId() {
+    public long getSubThemeId() {
         return subThemeId;
     }
 
@@ -74,9 +76,7 @@ public class SubThemeJpa {
         if(this.theme!=null){
             subTheme.setTheme(this.theme.toTheme());
         }
-        if(this.subThemeId!=null){
-            subTheme.setSubThemeId(this.subThemeId);
-        }
+        subTheme.setSubThemeId(this.subThemeId);
         subTheme.setSubThemeName(this.subThemeName);
         subTheme.setSubThemeDescription(this.subThemeDescription);
         return subTheme;

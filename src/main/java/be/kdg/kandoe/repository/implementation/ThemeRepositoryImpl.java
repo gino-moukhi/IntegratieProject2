@@ -5,6 +5,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -67,26 +68,23 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public Theme createTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.merge(jpa);
-        em.flush();
-        return jpa.toTheme();
+        ThemeJpa o = em.merge(jpa);
+        return o.toTheme();
     }
 
     @Transactional
     @Override
     public SubTheme createSubTheme(SubTheme subTheme) {
         SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
-        em.merge(jpa);
-        em.flush();
-        return this.findSubThemeById(jpa.getSubThemeId());
+        SubThemeJpa reply = em.merge(jpa);;
+        return reply.toSubTheme();
     }
 
     @Transactional
     @Override
     public Theme editTheme(Theme theme) {
         ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.merge(jpa);
-        em.flush();
+        ThemeJpa reply  = em.merge(jpa);
         return jpa.toTheme();
     }
 
@@ -94,19 +92,19 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public SubTheme editSubTheme(SubTheme subTheme){
         SubThemeJpa jpa = SubThemeJpa.fromSubTheme(subTheme);
-        em.merge(jpa);
-        em.flush();
-        return jpa.toSubTheme();
+        SubThemeJpa result = em.merge(jpa);
+        return result.toSubTheme();
     }
 
 
     @Transactional
     @Override
     public Theme deleteTheme(Theme theme){
-        ThemeJpa jpa = ThemeJpa.fromTheme(theme);
-        em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
-        em.flush();
-        return jpa.toTheme();
+        Query querySubTheme = em.createQuery("DELETE FROM SubThemeJpa WHERE subThemeId=:theme_subthemeId").setParameter("theme_subthemeId",theme.getThemeId());
+        querySubTheme.executeUpdate();
+        Query queryTheme = em.createQuery("DELETE FROM ThemeJpa WHERE themeId=:themeId").setParameter("themeId",theme.getThemeId());
+        queryTheme.executeUpdate();
+        return theme;
     }
     @Transactional
     @Override
@@ -122,11 +120,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public void deleteAll(){
         em.createQuery("DELETE FROM SubThemeJpa").executeUpdate();
         em.flush();
-        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN subtheme_id RESTART WITH 1").executeUpdate();
-        em.flush();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
-        em.flush();
-        em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
         em.flush();
     }
 

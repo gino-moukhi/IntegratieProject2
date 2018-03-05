@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 
 @Entity
-@Table()
+@Table
 public class Authority implements GrantedAuthority{
     @Id
     @Column(columnDefinition = "serial")

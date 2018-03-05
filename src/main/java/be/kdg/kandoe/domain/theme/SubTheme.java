@@ -2,9 +2,11 @@ package be.kdg.kandoe.domain.theme;
 
 import be.kdg.kandoe.dto.SubThemeDto;
 
+import java.util.List;
+
 public class SubTheme {
 
-    private Long subThemeId;
+    private long subThemeId;
     private Theme theme;
     private String subThemeName;
     private String subThemeDescription;
@@ -32,11 +34,11 @@ public class SubTheme {
         this.theme = theme;
     }
 
-    public Long getSubThemeId() {
+    public long getSubThemeId() {
         return subThemeId;
     }
 
-    public void setSubThemeId(Long subThemeId) {
+    public void setSubThemeId(long subThemeId) {
         this.subThemeId = subThemeId;
     }
 

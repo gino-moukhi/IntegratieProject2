@@ -21,7 +21,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long userId;
+    private long userId;
 
     @Column(length = 50, nullable = false)
     private String firstName;
@@ -51,12 +51,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-    @Column(nullable = false)
+    @Column
     @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities;
 
-    @Column(nullable = false)
+
+    @Column
     @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<UserGameSessionInfo> gameSessionInfos;

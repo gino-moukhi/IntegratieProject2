@@ -3,6 +3,7 @@ package be.kdg.kandoe.repository.declaration;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
+import be.kdg.kandoe.repository.jpa.ThemeJpa;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

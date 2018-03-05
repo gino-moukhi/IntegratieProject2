@@ -3,8 +3,13 @@ package be.kdg.kandoe.repository.jpa;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.ThemeDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +18,9 @@ import java.util.stream.Collectors;
     public class ThemeJpa {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "theme_id",columnDefinition = "serial")
-        private Long themeId;
+        @Generated(GenerationTime.INSERT)
+        @Column(name="themeId",nullable = false)
+        private long themeId;
 
         @Column(length = 50,nullable = false)
         private String name;
@@ -23,11 +29,18 @@ import java.util.stream.Collectors;
         private String description;
 
 
+        @Column(nullable = false)
+        @OneToMany(targetEntity=SubThemeJpa.class,fetch = FetchType.EAGER,mappedBy = "theme",cascade = CascadeType.REMOVE)
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        @Fetch(FetchMode.SELECT)
+        @JsonIgnore
+        private List<SubThemeJpa> subThemes;
+
+
         public ThemeJpa(){
 
         }
         public ThemeJpa(Theme theme){
-            this.themeId=theme.getThemeId();
             this.name=theme.getName();
             this.description=theme.getDescription();
         }
@@ -61,6 +74,9 @@ import java.util.stream.Collectors;
             theme.setThemeId(this.themeId);
             theme.setDescription(this.description);
             theme.setName(this.name);
+            if(theme.getSubThemes()!=null){
+                theme.setSubThemes(this.subThemes.stream().map(st->st.toSubTheme()).collect(Collectors.toList()));
+            }
             return theme;
         }
 
@@ -69,6 +85,9 @@ import java.util.stream.Collectors;
             jpa.name=theme.getName();
             jpa.description=(theme.getDescription());
             jpa.themeId=theme.getThemeId();
+            if(theme.getSubThemes()!=null){
+                jpa.subThemes = theme.getSubThemes().stream().map(st->SubThemeJpa.fromSubTheme(st)).collect(Collectors.toList());
+            }
             return jpa;
         }
     }

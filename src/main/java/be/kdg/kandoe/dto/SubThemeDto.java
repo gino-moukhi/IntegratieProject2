@@ -5,7 +5,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import com.google.gson.Gson;
 
 public class SubThemeDto {
-    private Long subThemeId;
+    private long subThemeId;
     private ThemeDto theme;
     private String subThemeName;
     private String subThemeDescription;
@@ -14,20 +14,18 @@ public class SubThemeDto {
 
     }
 
-    public SubThemeDto(Long subThemeId,ThemeDto theme,String subThemeName,String subThemeDescription){
-        if(subThemeId!=null){
-            this.subThemeId=subThemeId;
-        }
+    public SubThemeDto(long subThemeId,ThemeDto theme,String subThemeName,String subThemeDescription){
+        this.subThemeId=subThemeId;
         this.theme=theme;
         this.subThemeName=subThemeName;
         this.subThemeDescription=subThemeDescription;
     }
 
-    public Long getSubThemeId() {
+    public long getSubThemeId() {
         return subThemeId;
     }
 
-    public void setSubThemeId(Long subThemeId) {
+    public void setSubThemeId(long subThemeId) {
         this.subThemeId = subThemeId;
     }
 
@@ -63,9 +61,8 @@ public class SubThemeDto {
     public SubTheme toSubTheme(){
         SubTheme subTheme = new SubTheme();
         subTheme.setSubThemeDescription(this.subThemeDescription);
-        if(this.subThemeId!=null){
-            subTheme.setSubThemeId(this.subThemeId);
-        }
+        subTheme.setSubThemeId(this.subThemeId);
+
 
         if(this.theme!=null){
             subTheme.setTheme(new Theme(this.theme));
@@ -75,10 +72,12 @@ public class SubThemeDto {
     }
 
     public static SubThemeDto fromSubTheme(SubTheme subTheme){
+        SubThemeDto newSubtheme=null;
         if(subTheme.getTheme()!=null){
-            return new SubThemeDto(subTheme.getSubThemeId(),ThemeDto.fromTheme(subTheme.getTheme()),subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
+            newSubtheme= new SubThemeDto(subTheme.getSubThemeId(),ThemeDto.fromTheme(subTheme.getTheme()),subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
+        }else{
+            newSubtheme = new SubThemeDto(subTheme.getSubThemeId(),null,subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
         }
-        return new SubThemeDto(subTheme.getSubThemeId(),null,subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
-
+        return newSubtheme;
     }
 }

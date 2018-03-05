@@ -104,9 +104,6 @@ public class ThemeRestController {
     @RequestMapping(value = "api/public/themes", method = RequestMethod.POST)
  //   @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto themeDto){
-        if(themeDto.getThemeId()==0L){
-            themeDto.setThemeId(null);
-        }
         System.out.println("CALL RECEIVED: CreateTheme");
         logger.log(Priority.INFO,"API CALL: CreateTheme");
         Theme createdTheme = themeService.addTheme(themeDto.toTheme());
@@ -122,10 +119,6 @@ public class ThemeRestController {
     @RequestMapping(value = "api/public/subthemes/{themeId}",method = RequestMethod.POST)
 //    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<SubThemeDto> CreateSubTheme(@Valid @RequestBody SubThemeDto subThemeDto,@PathVariable(name = "themeId") Long themeId){
-        if(subThemeDto.getSubThemeId()==0L){
-            subThemeDto.setSubThemeId(null);
-        }
-
         if(themeId==new Long(0)){
             themeId=null;
         }
@@ -185,8 +178,7 @@ public class ThemeRestController {
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
         System.out.println("CALLED deleteTheByThemeId: "+themeId);
         try{
-            Theme foundTheme =themeService.getThemeById(themeId);
-            Theme deletedTheme=themeService.removeTheme(foundTheme);
+            Theme deletedTheme=themeService.removeThemeById(themeId);
             return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
         }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
