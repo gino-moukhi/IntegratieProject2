@@ -11,6 +11,7 @@ import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.GameSessionService;
 import be.kdg.kandoe.service.declaration.StorageService;
 import be.kdg.kandoe.service.declaration.UserService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -108,27 +109,10 @@ public class GameSessionRestController {
         return ResponseEntity.ok(savedGameSession.getGameSessionId());
     }
 
-
     //Update notification settings from a session
     @PostMapping("/api/private/users/{username}/sessions/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity updateNotificationSettingsOfUser(@PathVariable String username, @PathVariable Long id, @RequestBody NotificationDto notificationDto, HttpServletRequest request){
-//        String usernameFromToken = (String) request.getAttribute("username");
-//        User tokenUser = userService.findUserByUsername(usernameFromToken);
-//        boolean isAdmin = false;
-//        User requestUser = userService.findUserByUsername(username);
-//
-//
-//        for(GrantedAuthority authority : tokenUser.getAuthorities()){
-//            if(authority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")){
-//                isAdmin = true;
-//            }
-//        }
-//
-//        if(!isAdmin && !tokenUser.getUsername().equalsIgnoreCase(username)){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-
         User requestUser = userService.findUserByUsername(username);
 
         if (!authenticationHelperService.userIsAllowedToAccessResource(request, username)){
@@ -165,23 +149,9 @@ public class GameSessionRestController {
 
     //Get notification settings from a session that the user participates in
     @GetMapping("/api/private/users/{username}/sessions/{id}/notifications")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<NotificationDto> getNotificationsOfUserFromGameSession(@PathVariable String username, @PathVariable Long id, HttpServletRequest request){
-//        String usernameFromToken = (String) request.getAttribute("username");
-//        User tokenUser = userService.findUserByUsername(usernameFromToken);
-//        boolean isAdmin = false;
-//        User requestUser = userService.findUserByUsername(username);
-//
-//
-//        for(GrantedAuthority authority : tokenUser.getAuthorities()){
-//            if(authority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")){
-//                isAdmin = true;
-//            }
-//        }
-//
-//        if(!isAdmin && !tokenUser.getUsername().equalsIgnoreCase(username)){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
+        boolean isAdmin = (Boolean) request.getAttribute("isAdmin");
 
         User requestUser = userService.findUserByUsername(username);
 
@@ -208,7 +178,7 @@ public class GameSessionRestController {
 
     //GET ALL USERS FROM SESSION
     @GetMapping("/api/private/sessions/{id}/users")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity getUsersFromSession(@PathVariable Long id, HttpServletRequest request){
         GameSession gameSession = gameSessionService.getGameSessionWithId(id);
 
@@ -219,7 +189,9 @@ public class GameSessionRestController {
         List<RequestUserDto> userDtos = new ArrayList<>();
         for(UserGameSessionInfo gameSessionInfo : gameSession.getUserGameSessionInfos()){
             User user = gameSessionInfo.getUser();
-            userDtos.add(new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), gameSessionInfo.getRole().name()));
+            RequestUserDto dto = new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), gameSessionInfo.getRole().name());
+            dto.setGender(user.getGender().name());
+            userDtos.add(dto);
         }
 
         return ResponseEntity.ok(userDtos);
