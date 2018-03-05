@@ -135,41 +135,6 @@ public class UserServiceTest {
 //        assertThat(savedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
-    //TODO Not sure if these should be here since these conditions are tested in the controller
-    /*
-    @Test
-    public void addFaultyUserTest(){
-        User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
-
-    }
-
-    @Test
-    public void addUserWithUsernameThatAlreadyExistsTest(){
-        User spongebob = new User("spongebob", "squarepants", "spongebobSQ", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
-        when(userRepository.save(spongebob)).thenReturn(spongebob);
-        userService.addUser(spongebob);
-
-        User anotherSpongebob = new User("spongebob", "squarepants", "spongebobSQ", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
-        when(userRepository.save(anotherSpongebob)).thenReturn(anotherSpongebob);
-        userService.addUser(anotherSpongebob);
-
-        verify(userRepository, times(1)).save(spongebob);
-        verify(userRepository, times(0)).save(anotherSpongebob);
-    }
-
-    @Test
-    public void addUserWithEmailThatAlreadyExistsTest(){
-        User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
-
-    }
-
-    @Test
-    public void addUserWithEmailAndUsernameThatAlreadyExistTest(){
-        User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
-
-    }
-    */
-/*
     @Test
     public void getUserByIdTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
@@ -208,15 +173,6 @@ public class UserServiceTest {
         User user = userService.findUserByUsername("aUserNameThatDoesNotExist");
     }
 
-    //TODO Uncomment once query in UserRepository is not case sensitive
-//    @Test
-//    public void getUserByUsernameWithCaps(){
-//        User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
-//        when(userRepository.findUserByUsername(spongebob.getUsername())).thenReturn(spongebob);
-//        User user = userService.findUserByUsername("SponGeBob");
-//        verify(userRepository, times(1)).findUserByUsername(spongebob.getUsername());
-//        assertThat(user, is(spongebob));
-//    }
 
     @Test
     public void getUserByEmailTest(){
@@ -231,16 +187,6 @@ public class UserServiceTest {
 //        assertThat(returnedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
-    //TODO Uncomment once query in UserRepository is not case sensitive
-//    @Test
-//    public void getUserByUsernameWithCaps(){
-//        User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com",14, 7,1986,"", Gender.Male, null);
-//        when(userRepository.findUserByEmail(spongebob.getEmail())).thenReturn(spongebob);
-//        User user = userService.findUserByEmail("SpOngeBoB@hotmail.com");
-//        verify(userRepository, times(1)).findUserByEmail(spongebob.getEmail());
-//        assertThat(user, is(spongebob));
-//    }
-/*
     @Test
     public void getUserByRoleTest(){
         List<User> defaultUsers = new ArrayList<>();
