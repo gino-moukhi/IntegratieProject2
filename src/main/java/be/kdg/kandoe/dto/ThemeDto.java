@@ -2,6 +2,7 @@ package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.hibernate.annotations.Cascade;
 
@@ -19,11 +20,10 @@ public class ThemeDto {
     private long themeId;
     private String name;
     private String description;
+    private List<SubThemeDto> subThemes;
 
     public ThemeDto(){
-        this.themeId=0;
-        this.name="default";
-        this.description="default";
+
 
     }
 
@@ -31,6 +31,7 @@ public class ThemeDto {
         this.themeId=themeId;
         this.name = name;
         this.description = description;
+        subThemes = new ArrayList<>();
     }
 
     public String getName() {
@@ -53,10 +54,17 @@ public class ThemeDto {
         return themeId;
     }
 
-    public void setThemeId(Long themeId){
+    public void setThemeId(long themeId){
         this.themeId=themeId;
     }
 
+    public List<SubThemeDto> getSubThemes() {
+        return subThemes;
+    }
+
+    public void setSubThemes(List<SubThemeDto> subThemes) {
+        this.subThemes = subThemes;
+    }
 
     public String toJsonString(){
         String JSON = new Gson().toJson(this);
@@ -66,11 +74,16 @@ public class ThemeDto {
         Theme theme = new Theme();
         theme.setDescription(this.description);
         theme.setThemeId(this.themeId);
+
         theme.setName(this.getName());
         return theme;
     }
 
     public static ThemeDto fromTheme(Theme theme){
-        return new ThemeDto(theme.getThemeId(),theme.getName(),theme.getDescription());
+        ThemeDto newThemeDto =  new ThemeDto(theme.getThemeId(),theme.getName(),theme.getDescription());
+        if(theme.getSubThemes()!=null){
+            newThemeDto.setSubThemes(theme.getSubThemes().stream().map(st->SubThemeDto.fromSubTheme(st)).collect(Collectors.toList()));
+        }
+        return newThemeDto;
     }
 }

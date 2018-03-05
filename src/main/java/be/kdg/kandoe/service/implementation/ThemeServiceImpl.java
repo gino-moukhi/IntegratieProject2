@@ -96,20 +96,6 @@ public class ThemeServiceImpl implements ThemeService {
 
     //EDIT-METHODS
     //REMOVE-METHODS
-    @Override
-    public Theme removeTheme(Theme themeToDelete) {
-        Theme theme = getThemeById(themeToDelete.getThemeId());
-        for(SubTheme s: themeRepo.findAllSubThemes()){
-            if(s.getTheme().getThemeId()==theme.getThemeId()){
-                themeRepo.deleteSubTheme(s);
-            }
-        }
-        if(theme==null){
-            throw new ThemeServiceException("No Theme found for ID: "+themeToDelete.getThemeId());
-        }
-        return themeRepo.deleteTheme(themeToDelete);
-    }
-
     public void removeAllThemes(){
         themeRepo.deleteAll();
     }
@@ -117,11 +103,6 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public Theme removeThemeById(long themeId) {
         Theme themeToDelete = themeRepo.findThemeById(themeId);
-        for (SubTheme s :themeRepo.findAllSubThemes()){
-            if(s.getTheme().getThemeId()==themeId){
-                themeRepo.deleteSubTheme(s);
-            }
-        }
         if(themeToDelete==null){
             throw new ThemeServiceException("No Theme found for ID: "+themeId);
         }

@@ -2,6 +2,10 @@ package be.kdg.kandoe.repository.jpa;
 
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -9,12 +13,13 @@ import javax.persistence.*;
 @Table(name="SUBTHEME")
 public class SubThemeJpa {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Generated(GenerationTime.INSERT)
+    @Column(nullable = false,name = "subthemeId")
     private long subThemeId;
 
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "THEME_ID")
+
+    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.REMOVE)
     private ThemeJpa theme;
 
     @Column
@@ -27,18 +32,15 @@ public class SubThemeJpa {
 
     }
     public SubThemeJpa(SubTheme subTheme){
-        this.subThemeId=subTheme.getSubThemeId();
-        this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
+        if(subTheme.getTheme()!=null){
+            this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
+        }
         this.subThemeName=subTheme.getSubThemeName();
         this.subThemeDescription=subTheme.getSubThemeDescription();
     }
 
-    public Long getSubThemeId() {
+    public long getSubThemeId() {
         return subThemeId;
-    }
-
-    public void setSubThemeId(Long subThemeId) {
-        this.subThemeId = subThemeId;
     }
 
     public ThemeJpa getTheme() {
@@ -71,7 +73,9 @@ public class SubThemeJpa {
 
     public SubTheme toSubTheme(){
         SubTheme subTheme = new SubTheme();
-        subTheme.setTheme(this.theme.toTheme());
+        if(this.theme!=null){
+            subTheme.setTheme(this.theme.toTheme());
+        }
         subTheme.setSubThemeId(this.subThemeId);
         subTheme.setSubThemeName(this.subThemeName);
         subTheme.setSubThemeDescription(this.subThemeDescription);

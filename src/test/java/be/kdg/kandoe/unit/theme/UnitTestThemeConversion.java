@@ -33,13 +33,13 @@ public class UnitTestThemeConversion {
 
     @Before
     public void Setup(){
-        themeToTest= new Theme(new ThemeDto(1,"School","Theme to test conversion"));
-        themeDtoToTest=new ThemeDto(2,"Industry","Testing if this theme stays the same");
-        themeJpaToTest = new ThemeJpa(new Theme(new ThemeDto(3,"Building","Try to make the conversion equal all the time")));
+        themeToTest= new Theme(new ThemeDto(1L,"School","Theme to test conversion"));
+        themeDtoToTest=new ThemeDto(2L,"Industry","Testing if this theme stays the same");
+        themeJpaToTest = new ThemeJpa(new Theme(new ThemeDto(3L,"Building","Try to make the conversion equal all the time")));
 
-        subThemeToTest = new SubTheme(new SubThemeDto(1,themeDtoToTest,"Product quality","Subtheme for theme: Industry"));
-        subThemeDtoToTest = new SubThemeDto(2,themeDtoToTest,"Employee hapiness", "2nd subtheme for theme: Industry");
-        subThemeJpaToTest = new SubThemeJpa(new SubTheme(new SubThemeDto(3,themeDtoToTest,"Business expansion","3rd subtheme for theme: Industry")));
+        subThemeToTest = new SubTheme(new SubThemeDto(1L,themeDtoToTest,"Product quality","Subtheme for theme: Industry"));
+        subThemeDtoToTest = new SubThemeDto(2L,themeDtoToTest,"Employee hapiness", "2nd subtheme for theme: Industry");
+        subThemeJpaToTest = new SubThemeJpa(new SubTheme(new SubThemeDto(3L,themeDtoToTest,"Business expansion","3rd subtheme for theme: Industry")));
     }
 
     @Test

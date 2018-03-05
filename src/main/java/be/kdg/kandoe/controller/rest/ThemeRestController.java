@@ -79,7 +79,7 @@ public class ThemeRestController {
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}",method = RequestMethod.GET)
    // @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<SubThemeDto> getSubThemeById(@PathVariable(name = "subThemeId")long subThemeId){
+    public ResponseEntity<SubThemeDto> getSubThemeById(@PathVariable(name = "subThemeId")Long subThemeId){
         System.out.println("CALL RECEIVED: getSubThemeById: "+subThemeId);
         SubTheme subTheme = themeService.getSubThemeById(subThemeId);
         if(subTheme==null){
@@ -90,7 +90,7 @@ public class ThemeRestController {
 
     @RequestMapping(value = "api/public/theme/{themeId}/subthemes", method= RequestMethod.GET)
   //  @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@RequestParam(name="themeId")long themeId){
+    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@RequestParam(name="themeId")Long themeId){
         System.out.println("CALL RECEIVED: getSubThemesByThemeId: "+themeId);
         List<SubTheme> subThemes = themeService.getSubThemesByThemeId(themeId);
         if(subThemes==null){
@@ -118,7 +118,10 @@ public class ThemeRestController {
 
     @RequestMapping(value = "api/public/subthemes/{themeId}",method = RequestMethod.POST)
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<SubThemeDto> CreateSubTheme(@Valid @RequestBody SubThemeDto subThemeDto,@PathVariable(name = "themeId") long themeId){
+    public ResponseEntity<SubThemeDto> CreateSubTheme(@Valid @RequestBody SubThemeDto subThemeDto,@PathVariable(name = "themeId") Long themeId){
+        if(themeId==new Long(0)){
+            themeId=null;
+        }
         System.out.println("CALL RECEICED: CreateSubTheme");
         logger.log(Priority.INFO,"API CALL: CreateSubTheme");
         SubTheme createdSubTheme = themeService.addSubThemeByThemeId(subThemeDto.toSubTheme(),themeId);
@@ -133,7 +136,7 @@ public class ThemeRestController {
     //PUT-METHODS
     @RequestMapping(value = "api/public/theme/{themeId}", method = RequestMethod.PUT)
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ThemeDto> updateTheme(@PathVariable long themeId, @Valid @RequestBody ThemeDto theme){
+    public ResponseEntity<ThemeDto> updateTheme(@PathVariable Long themeId, @Valid @RequestBody ThemeDto theme){
         System.out.println("CALL RECEIVED: updateTheme: "+themeId);
         logger.log(Priority.INFO,"API CALL: updateTheme: "+themeId);
         Theme foundTheme = themeService.getThemeById(themeId);
@@ -150,7 +153,7 @@ public class ThemeRestController {
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}",method = RequestMethod.PUT)
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<SubThemeDto> updateSubTheme(@PathVariable long subThemeId, @Valid @RequestBody SubThemeDto dto){
+    public ResponseEntity<SubThemeDto> updateSubTheme(@PathVariable Long subThemeId, @Valid @RequestBody SubThemeDto dto){
         System.out.println("CALL RECEIVED: updateSubTheme: "+subThemeId);
         logger.log(Priority.INFO, "API CALL: UpdateSubTheme: "+subThemeId);
         SubTheme foundSubTheme = themeService.getSubThemeById(subThemeId);
@@ -174,14 +177,13 @@ public class ThemeRestController {
  //   @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
         System.out.println("CALLED deleteTheByThemeId: "+themeId);
-        Theme foundTheme =null;
         try{
-            foundTheme =themeService.getThemeById(themeId);
+            Theme deletedTheme=themeService.removeThemeById(themeId);
+            return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
         }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
         }
-        Theme deletedTheme=themeService.removeTheme(foundTheme);
-        return ResponseEntity.ok().body(ThemeDto.fromTheme(deletedTheme));
+
     }
 
     @RequestMapping(value = "api/public/theme", method = RequestMethod.DELETE)
@@ -204,7 +206,10 @@ public class ThemeRestController {
 
     @RequestMapping(value = "api/public/subthemes/{themeId}",method = RequestMethod.DELETE)
  //   @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<SubThemeDto>> deleteSubThemesByThemeId(@PathVariable(name = "themeId")long themeId){
+    public ResponseEntity<List<SubThemeDto>> deleteSubThemesByThemeId(@PathVariable(name = "themeId")Long themeId){
+        if(themeId==new Long(0)){
+            themeId=null;
+        }
         List<SubTheme> deletedSubThemes=null;
         try{
             deletedSubThemes = themeService.removeSubThemesByThemeId(themeId);

@@ -19,7 +19,6 @@ public interface ThemeService {
     Theme editTheme(Theme theme);
     SubTheme editSubtheme(SubTheme subTheme);
 
-    Theme removeTheme(Theme themeToDelete);
     Theme removeThemeById(long themeId);
     SubTheme removeSubThemeById(long subThemeId);
     List<SubTheme> removeSubThemesByThemeId(long themeId);

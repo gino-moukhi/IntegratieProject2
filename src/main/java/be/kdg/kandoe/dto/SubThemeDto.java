@@ -11,9 +11,7 @@ public class SubThemeDto {
     private String subThemeDescription;
 
     public SubThemeDto(){
-        this.subThemeName="Default";
-        this.subThemeDescription="Default description";
-        this.theme=null;
+
     }
 
     public SubThemeDto(long subThemeId,ThemeDto theme,String subThemeName,String subThemeDescription){
@@ -23,11 +21,11 @@ public class SubThemeDto {
         this.subThemeDescription=subThemeDescription;
     }
 
-    public Long getSubThemeId() {
+    public long getSubThemeId() {
         return subThemeId;
     }
 
-    public void setSubThemeId(Long subThemeId) {
+    public void setSubThemeId(long subThemeId) {
         this.subThemeId = subThemeId;
     }
 
@@ -64,12 +62,22 @@ public class SubThemeDto {
         SubTheme subTheme = new SubTheme();
         subTheme.setSubThemeDescription(this.subThemeDescription);
         subTheme.setSubThemeId(this.subThemeId);
-        subTheme.setTheme(new Theme(this.theme));
+
+
+        if(this.theme!=null){
+            subTheme.setTheme(new Theme(this.theme));
+        }
         subTheme.setSubThemeName(this.subThemeName);
         return subTheme;
     }
 
     public static SubThemeDto fromSubTheme(SubTheme subTheme){
-        return new SubThemeDto(subTheme.getSubThemeId(),ThemeDto.fromTheme(subTheme.getTheme()),subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
+        SubThemeDto newSubtheme=null;
+        if(subTheme.getTheme()!=null){
+            newSubtheme= new SubThemeDto(subTheme.getSubThemeId(),ThemeDto.fromTheme(subTheme.getTheme()),subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
+        }else{
+            newSubtheme = new SubThemeDto(subTheme.getSubThemeId(),null,subTheme.getSubThemeName(),subTheme.getSubThemeDescription());
+        }
+        return newSubtheme;
     }
 }
