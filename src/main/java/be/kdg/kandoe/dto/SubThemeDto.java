@@ -5,7 +5,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import com.google.gson.Gson;
 
 public class SubThemeDto {
-    private long subThemeId;
+    private Long subThemeId;
     private ThemeDto theme;
     private String subThemeName;
     private String subThemeDescription;
@@ -14,8 +14,10 @@ public class SubThemeDto {
 
     }
 
-    public SubThemeDto(long subThemeId,ThemeDto theme,String subThemeName,String subThemeDescription){
-        this.subThemeId=subThemeId;
+    public SubThemeDto(Long subThemeId,ThemeDto theme,String subThemeName,String subThemeDescription){
+        if(subThemeId!=null){
+            this.subThemeId=subThemeId;
+        }
         this.theme=theme;
         this.subThemeName=subThemeName;
         this.subThemeDescription=subThemeDescription;
@@ -61,7 +63,10 @@ public class SubThemeDto {
     public SubTheme toSubTheme(){
         SubTheme subTheme = new SubTheme();
         subTheme.setSubThemeDescription(this.subThemeDescription);
-        subTheme.setSubThemeId(this.subThemeId);
+        if(this.subThemeId!=null){
+            subTheme.setSubThemeId(this.subThemeId);
+        }
+
         if(this.theme!=null){
             subTheme.setTheme(new Theme(this.theme));
         }

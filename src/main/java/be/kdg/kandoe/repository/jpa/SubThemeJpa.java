@@ -2,15 +2,18 @@ package be.kdg.kandoe.repository.jpa;
 
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="subtheme")
+@Table(name="SUBTHEME")
 public class SubThemeJpa {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long subThemeId;
+    @Generated(GenerationTime.INSERT)
+    @Column(name = "subtheme_id",columnDefinition = "serial")
+    private Long subThemeId;
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "subtheme_theme_id")
@@ -36,10 +39,6 @@ public class SubThemeJpa {
 
     public Long getSubThemeId() {
         return subThemeId;
-    }
-
-    public void setSubThemeId(Long subThemeId) {
-        this.subThemeId = subThemeId;
     }
 
     public ThemeJpa getTheme() {
@@ -75,7 +74,9 @@ public class SubThemeJpa {
         if(this.theme!=null){
             subTheme.setTheme(this.theme.toTheme());
         }
-        subTheme.setSubThemeId(this.subThemeId);
+        if(this.subThemeId!=null){
+            subTheme.setSubThemeId(this.subThemeId);
+        }
         subTheme.setSubThemeName(this.subThemeName);
         subTheme.setSubThemeDescription(this.subThemeDescription);
         return subTheme;

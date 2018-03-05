@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Theme {
-    private long themeId;
+    private Long themeId;
     private String name;
     private String description;
 

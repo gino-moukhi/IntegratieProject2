@@ -4,7 +4,7 @@ import be.kdg.kandoe.dto.SubThemeDto;
 
 public class SubTheme {
 
-    private long subThemeId;
+    private Long subThemeId;
     private Theme theme;
     private String subThemeName;
     private String subThemeDescription;

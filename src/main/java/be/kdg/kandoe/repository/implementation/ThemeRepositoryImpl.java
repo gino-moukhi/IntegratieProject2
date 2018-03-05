@@ -122,7 +122,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public void deleteAll(){
         em.createQuery("DELETE FROM SubThemeJpa").executeUpdate();
         em.flush();
-        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN sub_theme_id RESTART WITH 1").executeUpdate();
+        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN subtheme_id RESTART WITH 1").executeUpdate();
         em.flush();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
         em.flush();

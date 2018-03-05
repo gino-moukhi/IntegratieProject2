@@ -15,13 +15,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USER_ENTITY")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(length = 50, nullable = false)
     private String firstName;

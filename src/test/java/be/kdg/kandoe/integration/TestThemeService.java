@@ -39,14 +39,14 @@ public class TestThemeService {
     @Before
     public void Setup(){
         themeService = new ThemeServiceImpl(new ThemeRepoMock());
-        ThemeDto theme1DTO=new ThemeDto(1,"Jeugd","Acties voor de jeugd");
-        ThemeDto theme2DTO= new ThemeDto(2,"Sport","Acties voor sport");
+        ThemeDto theme1DTO=new ThemeDto(1L,"Jeugd","Acties voor de jeugd");
+        ThemeDto theme2DTO= new ThemeDto(2L,"Sport","Acties voor sport");
 
         theme1 = new Theme(theme1DTO);
         theme2 = new Theme(theme2DTO);
 
-        subTheme1= new SubTheme(new SubThemeDto(1,null,"Speelplein","Speelplein aanleggen"));
-        subTheme2 = new SubTheme(new SubThemeDto(2,null,"Voetbalplein","Voetbalplein aanleggen"));
+        subTheme1= new SubTheme(new SubThemeDto(1L,null,"Speelplein","Speelplein aanleggen"));
+        subTheme2 = new SubTheme(new SubThemeDto(2L,null,"Voetbalplein","Voetbalplein aanleggen"));
 
         themeService.addTheme(theme1);
         themeService.addTheme(theme2);
@@ -57,7 +57,7 @@ public class TestThemeService {
 
     @Test
     public void TestAddTheme(){
-        ThemeDto DTOToAdd = new ThemeDto(3,"ThemeToAdd","Test Theme, if this exists success");
+        ThemeDto DTOToAdd = new ThemeDto(3L,"ThemeToAdd","Test Theme, if this exists success");
         Theme themeToAdd = new Theme(DTOToAdd);
         themeService.addTheme(themeToAdd);
         Theme returningTheme = themeService.getThemeByName(themeToAdd.getName());
@@ -69,7 +69,7 @@ public class TestThemeService {
      */
     @Test(expected = InputValidationException.class)
     public void TestAddInvalidTheme(){
-        ThemeDto DTOToAdd = new ThemeDto(3,"ThemeToAdd123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789","Theme with a name that is too long");
+        ThemeDto DTOToAdd = new ThemeDto(3L,"ThemeToAdd123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789","Theme with a name that is too long");
         Theme ThemeToAdd = new Theme(DTOToAdd);
         themeService.addTheme(ThemeToAdd);
         Theme returningTheme = themeService.getThemeById(ThemeToAdd.getThemeId());
@@ -84,7 +84,7 @@ public class TestThemeService {
 
     @Test
     public void TestGetAllThemes(){
-        Theme theme = new Theme(new ThemeDto(3,"Schoonheid","Thema ivm met schoonheid"));
+        Theme theme = new Theme(new ThemeDto(3L,"Schoonheid","Thema ivm met schoonheid"));
         themeService.addTheme(theme);
         assertEquals("Length of themes should be 3",themeService.getAllThemes().size(),3);
         assertEquals("Values of themes should match",themeService.getThemeById(1).getName(),"Jeugd");
@@ -140,7 +140,7 @@ public class TestThemeService {
      */
     @Test(expected = ThemeServiceException.class)
     public void TestDeleteByNonExistingThemeId(){
-        Theme unknownTheme = new Theme(new ThemeDto(3,"School","Thema ivm school"));
+        Theme unknownTheme = new Theme(new ThemeDto(3L,"School","Thema ivm school"));
         themeService.removeThemeById(unknownTheme.getThemeId());
     }
     /**
@@ -148,13 +148,13 @@ public class TestThemeService {
      */
     @Test(expected = ThemeServiceException.class)
     public void TestDeleteNonExistingTheme(){
-        Theme unknownTheme = new Theme(new ThemeDto(3,"Armoede", "Thema ivm armoeden enzo"));
+        Theme unknownTheme = new Theme(new ThemeDto(3L,"Armoede", "Thema ivm armoeden enzo"));
         themeService.removeTheme(unknownTheme);
     }
 
     @Test
     public void TestCreateSubTheme(){
-        SubTheme subThemeToAdd = new SubTheme(new SubThemeDto(3,null,"Activiteiten","Subthema voor Sport"));
+        SubTheme subThemeToAdd = new SubTheme(new SubThemeDto(3L,null,"Activiteiten","Subthema voor Sport"));
         SubTheme subThemeReceived = themeService.addSubThemeByThemeId(subThemeToAdd,theme2.getThemeId());
         Assert.assertThat(subThemeReceived.getSubThemeId(),equalTo(subThemeToAdd.getSubThemeId()));
         Assert.assertThat(subThemeReceived.getTheme(),equalTo(subThemeToAdd.getTheme()));

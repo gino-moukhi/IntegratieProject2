@@ -43,17 +43,17 @@ public class TestThemeRestController {
     @Before
     public void init(){
         controller = new ThemeRestController(new ThemeServiceImpl(new ThemeRepoMock()));
-        theme1= new ThemeDto(0,"School","TestTheme Everything to do with school");
-        theme2= new ThemeDto(0, "Industry","TestTheme Everything to do with Industry");
+        theme1= new ThemeDto(0L,"School","TestTheme Everything to do with school");
+        theme2= new ThemeDto(0L, "Industry","TestTheme Everything to do with Industry");
 
-        subTheme1= new SubThemeDto(0,theme1,"Extra classroom","Build extra classrooms to expand student limit");
-        subTheme2=new SubThemeDto(0,theme1,"More recreation","Allow students to relax more while on break");
+        subTheme1= new SubThemeDto(0L,theme1,"Extra classroom","Build extra classrooms to expand student limit");
+        subTheme2=new SubThemeDto(0L,theme1,"More recreation","Allow students to relax more while on break");
         setupDb();
     }
 
     @Test
     public void TestCreateTheme(){
-        ThemeDto themeDto = new ThemeDto(0,"JSONTheme","Theme created via JSON");
+        ThemeDto themeDto = new ThemeDto(0L,"JSONTheme","Theme created via JSON");
         ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/public/themes", themeDto, ThemeDto.class);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
@@ -63,7 +63,7 @@ public class TestThemeRestController {
 
     @Test
     public void TestCreateSubTheme(){
-        SubThemeDto subThemeDto = new SubThemeDto(0, null,"AddedSubTheme","This subtheme is added by Tests");
+        SubThemeDto subThemeDto = new SubThemeDto(0L, null,"AddedSubTheme","This subtheme is added by Tests");
         ResponseEntity<SubThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1", subThemeDto, SubThemeDto.class);
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getSubThemeId(),equalTo(new Long(3)));

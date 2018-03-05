@@ -2,6 +2,7 @@ package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.hibernate.annotations.Cascade;
 
@@ -16,19 +17,19 @@ import java.util.stream.Collectors;
 
 public class ThemeDto {
 
-    private long themeId;
+    private Long themeId;
     private String name;
     private String description;
 
     public ThemeDto(){
-        this.themeId=0;
-        this.name="default";
-        this.description="default";
+
 
     }
 
-    public ThemeDto(long themeId, String name, String description) {
-        this.themeId=themeId;
+    public ThemeDto(Long themeId, String name, String description) {
+        if(themeId!=null){
+            this.themeId=themeId;
+        }
         this.name = name;
         this.description = description;
     }
@@ -65,7 +66,9 @@ public class ThemeDto {
     public Theme toTheme(){
         Theme theme = new Theme();
         theme.setDescription(this.description);
-        theme.setThemeId(this.themeId);
+        if(this.themeId!=null){
+            theme.setThemeId(this.themeId);
+        }
         theme.setName(this.getName());
         return theme;
     }
