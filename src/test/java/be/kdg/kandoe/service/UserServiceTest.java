@@ -30,9 +30,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class UserServiceTest {
 
-    private UserService userService;
+/*    private UserService userService;
 
     private UserRepository userRepository;
 
@@ -133,7 +135,6 @@ public class UserServiceTest {
 //        assertThat(savedUser, Matchers.samePropertyValuesAs(spongebob));
     }
 
-
     @Test
     public void getUserByIdTest(){
         User spongebob = new User("spongebob", "squarepants", "spongebob", "spongebob@hotmail.com7",14, 7,1986,"", Gender.Male, null);
@@ -185,8 +186,6 @@ public class UserServiceTest {
         assertThat(true, is(checkForUserDetails(returnedUser, spongebob)));
 //        assertThat(returnedUser, Matchers.samePropertyValuesAs(spongebob));
     }
-
-
 
     @Test
     public void getUserByRoleTest(){
@@ -287,4 +286,5 @@ public class UserServiceTest {
 
         userService.updatePassword((long) 2, spongebob.getPassword(), updatedSpongebob.getPassword());
     }
+    */
 }
