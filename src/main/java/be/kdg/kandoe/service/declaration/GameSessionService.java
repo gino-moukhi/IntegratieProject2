@@ -7,5 +7,8 @@ import java.util.List;
 public interface GameSessionService {
     List<GameSession> getAllGameSessions();
     List<GameSession> getUserGameSessions(String username);
-    GameSession addGameSession(GameSession gameSession);
+    GameSession addGameSession(GameSession gameSession); //save
+    GameSession getGameSessionWithId(Long id);
+    GameSession updateGameSession(GameSession gameSession);
+
 }
