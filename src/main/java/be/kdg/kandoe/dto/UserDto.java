@@ -1,6 +1,10 @@
 package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.user.Gender;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -14,7 +18,6 @@ public class UserDto {
     private String email;
     private int age;
     private Gender gender;
-//    private Date birthday;
     private Calendar birthday;
 
     public UserDto() {
@@ -107,4 +110,5 @@ public class UserDto {
     public int getDay(){
         return birthday.get(Calendar.DAY_OF_MONTH);
     }
+
 }
