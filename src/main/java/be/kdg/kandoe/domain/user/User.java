@@ -1,6 +1,8 @@
 package be.kdg.kandoe.domain.user;
 
-import be.kdg.kandoe.domain.user.role.Role;
+import be.kdg.kandoe.domain.GameSession;
+import be.kdg.kandoe.domain.UserGameSessionInfo;
+import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,11 +51,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-
-    @Column(nullable = false)
-    @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Column
+    @OneToMany(mappedBy = "users",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Role> roles = new ArrayList<>();
+    private List<Authority> authorities;
+
+
+    @Column
+    @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Fetch(org.hibernate.annotations.FetchMode.SELECT)
+    private List<UserGameSessionInfo> gameSessionInfos;
+
+    @Column
+    private String profilePictureFileName = "default-profile.png";
 
 
 
@@ -71,7 +82,17 @@ public class User implements UserDetails {
         this.encryptedPassword = userDto.getPassword();
     }
 
-    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Role> roles) {
+    public User(UpdateuserDto updateuserDto){
+        this.firstName = updateuserDto.getFirstName();
+        this.lastName = updateuserDto.getLastName();
+        this.encryptedPassword = updateuserDto.getPassword();
+        this.gender = updateuserDto.getGender();
+        this.year = updateuserDto.getYear();
+        this.month = updateuserDto.getMonth();
+        this.day = updateuserDto.getDay();
+    }
+
+    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Authority> authorities) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -81,13 +102,12 @@ public class User implements UserDetails {
         this.year = year;
         this.encryptedPassword = encryptedPassword;
         this.gender = gender;
-        this.roles = roles;
+        this.authorities = authorities;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
@@ -171,11 +191,57 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public int getDay() {
+        return day;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public List<Authority> getUserRoles(){
+        return this.authorities;
+    }
+
+    public Calendar getBirthday(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth() - 1, getDay());
+        return calendar;
+    }
+
+    public List<UserGameSessionInfo> getGameSessionInfos() {
+        return gameSessionInfos;
+    }
+
+    public void setGameSessionInfos(List<UserGameSessionInfo> gameSessionInfos) {
+        this.gameSessionInfos = gameSessionInfos;
+    }
+
+    public String getProfilePictureFileName() {
+        return profilePictureFileName;
+    }
+
+    public void setProfilePictureFileName(String profilePictureFileName) {
+        this.profilePictureFileName = profilePictureFileName;
     }
 }
