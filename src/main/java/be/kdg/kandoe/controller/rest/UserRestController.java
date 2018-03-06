@@ -39,7 +39,7 @@ import java.net.URL;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
+//@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class UserRestController {
     private final Logger logger = Logger.getLogger(UserRestController.class);
     private final UserService userService;
