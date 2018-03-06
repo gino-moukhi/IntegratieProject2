@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "card")
+@Table(name = "CARD")
 public class CardJpa {
-    @Column(name = "card_id")
+    @Column(name = "cardId")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cardId;
     private String name;
     private String description;

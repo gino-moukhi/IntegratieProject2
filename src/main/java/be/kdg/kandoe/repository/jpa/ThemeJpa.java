@@ -1,15 +1,24 @@
 package be.kdg.kandoe.repository.jpa;
 
+import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    @Entity
-    @Table(name = "theme")
+@Entity
+    @Table(name = "THEME")
     public class ThemeJpa {
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        @Column(name="theme_id")
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Generated(GenerationTime.INSERT)
+        @Column(name="themeId",nullable = false)
         private long themeId;
 
         @Column(length = 50,nullable = false)
@@ -19,12 +28,18 @@ import javax.persistence.*;
         private String description;
 
 
+        @Column
+        @OneToMany(targetEntity=SubThemeJpa.class,fetch = FetchType.EAGER,mappedBy = "theme",cascade = CascadeType.REMOVE)
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        @Fetch(FetchMode.SELECT)
+        @JsonIgnore
+        private List<SubThemeJpa> subThemes;
+
+
         public ThemeJpa(){
 
         }
-
         public ThemeJpa(Theme theme){
-            this.themeId=theme.getThemeId();
             this.name=theme.getName();
             this.description=theme.getDescription();
         }
@@ -48,12 +63,17 @@ import javax.persistence.*;
         public long getThemeId() {
             return themeId;
         }
-        public void setThemeId(long themeId){
-            this.themeId=themeId;
+
+        public void setThemeId(long id){
+            this.themeId=id;
         }
 
-        /**public List<SubThemeJpa> getSubThemes() {
+        public List<SubThemeJpa> getSubThemes() {
             return subThemes;
-        }**/
+        }
+
+        public void setSubThemes(List<SubThemeJpa> subThemes){
+            this.subThemes=subThemes;
+        }
 
     }

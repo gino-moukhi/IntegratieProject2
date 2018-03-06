@@ -9,15 +9,15 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="subtheme")
+@Table(name="SUBTHEME")
 public class SubThemeJpa {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subthemeId")
     private long subThemeId;
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "theme_id")
+    @JoinColumn(name = "subtheme_themeId")
     private ThemeJpa theme;
 
     @Column
@@ -26,7 +26,7 @@ public class SubThemeJpa {
     @Column
     private String subThemeDescription;
 
-    @ManyToMany(mappedBy = "subThemes")
+    @ManyToMany(cascade= CascadeType.ALL,mappedBy = "subThemes")
     @JsonManagedReference
     private List<CardJpa> cards;
 
