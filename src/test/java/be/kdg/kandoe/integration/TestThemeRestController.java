@@ -53,11 +53,13 @@ public class TestThemeRestController {
 
     @Test
     public void TestCreateTheme(){
-        ThemeDto themeDto = new ThemeDto(3,"JSONTheme","Theme created via JSON");
+        ThemeDto themeDto = new ThemeDto(0,"JSONTheme","Theme created via JSON");
         ResponseEntity<ThemeDto> response = restTemplate.postForEntity("http://localhost:9090/api/public/themes", themeDto, ThemeDto.class);
+        ResponseEntity<ThemeDto> responseGet = restTemplate.getForEntity("http://localhost:9090/api/public/theme"+response.getBody().getThemeId(),ThemeDto.class);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
-        setupDb();
+        Assert.assertThat(responseGet.getBody().getName(),equalTo("JSONTheme"));
     }
 
     @Test
@@ -71,7 +73,6 @@ public class TestThemeRestController {
         }
         Assert.assertNotNull(themeDtos);
         Assert.assertThat(themeDtos.size(),equalTo(2));
-        setupDb();
     }
 
     @Test
@@ -100,7 +101,7 @@ public class TestThemeRestController {
     public void TestGetSubThemeById(){
         ResponseEntity<SubThemeDto> response = restTemplate.getForEntity("http://localhost:9090/api/public/subtheme/1",SubThemeDto.class);
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertThat(response.getBody().getSubThemeId(),equalTo(new Long(1)));
+        Assert.assertThat(response.getBody().getSubThemeId(),equalTo(subTheme1.getSubThemeId()));
         Assert.assertThat(response.getBody().getSubThemeName(),equalTo(subTheme1.getSubThemeName()));
     }
 
@@ -141,8 +142,11 @@ public class TestThemeRestController {
 
     @Test
     public void TestRemoveTheme(){
-        ResponseEntity<Theme> response = restTemplate.exchange("http://localhost:9090/api/public/theme/1", HttpMethod.DELETE,null,Theme.class);
+        ResponseEntity<ThemeDto> response = restTemplate.exchange("http://localhost:9090/api/public/theme/"+theme1.getThemeId(), HttpMethod.DELETE,null,ThemeDto.class);
+        ResponseEntity<ThemeDto> responseGet = restTemplate.getForEntity("http://localhost:9090/api/public/theme"+theme1.getThemeId(),ThemeDto.class);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertNotNull(response.getBody());
+        Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
         Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
         Assert.assertThat(response.getBody().getName(),equalTo("School"));
     }
@@ -179,9 +183,13 @@ public class TestThemeRestController {
 
     private void setupDb(){
         System.out.println(restTemplate.exchange("http://localhost:9090/api/public/themes",HttpMethod.DELETE,null,String.class).getStatusCode());
-        restTemplate.postForEntity("http://localhost:9090/api/public/themes", theme1, ThemeDto.class);
-        restTemplate.postForEntity("http://localhost:9090/api/public/themes", theme2, ThemeDto.class);
-        System.out.println(restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1",subTheme1,SubThemeDto.class).getStatusCode());
-        restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1",subTheme2,SubThemeDto.class);
+        ResponseEntity<ThemeDto> response1 = restTemplate.postForEntity("http://localhost:9090/api/public/themes", theme1, ThemeDto.class);
+        theme1=response1.getBody();
+        ResponseEntity<ThemeDto> response2 = restTemplate.postForEntity("http://localhost:9090/api/public/themes", theme2, ThemeDto.class);
+        theme2=response2.getBody();
+        ResponseEntity<SubThemeDto> response3 = restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1",subTheme1,SubThemeDto.class);
+        subTheme1=response3.getBody();
+        ResponseEntity<SubThemeDto> response4= restTemplate.postForEntity("http://localhost:9090/api/public/subthemes/1",subTheme2,SubThemeDto.class);
+        subTheme2=response4.getBody();
     }
 }

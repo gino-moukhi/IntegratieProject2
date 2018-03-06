@@ -72,8 +72,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public Theme createTheme(Theme theme) {
         ThemeJpa jpa = JpaConverter.toThemeJpa(theme);
-        em.merge(jpa);
-        return JpaConverter.toTheme(jpa);
+        ThemeJpa response = em.merge(jpa);
+        return JpaConverter.toTheme(response);
     }
 
     @Transactional
