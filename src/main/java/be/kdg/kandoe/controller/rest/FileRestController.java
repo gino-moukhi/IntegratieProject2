@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-//@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class FileRestController {
     private final UserService userService;
     private final AuthenticationHelperService authenticationHelperService;

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-//@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class GameSessionRestController {
 
     private final UserService userService;

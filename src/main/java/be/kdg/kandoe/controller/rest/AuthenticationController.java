@@ -34,7 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @RestController
-//@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class AuthenticationController {
     private final Logger logger = Logger.getLogger(UserRestController.class);
 

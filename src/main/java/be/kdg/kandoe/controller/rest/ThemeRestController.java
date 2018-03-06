@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-//@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class ThemeRestController {
     private final Logger logger = Logger.getLogger(ThemeRestController.class);
 
