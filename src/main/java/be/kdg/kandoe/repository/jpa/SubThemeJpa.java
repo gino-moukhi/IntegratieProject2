@@ -20,6 +20,7 @@ public class SubThemeJpa {
 
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.REMOVE)
+    @JoinColumn(name="themeId")
     private ThemeJpa theme;
 
     @Column

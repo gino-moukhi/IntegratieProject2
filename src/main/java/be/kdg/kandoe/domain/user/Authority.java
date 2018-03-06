@@ -18,6 +18,7 @@ public class Authority implements GrantedAuthority{
 
     @ManyToOne(targetEntity = User.class,fetch = FetchType.EAGER)
     @JsonIgnore
+    @JoinColumn(name="userId")
     private User user;
 
     public Authority() {
