@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class JpaConverter {
-    public static Theme toTheme(ThemeJpa jpa){
+    public static Theme toTheme(ThemeJpa jpa,boolean callByConverter){
         if(jpa==null){
             return null;
         }
@@ -24,10 +24,15 @@ public abstract class JpaConverter {
         theme.setThemeId(jpa.getThemeId());
         theme.setDescription(jpa.getDescription());
         theme.setName(jpa.getName());
+        if (!callByConverter){
+            if(jpa.getSubThemes()!=null){
+                theme.setSubThemes(jpa.getSubThemes().stream().map(st->JpaConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            }
+        }
         return theme;
     }
 
-    public static ThemeJpa toThemeJpa(Theme theme){
+    public static ThemeJpa toThemeJpa(Theme theme,boolean callByConverter){
         if(theme==null){
             return null;
         }
@@ -38,6 +43,11 @@ public abstract class JpaConverter {
         jpa.setName(theme.getName());
         jpa.setDescription((theme.getDescription()));
         jpa.setThemeId(theme.getThemeId());
+        if(!callByConverter){
+            if(theme.getSubThemes()!=null){
+                jpa.setSubThemes(theme.getSubThemes().stream().map(st->JpaConverter.toSubThemeJpa(st,true)).collect(Collectors.toList()));
+            }
+        }
         return jpa;
     }
 
@@ -49,7 +59,7 @@ public abstract class JpaConverter {
             throw new ConversionException("Parameter is not correct Class for conversion");
         }
         SubTheme subTheme = new SubTheme();
-        subTheme.setTheme(JpaConverter.toTheme(jpa.getTheme()));
+        subTheme.setTheme(JpaConverter.toTheme(jpa.getTheme(),true));
         subTheme.setSubThemeId(jpa.getSubThemeId());
         subTheme.setSubThemeName(jpa.getSubThemeName());
         subTheme.setSubThemeDescription(jpa.getSubThemeDescription());
@@ -73,7 +83,7 @@ public abstract class JpaConverter {
         jpa.setSubThemeId(subTheme.getSubThemeId());
         jpa.setSubThemeName(subTheme.getSubThemeName());
         jpa.setSubThemeDescription(subTheme.getSubThemeDescription());
-        jpa.setTheme(JpaConverter.toThemeJpa(subTheme.getTheme()));
+        jpa.setTheme(JpaConverter.toThemeJpa(subTheme.getTheme(),true));
         if(!callByConverter){
             if(subTheme.getCards()!=null){
                 jpa.setCards(subTheme.getCards().stream().map(c->JpaConverter.toCardJpa(c,true)).collect(Collectors.toList()));

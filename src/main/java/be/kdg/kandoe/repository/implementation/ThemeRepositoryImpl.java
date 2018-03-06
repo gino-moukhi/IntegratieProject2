@@ -43,7 +43,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
             throw new ThemeRepositoryException("No Theme found by name: "+ name);
         }
         ThemeJpa jpa = (ThemeJpa)query.getResultList().get(0);
-        return JpaConverter.toTheme(jpa);
+        return JpaConverter.toTheme(jpa,false);
     }
 
     @Transactional
@@ -54,7 +54,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
             throw new ThemeRepositoryException("No Theme found for ID: "+themeId);
         }
         ThemeJpa jpa = (ThemeJpa)query.getResultList().get(0);
-        return JpaConverter.toTheme(jpa);
+        return JpaConverter.toTheme(jpa,false);
     }
 
     @Transactional
@@ -71,25 +71,25 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme createTheme(Theme theme) {
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
         ThemeJpa response = em.merge(jpa);
-        return JpaConverter.toTheme(response);
+        return JpaConverter.toTheme(response,false);
     }
 
     @Transactional
     @Override
     public SubTheme createSubTheme(SubTheme subTheme) {
         SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme,false);
-        em.merge(jpa);
-        return JpaConverter.toSubTheme(jpa,false);
+        SubThemeJpa response = em.merge(jpa);
+        return JpaConverter.toSubTheme(response,false);
     }
 
     @Transactional
     @Override
     public Theme editTheme(Theme theme) {
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
         em.merge(jpa);
-        return JpaConverter.toTheme(jpa);
+        return JpaConverter.toTheme(jpa,false);
     }
 
     @Transactional
@@ -104,9 +104,9 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme deleteTheme(Theme theme){
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
         em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
-        return JpaConverter.toTheme(jpa);
+        return JpaConverter.toTheme(jpa,false);
     }
     @Transactional
     @Override
@@ -120,9 +120,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public void deleteAll(){
         em.createQuery("DELETE from SubThemeJpa").executeUpdate();
-        em.createNativeQuery("ALTER TABLE SUBTHEME ALTER COLUMN sub_Theme_id RESTART WITH 1").executeUpdate();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
-        em.createNativeQuery("ALTER TABLE THEME ALTER COLUMN theme_id RESTART WITH 1").executeUpdate();
+        em.createQuery("DELETE FROM CardJpa ").executeUpdate();
     }
 
     @Transactional
@@ -135,7 +134,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         List<ThemeJpa> jpas = query.getResultList();
         List<Theme> themes = new ArrayList<>();
         for(ThemeJpa jpa:jpas){
-            themes.add(JpaConverter.toTheme(jpa));
+            themes.add(JpaConverter.toTheme(jpa,false));
         }
         return themes;
     }

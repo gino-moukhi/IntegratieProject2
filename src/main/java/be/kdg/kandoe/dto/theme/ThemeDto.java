@@ -1,5 +1,6 @@
 package be.kdg.kandoe.dto.theme;
 
+import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class ThemeDto {
     private long themeId;
     private String name;
     private String description;
+    private List<SubThemeDto> subThemes;
 
     public ThemeDto(){
 
@@ -47,6 +49,14 @@ public class ThemeDto {
 
     public void setThemeId(Long themeId){
         this.themeId=themeId;
+    }
+
+    public List<SubThemeDto> getSubThemes() {
+        return subThemes;
+    }
+
+    public void setSubThemes(List<SubThemeDto> subThemes) {
+        this.subThemes = subThemes;
     }
 
     public String toJsonString(){

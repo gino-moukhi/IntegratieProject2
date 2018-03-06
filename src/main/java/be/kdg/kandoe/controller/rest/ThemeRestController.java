@@ -35,7 +35,7 @@ public class ThemeRestController {
     public ResponseEntity<List<ThemeDto>> getAllThemes(){
         System.out.println("CALL RECEIVED: getAllThemes");
         List<Theme> allThemes =themeService.getAllThemes();
-        return ResponseEntity.ok().body(allThemes.stream().map(t-> DtoConverter.toThemeDto(t)).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(allThemes.stream().map(t-> DtoConverter.toThemeDto(t,false)).collect(Collectors.toList()));
     }
 
     //GET-METHODS
@@ -49,7 +49,7 @@ public class ThemeRestController {
         }catch (ThemeServiceException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme,false));
     }
 
     @RequestMapping(value = "api/public/subthemes",method = RequestMethod.GET)
@@ -64,7 +64,7 @@ public class ThemeRestController {
         System.out.println("CALL RECEIVED: getThemeByName: "+name);
         Theme theme = themeService.getThemeByName(name);
         if(theme !=null){
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme,false));
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -96,13 +96,13 @@ public class ThemeRestController {
     public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto themeDto){
         System.out.println("CALL RECEIVED: CreateTheme");
         logger.log(Priority.INFO,"API CALL: CreateTheme");
-        Theme createdTheme = themeService.addTheme(DtoConverter.toTheme(themeDto));
+        Theme createdTheme = themeService.addTheme(DtoConverter.toTheme(themeDto,false));
         if(createdTheme==null){
             logger.log(Priority.ERROR,"ThemeService.addTheme returns NULL..");
             return ResponseEntity.badRequest().build();
         }else{
             logger.log(Priority.INFO,"Successfully created new Theme");
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme));
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme,false));
         }
     }
 
@@ -134,7 +134,7 @@ public class ThemeRestController {
         foundTheme.setName(theme.getName());
         Theme updatedTheme=themeService.editTheme(foundTheme);
         logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme,false));
     }
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}",method = RequestMethod.PUT)
@@ -148,7 +148,7 @@ public class ThemeRestController {
         }
         foundSubTheme.setSubThemeName(dto.getSubThemeName());
         foundSubTheme.setSubThemeDescription(dto.getSubThemeDescription());
-        foundSubTheme.setTheme(DtoConverter.toTheme(dto.getTheme()));
+        foundSubTheme.setTheme(DtoConverter.toTheme(dto.getTheme(),false));
         SubTheme updatedTheme = themeService.editSubtheme(foundSubTheme);
         if(updatedTheme==null){
             logger.log(Priority.ERROR,"Updated Theme is NULL");
@@ -168,7 +168,7 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme,false));
     }
 
     @RequestMapping(value = "api/public/theme", method = RequestMethod.DELETE)
@@ -178,7 +178,7 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
         themeService.removeThemeById(foundTheme.getThemeId());
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme,false));
     }
 
     @RequestMapping(value = "api/public/themes", method = RequestMethod.DELETE)

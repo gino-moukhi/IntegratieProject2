@@ -8,11 +8,12 @@ import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.service.exception.ConversionException;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public abstract class DtoConverter {
 
-    public static ThemeDto toThemeDto(Theme theme){
+    public static ThemeDto toThemeDto(Theme theme,boolean callByConverter){
         if(theme==null){
             return null;
         }
@@ -20,11 +21,15 @@ public abstract class DtoConverter {
         newDto.setThemeId(theme.getThemeId());
         newDto.setName(theme.getName());
         newDto.setDescription(theme.getDescription());
-
+        if(!callByConverter){
+            if(theme.getSubThemes()!=null){
+                newDto.setSubThemes(theme.getSubThemes().stream().map(st->DtoConverter.toSubThemeDto(st,true)).collect(Collectors.toList()));
+            }
+        }
         return newDto;
     }
 
-    public static Theme toTheme(ThemeDto dto){
+    public static Theme toTheme(ThemeDto dto,boolean callByConverter){
         if(dto==null){
             return null;
         }
@@ -32,6 +37,11 @@ public abstract class DtoConverter {
         theme.setThemeId(dto.getThemeId());
         theme.setDescription(dto.getDescription());;
         theme.setName(dto.getName());
+        if(!callByConverter){
+            if(dto.getSubThemes()!=null){
+                theme.setSubThemes(dto.getSubThemes().stream().map(st->DtoConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            }
+        }
         return theme;
     }
 
@@ -49,10 +59,14 @@ public abstract class DtoConverter {
         dto.setSubThemeId(subTheme.getSubThemeId());
         dto.setSubThemeName(subTheme.getSubThemeName());
         dto.setSubThemeDescription(subTheme.getSubThemeDescription());
-        dto.setTheme(DtoConverter.toThemeDto(subTheme.getTheme()));
         if(!callByConverter){
+            if(subTheme.getTheme()!=null){
+                dto.setTheme(DtoConverter.toThemeDto(subTheme.getTheme(),true));
+            }
             if(subTheme.getCards()!=null){
                 dto.setCards(subTheme.getCards().stream().map(c->DtoConverter.toCardDto(c,true)).collect(Collectors.toList()));
+            }else{
+                dto.setCards(new ArrayList<>());
             }
         }
         return dto;
@@ -70,7 +84,7 @@ public abstract class DtoConverter {
         }
         SubTheme subTheme = new SubTheme();
         if(dto.getTheme()!=null){
-            subTheme.setTheme(DtoConverter.toTheme(dto.getTheme()));
+            subTheme.setTheme(DtoConverter.toTheme(dto.getTheme(),true));
         }
         subTheme.setSubThemeId(dto.getSubThemeId());
         subTheme.setSubThemeName(dto.getSubThemeName());

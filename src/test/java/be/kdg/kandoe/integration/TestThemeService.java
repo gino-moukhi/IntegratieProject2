@@ -51,8 +51,8 @@ public class TestThemeService {
         ThemeDto theme1DTO=new ThemeDto(1,"Jeugd","Acties voor de jeugd");
         ThemeDto theme2DTO= new ThemeDto(2,"Sport","Acties voor sport");
 
-        theme1 = DtoConverter.toTheme(theme1DTO);
-        theme2 = DtoConverter.toTheme(theme2DTO);
+        theme1 = DtoConverter.toTheme(theme1DTO,false);
+        theme2 = DtoConverter.toTheme(theme2DTO,false);
 
         subTheme1= new SubTheme();
         subTheme1.setSubThemeId(new Long(1));
@@ -92,7 +92,7 @@ public class TestThemeService {
 
     @Test
     public void TestAddTheme(){
-        Theme themeToAdd = DtoConverter.toTheme(new ThemeDto(3,"ThemeToAdd","Test Theme, if this exists success"));
+        Theme themeToAdd = DtoConverter.toTheme(new ThemeDto(3,"ThemeToAdd","Test Theme, if this exists success"),false);
         themeService.addTheme(themeToAdd);
         Theme returningTheme = themeService.getThemeByName(themeToAdd.getName());
         assertEquals("Theme returned should be equal to ThemeToAdd",returningTheme,themeToAdd);
@@ -104,7 +104,7 @@ public class TestThemeService {
     @Test(expected = InputValidationException.class)
     public void TestAddInvalidTheme(){
         ThemeDto DTOToAdd = new ThemeDto(3,"ThemeToAdd123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789","Theme with a name that is too long");
-        Theme ThemeToAdd = DtoConverter.toTheme(DTOToAdd);
+        Theme ThemeToAdd = DtoConverter.toTheme(DTOToAdd,false);
         themeService.addTheme(ThemeToAdd);
         Theme returningTheme = themeService.getThemeById(ThemeToAdd.getThemeId());
         assertEquals("Theme returned should be null, name too long", returningTheme,null);
@@ -118,7 +118,7 @@ public class TestThemeService {
 
     @Test
     public void TestGetAllThemes(){
-        Theme theme = DtoConverter.toTheme(new ThemeDto(3,"Schoonheid","Thema ivm met schoonheid"));
+        Theme theme = DtoConverter.toTheme(new ThemeDto(3,"Schoonheid","Thema ivm met schoonheid"),false);
         themeService.addTheme(theme);
         assertEquals("Length of themes should be 3",themeService.getAllThemes().size(),3);
         assertEquals("Values of themes should match",themeService.getThemeById(1).getName(),"Jeugd");
@@ -136,8 +136,8 @@ public class TestThemeService {
     @Test
     public void TestEditTheme(){
         ThemeDto updatedDTO = new ThemeDto(theme1.getThemeId(),theme1.getName(),theme1.getDescription());
-        Theme newTheme = DtoConverter.toTheme(updatedDTO);
-        Theme oldTheme =DtoConverter.toTheme(new ThemeDto(newTheme.getThemeId(),newTheme.getName(),newTheme.getDescription()));
+        Theme newTheme = DtoConverter.toTheme(updatedDTO,false);
+        Theme oldTheme =DtoConverter.toTheme(new ThemeDto(newTheme.getThemeId(),newTheme.getName(),newTheme.getDescription()),false);
         newTheme.setDescription("Theme has been updated");
         newTheme.setName("Updated Theme");
         Theme updatedTheme = themeService.editTheme(newTheme);
@@ -173,7 +173,7 @@ public class TestThemeService {
      */
     @Test(expected = ThemeServiceException.class)
     public void TestDeleteByNonExistingThemeId(){
-        Theme unknownTheme = DtoConverter.toTheme(new ThemeDto(3,"School","Thema ivm school"));
+        Theme unknownTheme = DtoConverter.toTheme(new ThemeDto(3,"School","Thema ivm school"),false);
         themeService.removeThemeById(unknownTheme.getThemeId());
     }
     /**

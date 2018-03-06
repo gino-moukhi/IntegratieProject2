@@ -1,11 +1,13 @@
 package be.kdg.kandoe.domain.theme;
 
-import be.kdg.kandoe.dto.theme.ThemeDto;
+
+import java.util.List;
 
 public class Theme {
     private long themeId;
     private String name;
     private String description;
+    private List<SubTheme> subThemes;
 
 
     public Theme(){
@@ -33,4 +35,11 @@ public class Theme {
         this.themeId=id;
     }
 
+    public List<SubTheme> getSubThemes() {
+        return subThemes;
+    }
+
+    public void setSubThemes(List<SubTheme> subThemes) {
+        this.subThemes = subThemes;
+    }
 }
