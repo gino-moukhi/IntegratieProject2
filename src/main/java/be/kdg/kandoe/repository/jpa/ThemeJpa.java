@@ -4,7 +4,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 
 import javax.persistence.*;
 
-@Entity
+    @Entity
     @Table(name = "theme")
     public class ThemeJpa {
         @Id
@@ -22,6 +22,7 @@ import javax.persistence.*;
         public ThemeJpa(){
 
         }
+
         public ThemeJpa(Theme theme){
             this.themeId=theme.getThemeId();
             this.name=theme.getName();
