@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @RestController
+@CrossOrigin
 public class AuthenticationController {
     private final Logger logger = Logger.getLogger(UserRestController.class);
 

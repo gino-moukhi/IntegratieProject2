@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 public class ThemeRestController {
     private final Logger logger = Logger.getLogger(ThemeRestController.class);
 
