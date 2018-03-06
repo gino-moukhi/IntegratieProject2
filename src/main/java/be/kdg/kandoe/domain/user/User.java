@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USER_ENTITY")
 public class User implements UserDetails {
 
     @Id
@@ -52,7 +52,7 @@ public class User implements UserDetails {
     private Gender gender;
 
     @Column
-    @OneToMany(mappedBy = "users",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities;
 
