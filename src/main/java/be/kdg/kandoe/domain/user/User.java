@@ -52,7 +52,7 @@ public class User implements UserDetails {
     private Gender gender;
 
     @Column
-    @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToMany(mappedBy = "users",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities;
 
