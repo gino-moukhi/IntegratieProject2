@@ -1,10 +1,22 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.common.DeviceProvider;
 import be.kdg.kandoe.domain.user.User;
+import be.kdg.kandoe.domain.user.UserTokenState;
+import be.kdg.kandoe.dto.UserDto;
+import be.kdg.kandoe.security.TokenHelper;
+import be.kdg.kandoe.security.auth.JwtAuthenticationRequest;
 import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.UserService;
+import be.kdg.kandoe.service.exception.CustomAuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,10 +26,85 @@ public class AuthenticationHelperServiceImpl implements AuthenticationHelperServ
 
     private final UserService userService;
 
+    private final TokenHelper tokenHelper;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final CustomUserDetailsService userDetailsService;
+
+    private final DeviceProvider deviceProvider;
+
     @Autowired
-    public AuthenticationHelperServiceImpl(UserService userService) {
+    public AuthenticationHelperServiceImpl(UserService userService, TokenHelper tokenHelper, AuthenticationManager authenticationManager, CustomUserDetailsService userDetailsService, DeviceProvider deviceProvider) {
         this.userService = userService;
+        this.tokenHelper = tokenHelper;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.deviceProvider = deviceProvider;
     }
+
+    @Override
+    public UserTokenState authenticate(JwtAuthenticationRequest authenticationRequest, Device device){
+
+        try{
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(),
+                            authenticationRequest.getPassword()
+                    )
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // token creation
+            User user = (User)authentication.getPrincipal();
+
+            //Fill in roles
+            StringBuilder roles = new StringBuilder();
+            user.getAuthorities().forEach(role -> roles.append(role.getAuthority() + " "));
+
+            String jws = tokenHelper.generateToken( user.getUsername(), device, roles.toString());
+            int expiresIn = tokenHelper.getExpiredIn(device);
+
+            return new UserTokenState(jws, expiresIn);
+
+        }catch (AuthenticationException e){
+            if (e.getMessage().toLowerCase().contains("bad credentials")) throw new CustomAuthenticationException("Username and password don't match");
+            throw new CustomAuthenticationException("Something went wrong while trying to login", e);
+        }
+    }
+
+    @Override
+    public boolean checkUsernameCredentials(String username){
+        return userService.usernameUsed(username);
+    }
+
+    @Override
+    public boolean checkEmailCredentials(String email){
+        return userService.emailUsed(email);
+    }
+
+    @Override
+    public boolean register(UserDto userDto){
+        boolean usernameGood = this.checkUsernameCredentials(userDto.getUsername());
+        boolean emailGood = this.checkEmailCredentials(userDto.getEmail());
+
+        if(!usernameGood && !emailGood){
+            throw new CustomAuthenticationException("Username and email already used!");
+        }
+        else if(!usernameGood){
+            throw new CustomAuthenticationException("Username is already used!");
+        }
+        else if(!emailGood){
+            throw new CustomAuthenticationException("Email is already used!");
+        }
+        else{
+            User user = new User(userDto);
+            userDetailsService.addUser(user);
+            return true;
+        }
+    }
+
 
     @Override
     public boolean isAdmin(User user) {

@@ -1,5 +1,6 @@
 package be.kdg.kandoe.service.implementation;
 
+import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.repository.declaration.UserRepository;
@@ -71,20 +72,22 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         return u;
     }
 
+    //IMPORTANT ONLY USE THIS METHOD IF YOU WANT TO ALSO UPDATE THE PASSWORD!!!
     @Override
     public User updateUser(Long userId, User user) throws UserServiceException {
-        User u = userRepository.findOne(userId);
+        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
+        return this.saveUser(user);
+    }
 
-        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
-
-
+    @Override
+    public User updateUserNoPassword(User user) throws UserServiceException {
         return this.saveUser(user);
     }
 
     @Override
     public User addUser(User user) throws UserServiceException {
         Authority authority = new Authority();
-        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
         user.setAuthorities(Arrays.asList(authority));
         authority.setUser(user);
         return this.saveUser(user);
@@ -107,16 +110,6 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         }
     }
 
-
-//    @Override
-//    public void checkLogin(String username, String password) throws UserServiceException {
-//        User u = userRepository.findUserByUsername(username);
-//        if(u == null || !passwordEncoder.matches(password, u.getEncryptedPassword())){
-//            throw new UserServiceException("Username and password are incorrect for user " + username);
-//        }
-//    }
-
-
     @Override
     public void updatePassword(Long userId, String oldPassword, String newPassword) throws UserServiceException {
         User u = userRepository.findOne(userId);
@@ -124,7 +117,6 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         u.setEncryptedPassword(passwordEncoder.encode(newPassword));
         userRepository.save(u);
     }
-
 
     @Override
     public User findUserByEmail(String email) throws UserServiceException {
@@ -135,13 +127,28 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     }
 
     @Override
+    public boolean usernameUsed(String username) {
+        User user = userRepository.findUserByUsername(username);
+        return user == null;
+    }
+
+    @Override
+    public boolean emailUsed(String email) {
+        User user = userRepository.findUserByEmail(email);
+        return user == null;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = userRepository.findUserByUsername(username);
         if (u == null) throw new UsernameNotFoundException("No such user: " + username);
         return u;
     }
 
-
-
-
+    @Override
+    public void addUserGameSessionInfo(Long id, UserGameSessionInfo userGameSessionInfo) {
+        User user = userRepository.findOne(id);
+        user.addGameSessionInfo(userGameSessionInfo);
+        this.updateUserNoPassword(user);
+    }
 }

@@ -1,10 +1,9 @@
 package be.kdg.kandoe.service.declaration;
 
+import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.service.exception.UserServiceException;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -31,5 +30,13 @@ public interface UserService extends UserDetailsService{
     void checkLogin(Long userId, String currentPassword) throws UserServiceException;
 
     void updatePassword(Long userId, String oldPassword, String newPassword) throws UserServiceException;
+
+    void addUserGameSessionInfo(Long id, UserGameSessionInfo userGameSessionInfo);
+
+    User updateUserNoPassword(User user) throws UserServiceException;
+
+    boolean usernameUsed(String username);
+
+    boolean emailUsed(String email);
 
 }

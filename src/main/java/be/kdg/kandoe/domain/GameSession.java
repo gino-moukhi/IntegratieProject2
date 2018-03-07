@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table()
 public class GameSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,35 +53,34 @@ public class GameSession {
 
     public GameSession(CreateGameSessionDto gameSessionDto, User user){
         this.title = gameSessionDto.getTitle();
-        //TODO organisator
         this.isOrganisatorPlaying = gameSessionDto.isOrganisatorPlaying();
         this.allowUsersToAdd = gameSessionDto.isAllowUsersToAdd();
         this.addLimit = gameSessionDto.getLimit();
         this.selectionLimit = gameSessionDto.getSelectionLimit();
         this.timerLength = gameSessionDto.getTimer();
 
-        //TODO notificatons
+        //Role
+        GameSessionRole role;
+        role = isOrganisatorPlaying ? GameSessionRole.ModeratorParticipant : GameSessionRole.Moderator;
+        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(getDefaultNotifications(), false, role, user, this);
+
+        this.userGameSessionInfos.add(userGameSessionInfo);
+    }
+
+
+    public UserGameSessionInfo addUserToGameSession(User user){
+        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(getDefaultNotifications(), false, GameSessionRole.Participant, user, this);
+        this.userGameSessionInfos.add(userGameSessionInfo);
+        return userGameSessionInfo;
+    }
+
+    private List<Notification> getDefaultNotifications(){
         List<Notification> notifications = new ArrayList<>();
         notifications.add(Notification.StartGame);
         notifications.add(Notification.EndGame);
         notifications.add(Notification.YourTurn);
         notifications.add(Notification.EndTurn);
-
-        //Role
-        GameSessionRole role;
-        role = isOrganisatorPlaying ? GameSessionRole.ModeratorParticipant : GameSessionRole.Moderator;
-        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(notifications, false, role, user, this);
-
-        this.userGameSessionInfos.add(userGameSessionInfo);
-    }
-
-
-    public void addUserToGameSession(UserGameSessionInfo userGameSessionInfo){
-        this.userGameSessionInfos.add(userGameSessionInfo);
-    }
-
-    public void removeUserFromGameSession(UserGameSessionInfo userGameSessionInfo){
-        this.userGameSessionInfos.remove(userGameSessionInfo);
+        return notifications;
     }
 
     public boolean isOrganisatorPlaying() {

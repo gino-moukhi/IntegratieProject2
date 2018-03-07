@@ -2,7 +2,6 @@ package be.kdg.kandoe.domain;
 
 import be.kdg.kandoe.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.List;

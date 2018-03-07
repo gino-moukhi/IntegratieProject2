@@ -38,6 +38,7 @@ public class MainWebAppInitializer implements WebApplicationInitializer {
 
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
+
         return new StandardServletMultipartResolver();
     }
 }

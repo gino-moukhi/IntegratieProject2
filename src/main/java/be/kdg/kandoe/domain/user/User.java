@@ -1,6 +1,5 @@
 package be.kdg.kandoe.domain.user;
 
-import be.kdg.kandoe.domain.GameSession;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
@@ -9,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -104,6 +102,10 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    public void addGameSessionInfo(UserGameSessionInfo userGameSessionInfo){
+        this.gameSessionInfos.add(userGameSessionInfo);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -131,7 +133,11 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getEncryptedPassword();
+        return this.encryptedPassword;
+    }
+
+    public String getEncryptedPassword() {
+        return this.encryptedPassword;
     }
 
     public long getUserId() {
@@ -172,10 +178,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getEncryptedPassword(){
-        return this.encryptedPassword;
     }
 
     public void setEncryptedPassword(String password) {
