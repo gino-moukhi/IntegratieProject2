@@ -107,7 +107,11 @@ public class TestThemeRestController {
 
     @Test
     public void TestGetSubThemesByThemeId(){
-        ResponseEntity<SubThemeDto> response;
+        ParameterizedTypeReference<List<SubThemeDto>> typeref = new ParameterizedTypeReference<List<SubThemeDto>>() {
+        };
+        ResponseEntity<List<SubThemeDto>> response = restTemplate.exchange("http://localhost:9090/api/public/theme/"+theme1.getThemeId()+"/subthemes",HttpMethod.GET,null,typeref);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(response.getBody().size(),equalTo(2));
     }
 
     @Test
@@ -115,7 +119,7 @@ public class TestThemeRestController {
         ThemeDto themeDto = restTemplate.getForEntity("http://localhost:9090/api/public/theme/1",ThemeDto.class).getBody();
         themeDto.setName("SchoolUpdated");
         themeDto.setDescription("Updated Theme of School");
-        HttpEntity<ThemeDto> httpEntity = new HttpEntity<ThemeDto>(themeDto);
+        HttpEntity<ThemeDto> httpEntity = new HttpEntity<>(themeDto);
         ResponseEntity<ThemeDto> response = restTemplate.exchange("http://localhost:9090/api/public/theme/1",HttpMethod.PUT,httpEntity,ThemeDto.class);
 
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
@@ -147,7 +151,8 @@ public class TestThemeRestController {
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertNotNull(response.getBody());
         Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
-        Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
+        //Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
+        Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
         Assert.assertThat(response.getBody().getName(),equalTo("School"));
     }
 

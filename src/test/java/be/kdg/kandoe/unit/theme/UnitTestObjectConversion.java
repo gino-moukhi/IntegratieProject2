@@ -125,7 +125,7 @@ public class UnitTestObjectConversion {
 
     @Test
     public void TestThemeJpaToTheme(){
-        Theme theme = JpaConverter.toTheme(themeJpaToTest);
+        Theme theme = JpaConverter.toTheme(themeJpaToTest, false);
         Assert.assertThat(theme.getThemeId(),equalTo(themeJpaToTest.getThemeId()));
         Assert.assertThat(theme.getName(),equalTo(themeJpaToTest.getName()));
         Assert.assertThat(theme.getDescription(),equalTo(themeJpaToTest.getDescription()));
@@ -133,7 +133,7 @@ public class UnitTestObjectConversion {
 
     @Test
     public void TestThemeToThemeJpa(){
-        ThemeJpa jpa = JpaConverter.toThemeJpa(themeToTest);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(themeToTest, false);
         Assert.assertThat(themeToTest.getThemeId(),equalTo(jpa.getThemeId()));
         Assert.assertThat(themeToTest.getName(),equalTo(jpa.getName()));
         Assert.assertThat(themeToTest.getDescription(),equalTo(jpa.getDescription()));
