@@ -4,6 +4,7 @@ import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
+import be.kdg.kandoe.dto.theme.CardDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -234,6 +236,56 @@ public class TestThemeService {
         Assert.assertThat(card.getCardId(),equalTo(cardId));
         Assert.assertThat(card.getName(),equalTo(card1.getName()));
         Assert.assertTrue(card.getSubThemes().contains(subTheme1));
+    }
+
+    @Test
+    public void TestCreateCard(){
+        Card newCard = DtoConverter.toCard(new CardDto(3,"CardToCreate","Card should be created by TestCreateCard",false),false);
+        Card addedCard = themeService.addCard(newCard);
+        Assert.assertThat(addedCard.getCardId(),equalTo(newCard.getCardId()));
+        Assert.assertThat(addedCard.getName(),equalTo(newCard.getName()));
+        Assert.assertThat(addedCard.getDescription(),equalTo(newCard.getDescription()));
+    }
+
+    @Test
+    public void TestAddCardToSubtheme(){
+        Card mockCard = DtoConverter.toCard(new CardDto(3,"Card of Subtheme","This Card should be added to a subtheme",false),false);
+        SubTheme mockSubTheme = DtoConverter.toSubTheme(new SubThemeDto(3,null,"SubTheme of Card","This subtheme should contain a card",new ArrayList<>()),false);
+        themeService.addSubThemeByThemeId(mockSubTheme,1);
+        themeService.addCard(mockCard);
+        SubTheme editedSubTheme = themeService.addCardToSubTheme(3,3);
+        Card addedCard = themeService.getCardById(3);
+
+        boolean subThemeContainsCard=false;
+        SubTheme subThemeToGet = themeService.getSubThemeById(3);
+        for (Card card:subThemeToGet.getCards()
+             ) {
+            if(card.getCardId()==mockCard.getCardId()){
+                subThemeContainsCard=true;
+            }
+        }
+
+        boolean cardContainsSubTheme=false;
+        for (SubTheme s: addedCard.getSubThemes()){
+            if(s.getSubThemeId()==editedSubTheme.getSubThemeId()){
+                cardContainsSubTheme=true;
+            }
+        }
+        Assert.assertTrue("Subtheme should contain the card",subThemeContainsCard);
+        Assert.assertTrue("Card should contain the subtheme",cardContainsSubTheme);
+    }
+
+    @Test
+    public void DeleteCardsFromSubTheme(){
+        Assert.assertThat("SubTheme should initially have cards",subTheme1.getCards().size(),not(0));
+        SubTheme subThemeNoCards = themeService.removeCardsFromSubTheme(1);
+        Assert.assertThat(subThemeNoCards.getCards().size(),equalTo(0));
+    }
+
+    @Test
+    public void TestGetCardsFromSubTheme(){
+        List<Card> cards = themeService.getCardsBySubthemeId(1);
+        Assert.assertThat(cards.size(),equalTo(2));
     }
 
     @Test(expected = ThemeRepositoryException.class)

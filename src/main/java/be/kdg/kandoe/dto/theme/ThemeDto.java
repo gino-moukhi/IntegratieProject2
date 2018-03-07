@@ -17,13 +17,14 @@ public class ThemeDto {
     private List<SubThemeDto> subThemes;
 
     public ThemeDto(){
-
+        subThemes= new ArrayList<>();
     }
 
     public ThemeDto(long themeId, String name, String description) {
         this.themeId=themeId;
         this.name = name;
         this.description = description;
+        subThemes = new ArrayList<>();
     }
 
     public String getName() {

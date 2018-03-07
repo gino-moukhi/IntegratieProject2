@@ -100,6 +100,14 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         return JpaConverter.toSubTheme(jpa, false);
     }
 
+    @Transactional
+    @Override
+    public Card editCard(Card card) {
+        CardJpa jpa = JpaConverter.toCardJpa(card, false);
+        CardJpa result = em.merge(jpa);
+        return JpaConverter.toCard(result, false);
+    }
+
 
     @Transactional
     @Override
@@ -121,6 +129,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public void deleteAll() {
         em.createQuery("DELETE from SubThemeJpa").executeUpdate();
+        em.createQuery("DELETE from CardJpa").executeUpdate();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
     }
 
@@ -160,26 +169,32 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         return query.getResultList().stream().map(jpa -> JpaConverter.toSubTheme(jpa, false)).collect(Collectors.toList());
     }
 
-    @Override
-    public List<Card> findCardsByThemeId(long themeId) {
-        /*<SubThemeJpa> q1 = em.createQuery("SELECT st from SubThemeJpa st where st.theme.themeId=:themeId",SubThemeJpa.class).setParameter("themeId",themeId);
-        List<Card> cards=new ArrayList<>();
-        for (SubThemeJpa jpa:q1.getResultList()
-             ) {
-            TypedQuery<Card> q2 = em.createQuery("SELECT c from CardJpa c join SubThemeJpa sub on c.subthemeId = sub.subthemeId where sub.themeId = :themeId", Card.class);
-        }
-
-        q.setParameter("themeId",themeId);
-        return q.getResultList();*/
-        throw new NotImplementedException();
-    }
 
     @Override
+    @Transactional
     public List<Card> findCardsBySubthemeId(long subthemeId) {
-        throw new NotImplementedException();
+        TypedQuery<CardJpa> q = em.createQuery("SELECT card FROM CardJpa card " +
+                "join card.subThemes st where st.subThemeId=:subThemeId", CardJpa.class)
+                .setParameter("subThemeId", subthemeId);
+
+        if (q.getResultList().isEmpty()) {
+            throw new ThemeRepositoryException("No Cards found for SubTheme with ID: " + subthemeId);
+        }
+        return q.getResultList().stream().map(c -> JpaConverter.toCard(c, false)).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
+    public List<Card> findAllCards() {
+        TypedQuery<CardJpa> query = em.createQuery("SELECT card FROM CardJpa card", CardJpa.class);
+        if (query.getResultList().isEmpty()) {
+            throw new ThemeRepositoryException("No cards found");
+        }
+        return query.getResultList().stream().map(c -> JpaConverter.toCard(c, false)).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public Card findCardById(@Param("cardId") long cardId) {
         TypedQuery<CardJpa> q = em.createQuery("SELECT c from CardJpa c where c.cardId = :cardId", CardJpa.class);
         q.setParameter("cardId", cardId);
@@ -190,6 +205,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     }
 
     @Override
+    @Transactional
     public Card createCard(Card card) {
         CardJpa jpa = JpaConverter.toCardJpa(card, false);
         em.persist(jpa);
@@ -197,12 +213,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     }
 
     @Override
-    public Card saveCard(Card card) {
-        CardJpa jpa = JpaConverter.toCardJpa(card, false);
-        return em.merge(card);
-    }
-
-    @Override
+    @Transactional
     public Card delete(Card card) {
         CardJpa jpa = JpaConverter.toCardJpa(card, false);
         em.remove(em.contains(jpa) ? jpa : em.merge(jpa));

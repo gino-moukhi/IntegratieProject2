@@ -25,15 +25,15 @@ public interface ThemeRepository {
     List<SubTheme> findAllSubThemes();
     List<SubTheme> findSubThemesByThemeId(long id);
 
-    List<Card> findCardsByThemeId(long themeId);
-
     List<Card> findCardsBySubthemeId(long subthemeId);
 
     Card findCardById(long cardId);
 
     Card createCard(Card card);
 
-    Card saveCard(Card card);
-
     Card delete(Card card);
+
+    Card editCard(Card cardToAdd);
+
+    List<Card> findAllCards();
 }

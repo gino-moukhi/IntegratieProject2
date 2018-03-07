@@ -25,6 +25,7 @@ public abstract class DtoConverter {
             if(theme.getSubThemes()!=null){
                 newDto.setSubThemes(theme.getSubThemes().stream().map(st->DtoConverter.toSubThemeDto(st,true)).collect(Collectors.toList()));
             }
+            else newDto.setSubThemes(new ArrayList<>());
         }
         return newDto;
     }
@@ -40,6 +41,8 @@ public abstract class DtoConverter {
         if(!callByConverter){
             if(dto.getSubThemes()!=null){
                 theme.setSubThemes(dto.getSubThemes().stream().map(st->DtoConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            }else{
+                theme.setSubThemes(new ArrayList<>());
             }
         }
         return theme;
@@ -92,6 +95,8 @@ public abstract class DtoConverter {
         if(!callByConverter){
             if(dto.getCards()!=null) {
                 subTheme.setCards(dto.getCards().stream().map(c->DtoConverter.toCard(c,true)).collect(Collectors.toList()));
+            }else{
+                subTheme.setCards(new ArrayList<>());
             }
         }
         return subTheme;
@@ -117,7 +122,12 @@ public abstract class DtoConverter {
         newCard.setDescription(cardDto.getDescription());
         newCard.setDefaultCard(cardDto.isDefaultCard());
         if(!callByConverter){
-            newCard.setSubThemes(cardDto.getSubThemes().stream().map(st->DtoConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            if(cardDto.getSubThemes()!=null){
+                newCard.setSubThemes(cardDto.getSubThemes().stream().map(st->DtoConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            }else{
+                newCard.setSubThemes(new ArrayList<>());
+            }
+
         }
         return newCard;
     }
@@ -141,7 +151,11 @@ public abstract class DtoConverter {
         dto.setDescription(card.getDescription());
         dto.setDefaultCard(card.isDefaultCard());
         if(!callByConverter){
-            dto.setSubThemes(card.getSubThemes().stream().map(st->DtoConverter.toSubThemeDto(st,true)).collect(Collectors.toList()));
+            if(card.getSubThemes()!=null){
+                dto.setSubThemes(card.getSubThemes().stream().map(st->DtoConverter.toSubThemeDto(st,true)).collect(Collectors.toList()));
+            }else{
+                dto.setSubThemes(new ArrayList<>());
+            }
         }
         return dto;
     }

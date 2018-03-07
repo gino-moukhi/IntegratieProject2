@@ -3,6 +3,7 @@ package be.kdg.kandoe.repository.jpa;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ public class SubThemeJpa {
     private long subThemeId;
 
     @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "subtheme_themeId")
+    @JoinColumn(name = "themeId_PK")
     private ThemeJpa theme;
 
     @Column
@@ -26,8 +27,12 @@ public class SubThemeJpa {
     @Column
     private String subThemeDescription;
 
-    @ManyToMany(cascade= CascadeType.ALL,mappedBy = "subThemes")
-    @JsonManagedReference
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(
+            name="SUBTHEME_CARD",
+            joinColumns = {@JoinColumn(name = "subthemeId",referencedColumnName = "subthemeId")},
+            inverseJoinColumns = {@JoinColumn(name="cardId",referencedColumnName = "cardId")}
+    )
     private List<CardJpa> cards;
 
     public SubThemeJpa(){

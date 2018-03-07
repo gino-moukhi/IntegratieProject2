@@ -10,12 +10,14 @@ import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 public class ThemeServiceImpl implements ThemeService {
 
     private ThemeRepository themeRepo;
@@ -42,6 +44,21 @@ public class ThemeServiceImpl implements ThemeService {
         return themeRepo.createSubTheme(subTheme);
     }
 
+    @Override
+    public Card addCard(Card card) throws ThemeRepositoryException{
+        return themeRepo.createCard(card);
+    }
+
+    @Override
+    public SubTheme addCardToSubTheme(long cardId,long subThemeId){
+        SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
+        Card cardToAdd = themeRepo.findCardById(cardId);
+        subThemeForCard.addCard(cardToAdd);
+        cardToAdd.addSubTheme(subThemeForCard);
+        themeRepo.editCard(cardToAdd);
+        return themeRepo.editSubTheme(subThemeForCard);
+
+    }
     //ADD-METHODS
     //GET-METHODS
     @Override
@@ -78,8 +95,8 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public List<Card> getCardsByThemeId(long themeId) throws ThemeRepositoryException {
-        return themeRepo.findCardsByThemeId(themeId);
+    public List<Card> getAllCards(){
+        return themeRepo.findAllCards();
     }
 
     @Override
@@ -88,28 +105,14 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public Card getCardById(long cardId) {
+    public Card getCardById(long cardId) throws ThemeRepositoryException {
         Card card = themeRepo.findCardById(cardId);
         return card;
     }
 
     @Override
-    public Card addCardBySubtheme(Card card, long subThemeId) throws ThemeRepositoryException {
-        SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
-        subThemeForCard.addCard(card);
-        card.addSubTheme(subThemeForCard);
-        themeRepo.editSubTheme(subThemeForCard);
-        return themeRepo.createCard(card);
-    }
-
-    @Override
-    public Card editCard(long cardId, Card card) throws ThemeRepositoryException {
-        Card cardToUpdate = themeRepo.findCardById(cardId);
-        cardToUpdate.setName(card.getName());
-        cardToUpdate.setDescription(card.getDescription());
-        cardToUpdate.setDefaultCard(card.isDefaultCard());
-        cardToUpdate.setSubThemes(card.getSubThemes());
-        return themeRepo.saveCard(cardToUpdate);
+    public Card editCard(Card card) throws ThemeRepositoryException {
+        return themeRepo.editCard(card);
     }
 
     @Override
@@ -169,6 +172,13 @@ public class ThemeServiceImpl implements ThemeService {
             }
         }
         return deletedSubThemes;
+    }
+
+    @Override
+    public SubTheme removeCardsFromSubTheme(long subThemeId){
+        SubTheme subThemeToEdit = themeRepo.findSubThemeById(subThemeId);
+        subThemeToEdit.setCards(new ArrayList<>());
+        return themeRepo.editSubTheme(subThemeToEdit);
     }
     //REMOVE-METHODS
 

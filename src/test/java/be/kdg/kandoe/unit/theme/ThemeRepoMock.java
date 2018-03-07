@@ -75,14 +75,17 @@ public class ThemeRepoMock implements ThemeRepository {
 
     @Override
     public SubTheme editSubTheme(SubTheme subTheme) {
-        if(themes.contains(subTheme)){
-            SubTheme subTheme1 = subThemes.get(subThemes.indexOf(subTheme));
-            subTheme1.setSubThemeName(subTheme.getSubThemeName());
-            subTheme1.setSubThemeDescription(subTheme.getSubThemeDescription());
-            subTheme1.setTheme(subTheme.getTheme());
-            return subTheme1;
+        for (SubTheme st :subThemes
+             ) {
+            if(st.getSubThemeId()==subTheme.getSubThemeId()){
+                st.setTheme(subTheme.getTheme());
+                st.setCards(subTheme.getCards());
+                st.setSubThemeName(subTheme.getSubThemeName());
+                st.setSubThemeDescription(st.getSubThemeDescription());
+                return st;
+            }
         }
-        return null;
+        throw new ThemeRepositoryException("Could not edit subTheme: "+subTheme.getSubThemeId());
     }
 
     public Theme deleteThemeByName(String name) {
@@ -165,14 +168,20 @@ public class ThemeRepoMock implements ThemeRepository {
         return subThemes;
     }
 
-    @Override
-    public List<Card> findCardsByThemeId(long themeId) {
-        return null;
-    }
 
     @Override
     public List<Card> findCardsBySubthemeId(long subthemeId) {
-        return null;
+        List<Card> foundCards = new ArrayList<>();
+        for (Card c:cards
+             ) {
+            for (SubTheme st:c.getSubThemes()
+                 ) {
+                if(st.getSubThemeId()==subthemeId){
+                    if(!foundCards.contains(c))foundCards.add(c);
+                }
+            }
+        }
+        return foundCards;
     }
 
     @Override
@@ -192,24 +201,28 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     @Override
-    public Card saveCard(Card card) {
-        for (Card c:cards
-             ) {
-            if(c.getCardId()==card.getCardId()){
-                c.setName(card.getName());
-                c.setDefaultCard(card.isDefaultCard());
-                c.setDescription(card.getDescription());
-                c.setSubThemes(card.getSubThemes());
-                return c;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public Card delete(Card card) {
         cards.remove(card);
         return card;
+    }
+
+    @Override
+    public Card editCard(Card cardToEdit) {
+        for (Card c:cards){
+            if(c.getCardId()==cardToEdit.getCardId()){
+                c.setSubThemes(cardToEdit.getSubThemes());
+                c.setName(cardToEdit.getName());
+                c.setDescription(cardToEdit.getDescription());
+                c.setDefaultCard(cardToEdit.isDefaultCard());
+                return c;
+            }
+        }
+        throw new ThemeRepositoryException("Could not edit theme: "+cardToEdit.getCardId());
+    }
+
+    @Override
+    public List<Card> findAllCards() {
+        return this.cards;
     }
 
     public void setThemes(ArrayList<Theme> themes){

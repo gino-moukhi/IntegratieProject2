@@ -26,9 +26,9 @@ public class CardJpa {
     @ManyToMany(cascade = CascadeType.ALL)
     @JsonBackReference
     @JoinTable(
-            name="subtheme_card",
-            joinColumns = {@JoinColumn(name="card_id")},
-            inverseJoinColumns = {@JoinColumn(name = "subtheme_id")}
+            name="SUBTHEME_CARD",
+            joinColumns = {@JoinColumn(name="cardId",referencedColumnName = "cardId")},
+            inverseJoinColumns = {@JoinColumn(name = "subthemeId",referencedColumnName = "subthemeId")}
     )
     private List<SubThemeJpa> subThemes;
 

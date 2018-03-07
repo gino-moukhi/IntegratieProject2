@@ -14,6 +14,7 @@ import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,13 +82,31 @@ public class ThemeRestController {
     }
 
     @RequestMapping(value = "api/public/theme/{themeId}/subthemes", method= RequestMethod.GET)
-    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@RequestParam(name="themeId")long themeId){
+    public ResponseEntity<String> getSubThemesByThemeId(@RequestParam(name="themeId")long themeId){
         System.out.println("CALL RECEIVED: getSubThemesByThemeId: "+themeId);
-        List<SubTheme> subThemes = themeService.getSubThemesByThemeId(themeId);
+        List<SubThemeDto> subThemes = themeService.getSubThemesByThemeId(themeId).stream().map(st->DtoConverter.toSubThemeDto(st,false)).collect(Collectors.toList());
+        StringBuilder subThemesJSON = new StringBuilder();
+        for (SubThemeDto st: subThemes){
+            subThemesJSON.append(st.toJsonString());
+        }
+        System.out.println(subThemesJSON.toString());
         if(subThemes==null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(subThemes.stream().map(s->DtoConverter.toSubThemeDto(s,false)).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(subThemesJSON.toString());
+    }
+
+    @RequestMapping(value = "api/public/subtheme/{subThemeId}/cards",method = RequestMethod.GET)
+    public ResponseEntity<List<CardDto>> getCardsBySubThemeId(@PathVariable(name = "subThemeId")long subThemeId){
+        try{
+            List<Card> cards = themeService.getCardsBySubthemeId(subThemeId);
+            return ResponseEntity.ok().body(cards.stream().map(c->DtoConverter.toCardDto(c,false)).collect(Collectors.toList()));
+        }catch (ThemeRepositoryException te){
+            return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     //GET-METHODS
@@ -207,29 +226,33 @@ public class ThemeRestController {
      * @return
      */
 
-    @RequestMapping(value = "/api/public/theme/{themeId}/cards",method = RequestMethod.GET)
-    public ResponseEntity<List<CardDto>> getCardsFromTheme(@PathVariable long themeId){
+    @RequestMapping(value = "api/public/cards",method = RequestMethod.POST)
+    public ResponseEntity<CardDto> createCard(@Valid @RequestBody CardDto card){
         try{
-            List<Card> cards = themeService.getCardsByThemeId(themeId);
-            return ResponseEntity.ok().body(cards.stream().map(c->DtoConverter.toCardDto(c,false)).collect(Collectors.toList()));
-        }catch (ThemeRepositoryException e){
-            return ResponseEntity.notFound().build();
+            Card cardAdded = themeService.addCard(DtoConverter.toCard(card,false));
+            return ResponseEntity.ok().body(DtoConverter.toCardDto(cardAdded,false));
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
-    @RequestMapping(value = "/api/public/subtheme/{subthemeId}/cards",method = RequestMethod.GET)
-    public ResponseEntity<List<CardDto>> getCardsFromSubtheme(@PathVariable long subthemeId){
+    @RequestMapping(value = "/api/public/cards",method = RequestMethod.GET)
+    public ResponseEntity<List<CardDto>> getAllCards(){
         try{
-            List<Card> cards = themeService.getCardsBySubthemeId(subthemeId);
-            return ResponseEntity.ok().body(cards.stream().map(c->DtoConverter.toCardDto(c,false)).collect(Collectors.toList()));
-        }catch (ThemeRepositoryException e)
-        {
+            List<CardDto> cards = themeService.getAllCards().stream().map(c->DtoConverter.toCardDto(c,false)).collect(Collectors.toList());
+            return ResponseEntity.ok().body(cards);
+        }catch (ThemeRepositoryException e){
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @RequestMapping(value = "/api/public/card/{cardId}",method = RequestMethod.GET)
-    public ResponseEntity<Card> getCard(@PathVariable long cardId){
+    public ResponseEntity<Card> getCardById(@PathVariable long cardId){
         try{
             Card card = themeService.getCardById(cardId);
             return ResponseEntity.ok(card);
@@ -237,26 +260,28 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @RequestMapping( value = "/api/public/subtheme/{subThemeId}/cards",method = RequestMethod.POST)
-    public ResponseEntity<CardDto> createCardBysubtheme(@Valid @RequestBody Card card, @PathVariable(name = "subThemeId")long subThemeId){
+    @RequestMapping(value = "/api/public/subtheme/{subThemeId}/card/{cardId}",method = RequestMethod.PUT)
+    public ResponseEntity<SubTheme> addCardToSubTheme(@PathVariable(name = "subThemeId")long subThemeId,@PathVariable(name = "cardId")long cardId){
         try{
-            Card createdCard = themeService.addCardBySubtheme(card,subThemeId);
-            return ResponseEntity.ok().body(DtoConverter.toCardDto(createdCard,false));
-        }catch (ThemeRepositoryException e){
+            SubTheme updatedSubTheme = themeService.addCardToSubTheme(cardId,subThemeId);
+            return ResponseEntity.ok().body(updatedSubTheme);
+        }catch (ThemeRepositoryException te){
             return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
-    @RequestMapping(value = "/api/public/cards/{cardId}",method = RequestMethod.PUT)
-    public ResponseEntity<Card> updateCard(@Valid @RequestBody Card card,@PathVariable(name = "cardId")long cardId){
+    @RequestMapping(value = "/api/public/cards/",method = RequestMethod.PUT)
+    public ResponseEntity<Card> updateCard(@Valid @RequestBody Card card){
         try{
-            Card updatedCard = themeService.editCard(cardId,card);
+            Card updatedCard = themeService.editCard(card);
             return ResponseEntity.ok(updatedCard);
         }catch (ThemeRepositoryException e){
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
-
     }
 
     @RequestMapping(value = "/api/public/card/{cardId}",method = RequestMethod.DELETE)
@@ -265,9 +290,8 @@ public class ThemeRestController {
             Card card = themeService.removeCardById(cardId);
             return ResponseEntity.ok(card);
         }catch (ThemeRepositoryException e){
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
-
-
     }
 }
