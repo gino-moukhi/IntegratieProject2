@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class JpaConverter {
-    public static Theme toTheme(ThemeJpa jpa, boolean callByConverter){
+    public static Theme toTheme(ThemeJpa jpa,boolean callByConverter){
         if(jpa==null){
             return null;
         }
@@ -24,13 +24,15 @@ public abstract class JpaConverter {
         theme.setThemeId(jpa.getThemeId());
         theme.setDescription(jpa.getDescription());
         theme.setName(jpa.getName());
-        if (theme.getSubthemes() != null && !callByConverter){
-            theme.setSubthemes(jpa.getSubthemes().stream().map(subtheme -> JpaConverter.toSubTheme(subtheme,true)).collect(Collectors.toList()));
+        if (!callByConverter){
+            if(jpa.getSubThemes()!=null){
+                theme.setSubThemes(jpa.getSubThemes().stream().map(st->JpaConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            }
         }
         return theme;
     }
 
-    public static ThemeJpa toThemeJpa(Theme theme, boolean callByConverter){
+    public static ThemeJpa toThemeJpa(Theme theme,boolean callByConverter){
         if(theme==null){
             return null;
         }
@@ -41,6 +43,11 @@ public abstract class JpaConverter {
         jpa.setName(theme.getName());
         jpa.setDescription((theme.getDescription()));
         jpa.setThemeId(theme.getThemeId());
+        if(!callByConverter){
+            if(theme.getSubThemes()!=null){
+                jpa.setSubThemes(theme.getSubThemes().stream().map(st->JpaConverter.toSubThemeJpa(st,true)).collect(Collectors.toList()));
+            }
+        }
         return jpa;
     }
 

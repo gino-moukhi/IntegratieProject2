@@ -1,20 +1,21 @@
 package be.kdg.kandoe.dto.theme;
 
 import be.kdg.kandoe.dto.converter.DtoConverter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class SubThemeDto {
     private long subThemeId;
     private ThemeDto theme;
     private String subThemeName;
     private String subThemeDescription;
+    @JsonProperty("cards")
     private List<CardDto> cards;
 
     public SubThemeDto(){
-        this.cards= new ArrayList<>();
     }
 
     public SubThemeDto(long id, String name, String description){

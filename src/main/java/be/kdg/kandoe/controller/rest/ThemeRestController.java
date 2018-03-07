@@ -35,7 +35,7 @@ public class ThemeRestController {
     public ResponseEntity<List<ThemeDto>> getAllThemes(){
         System.out.println("CALL RECEIVED: getAllThemes");
         List<Theme> allThemes =themeService.getAllThemes();
-        return ResponseEntity.ok().body(allThemes.stream().map(t-> DtoConverter.toThemeDto(t)).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(allThemes.stream().map(t-> DtoConverter.toThemeDto(t,false)).collect(Collectors.toList()));
     }
 
     //GET-METHODS
@@ -46,10 +46,10 @@ public class ThemeRestController {
         Theme theme;
         try{
             theme = themeService.getThemeById(themeId);
-        }catch (ThemeServiceException e){
+        }catch (ThemeRepositoryException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme,false));
     }
 
     @RequestMapping(value = "api/public/subthemes",method = RequestMethod.GET)
@@ -64,7 +64,7 @@ public class ThemeRestController {
         System.out.println("CALL RECEIVED: getThemeByName: "+name);
         Theme theme = themeService.getThemeByName(name);
         if(theme !=null){
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme));
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme,false));
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -96,13 +96,13 @@ public class ThemeRestController {
     public ResponseEntity<ThemeDto> CreateTheme(@Valid @RequestBody ThemeDto themeDto){
         System.out.println("CALL RECEIVED: CreateTheme");
         logger.log(Priority.INFO,"API CALL: CreateTheme");
-        Theme createdTheme = themeService.addTheme(DtoConverter.toTheme(themeDto));
+        Theme createdTheme = themeService.addTheme(DtoConverter.toTheme(themeDto,false));
         if(createdTheme==null){
             logger.log(Priority.ERROR,"ThemeService.addTheme returns NULL..");
             return ResponseEntity.badRequest().build();
         }else{
             logger.log(Priority.INFO,"Successfully created new Theme");
-            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme));
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(createdTheme,false));
         }
     }
 
@@ -125,16 +125,19 @@ public class ThemeRestController {
     public ResponseEntity<ThemeDto> updateTheme(@PathVariable long themeId, @Valid @RequestBody ThemeDto theme){
         System.out.println("CALL RECEIVED: updateTheme: "+themeId);
         logger.log(Priority.INFO,"API CALL: updateTheme: "+themeId);
-        Theme foundTheme = themeService.getThemeById(themeId);
-        if(foundTheme == null){
+        try{
+            Theme foundTheme = themeService.getThemeById(themeId);
+            foundTheme.setDescription(theme.getDescription());
+            foundTheme.setName(theme.getName());
+            Theme updatedTheme=themeService.editTheme(foundTheme);
+            logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme,false));
+        }catch (ThemeRepositoryException e){
             logger.log(Priority.ERROR,"No theme found for Id: "+themeId);
             return ResponseEntity.notFound().build();
         }
-        foundTheme.setDescription(theme.getDescription());
-        foundTheme.setName(theme.getName());
-        Theme updatedTheme=themeService.editTheme(foundTheme);
-        logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme));
+
+
     }
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}",method = RequestMethod.PUT)
@@ -148,7 +151,7 @@ public class ThemeRestController {
         }
         foundSubTheme.setSubThemeName(dto.getSubThemeName());
         foundSubTheme.setSubThemeDescription(dto.getSubThemeDescription());
-        foundSubTheme.setTheme(DtoConverter.toTheme(dto.getTheme()));
+        foundSubTheme.setTheme(DtoConverter.toTheme(dto.getTheme(),false));
         SubTheme updatedTheme = themeService.editSubtheme(foundSubTheme);
         if(updatedTheme==null){
             logger.log(Priority.ERROR,"Updated Theme is NULL");
@@ -160,15 +163,16 @@ public class ThemeRestController {
     //DELET-METHODS
     @RequestMapping(value = "api/public/theme/{themeId}",method = RequestMethod.DELETE)
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
-        System.out.println("CALLED deleteTheByThemeId: "+themeId);
+        System.out.println("CALLED deleteThemeByThemeId: "+themeId);
         Theme deletedTheme =null;
         try{
             deletedTheme=themeService.removeThemeById(themeId);
-        }catch (ThemeServiceException e){
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme,false));
+        }catch (ThemeRepositoryException e){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme));
+
     }
 
     @RequestMapping(value = "api/public/theme", method = RequestMethod.DELETE)
@@ -178,7 +182,7 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
         themeService.removeThemeById(foundTheme.getThemeId());
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme));
+        return ResponseEntity.ok().body(DtoConverter.toThemeDto(foundTheme,false));
     }
 
     @RequestMapping(value = "api/public/themes", method = RequestMethod.DELETE)
@@ -192,7 +196,7 @@ public class ThemeRestController {
         List<SubTheme> deletedSubThemes=null;
         try{
             deletedSubThemes = themeService.removeSubThemesByThemeId(themeId);
-        }catch (ThemeServiceException tse){
+        }catch (ThemeRepositoryException tse){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(deletedSubThemes.stream().map(st->DtoConverter.toSubThemeDto(st,false)).collect(Collectors.toList()));

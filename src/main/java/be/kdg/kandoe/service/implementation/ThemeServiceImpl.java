@@ -6,6 +6,7 @@ import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,67 +21,69 @@ public class ThemeServiceImpl implements ThemeService {
     private ThemeRepository themeRepo;
 
     @Autowired
-    public ThemeServiceImpl(ThemeRepository repository){
-        this.themeRepo=repository;
+    public ThemeServiceImpl(ThemeRepository repository) {
+        this.themeRepo = repository;
     }
+
     //ADD-METHODS
     @Override
-    public Theme addTheme(Theme theme) {
-        if(checkNameLength(theme)) {
-           return themeRepo.createTheme(theme);
+    public Theme addTheme(Theme theme) throws ThemeRepositoryException {
+        if (checkNameLength(theme)) {
+            return themeRepo.createTheme(theme);
         } else {
             throw new InputValidationException("Theme name too long");
         }
     }
 
     @Override
-    public SubTheme addSubThemeByThemeId(SubTheme subTheme,long themeId) {
-        Theme themeToAdd=themeRepo.findThemeById(themeId);
+    public SubTheme addSubThemeByThemeId(SubTheme subTheme, long themeId) throws ThemeRepositoryException {
+        Theme themeToAdd = themeRepo.findThemeById(themeId);
         subTheme.setTheme(themeToAdd);
         return themeRepo.createSubTheme(subTheme);
     }
+
     //ADD-METHODS
     //GET-METHODS
     @Override
-    public Theme getThemeByName(String name) {
+    public Theme getThemeByName(String name) throws ThemeRepositoryException {
         Theme themeToFind = themeRepo.findThemeByName(name);
         return themeToFind;
     }
 
     @Override
-    public Theme getThemeById(long id) {
+    public Theme getThemeById(long id) throws ThemeRepositoryException {
         Theme foundTheme = themeRepo.findThemeById(id);
         return themeRepo.findThemeById(id);
     }
 
     @Override
-    public SubTheme getSubThemeById(long subThemeId){
+    public SubTheme getSubThemeById(long subThemeId) throws ThemeRepositoryException {
         SubTheme foundSubTheme = themeRepo.findSubThemeById(subThemeId);
         return foundSubTheme;
     }
 
     @Override
-    public List<Theme> getAllThemes() {
+    public List<Theme> getAllThemes() throws ThemeRepositoryException {
         return themeRepo.findAllThemes();
     }
 
     @Override
-    public List<SubTheme> getAllSubThemes() {
+    public List<SubTheme> getAllSubThemes() throws ThemeRepositoryException {
         return themeRepo.findAllSubThemes();
     }
 
     @Override
-    public List<SubTheme> getSubThemesByThemeId(long id){
+    public List<SubTheme> getSubThemesByThemeId(long id) throws ThemeRepositoryException {
         return themeRepo.findSubThemesByThemeId(id);
     }
 
     @Override
-    public List<Card> getCardsByThemeId(long themeId) {
+    public List<Card> getCardsByThemeId(long themeId) throws ThemeRepositoryException {
         return themeRepo.findCardsByThemeId(themeId);
     }
 
     @Override
-    public List<Card> getCardsBySubthemeId(long subthemeId) {
+    public List<Card> getCardsBySubthemeId(long subthemeId) throws ThemeRepositoryException {
         return themeRepo.findCardsBySubthemeId(subthemeId);
     }
 
@@ -91,7 +94,7 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public Card addCardBySubtheme(Card card,long subThemeId) {
+    public Card addCardBySubtheme(Card card, long subThemeId) throws ThemeRepositoryException {
         SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
         subThemeForCard.addCard(card);
         card.addSubTheme(subThemeForCard);
@@ -100,7 +103,7 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public Card editCard(long cardId,Card card) {
+    public Card editCard(long cardId, Card card) throws ThemeRepositoryException {
         Card cardToUpdate = themeRepo.findCardById(cardId);
         cardToUpdate.setName(card.getName());
         cardToUpdate.setDescription(card.getDescription());
@@ -110,7 +113,7 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public Card removeCardById(long cardId) {
+    public Card removeCardById(long cardId) throws ThemeRepositoryException {
         Card card = this.getCardById(cardId);
         return themeRepo.delete(card);
     }
@@ -118,7 +121,7 @@ public class ThemeServiceImpl implements ThemeService {
     //GET-METHODS
     //EDIT-METHODS
     @Override
-    public Theme editTheme(Theme theme) {
+    public Theme editTheme(Theme theme) throws ThemeRepositoryException {
         if (checkNameLength(theme)) return themeRepo.editTheme(theme);
         throw new InputValidationException("Themename too long");
     }
@@ -131,35 +134,36 @@ public class ThemeServiceImpl implements ThemeService {
     //EDIT-METHODS
     //REMOVE-METHODS
 
-    public void removeAllThemes(){
+    public void removeAllThemes() {
         themeRepo.deleteAll();
     }
 
     @Override
-    public Theme removeThemeById(long themeId) {
-        Theme themeToDelete = themeRepo.findThemeById(themeId);
-        for (SubTheme s :themeRepo.findAllSubThemes()){
-            if(s.getTheme().getThemeId()==themeId){
-                themeRepo.deleteSubTheme(s);
-            }
+    public Theme removeThemeById(long themeId) throws ThemeRepositoryException {
+        try{
+            Theme themeToDelete = themeRepo.findThemeById(themeId);
+            return themeRepo.deleteTheme(themeToDelete);
+        }catch (ThemeRepositoryException e){
+            throw e;
         }
-        return themeRepo.deleteTheme(themeToDelete);
+
+
     }
 
     @Override
-    public SubTheme removeSubThemeById(long subThemeId){
+    public SubTheme removeSubThemeById(long subThemeId) throws ThemeRepositoryException {
         SubTheme subThemeToDelete = themeRepo.findSubThemeById(subThemeId);
         return themeRepo.deleteSubTheme(subThemeToDelete);
     }
 
     @Override
-    public List<SubTheme> removeSubThemesByThemeId(long themeId) {
+    public List<SubTheme> removeSubThemesByThemeId(long themeId) throws ThemeRepositoryException {
         Theme theme = themeRepo.findThemeById(themeId);
         List<SubTheme> subThemes = themeRepo.findAllSubThemes();
-        List<SubTheme> deletedSubThemes= new ArrayList<>();
-        for (SubTheme st:subThemes
-             ) {
-            if(st.getTheme().getThemeId()==themeId){
+        List<SubTheme> deletedSubThemes = new ArrayList<>();
+        for (SubTheme st : subThemes
+                ) {
+            if (st.getTheme().getThemeId() == themeId) {
                 deletedSubThemes.add(st);
                 themeRepo.deleteSubTheme(st);
             }
@@ -170,11 +174,12 @@ public class ThemeServiceImpl implements ThemeService {
 
     /**
      * Checks if the themeName is not longer than 50 characters
+     *
      * @param theme
      * @return boolean
      */
     private boolean checkNameLength(Theme theme) {
-        if(theme.getName().length()<=50){
+        if (theme.getName().length() <= 50) {
             return true;
         }
         return false;

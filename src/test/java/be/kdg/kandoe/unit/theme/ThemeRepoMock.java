@@ -4,6 +4,7 @@ import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ThemeRepoMock implements ThemeRepository {
                return t;
            }
         }
-        return null;
+        throw new ThemeRepositoryException("No theme found");
     }
 
     public Theme findThemeById(long id) {
@@ -30,7 +31,7 @@ public class ThemeRepoMock implements ThemeRepository {
                 return t;
             }
         }
-        return null;
+        throw new ThemeRepositoryException("No theme found");
     }
 
     public SubTheme findSubThemeById(long id){
@@ -40,7 +41,7 @@ public class ThemeRepoMock implements ThemeRepository {
                 return st;
             }
         }
-        return null;
+        throw new ThemeRepositoryException("No subtheme foudn");
     }
 
     public Theme createTheme(Theme theme) {
@@ -181,7 +182,7 @@ public class ThemeRepoMock implements ThemeRepository {
                 return card;
             }
         }
-        return null;
+        throw new ThemeRepositoryException("no card found");
     }
 
     @Override
