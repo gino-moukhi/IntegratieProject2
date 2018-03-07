@@ -46,7 +46,7 @@ public class ThemeRestController {
         Theme theme;
         try{
             theme = themeService.getThemeById(themeId);
-        }catch (ThemeServiceException e){
+        }catch (ThemeRepositoryException e){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(DtoConverter.toThemeDto(theme,false));
@@ -125,16 +125,19 @@ public class ThemeRestController {
     public ResponseEntity<ThemeDto> updateTheme(@PathVariable long themeId, @Valid @RequestBody ThemeDto theme){
         System.out.println("CALL RECEIVED: updateTheme: "+themeId);
         logger.log(Priority.INFO,"API CALL: updateTheme: "+themeId);
-        Theme foundTheme = themeService.getThemeById(themeId);
-        if(foundTheme == null){
+        try{
+            Theme foundTheme = themeService.getThemeById(themeId);
+            foundTheme.setDescription(theme.getDescription());
+            foundTheme.setName(theme.getName());
+            Theme updatedTheme=themeService.editTheme(foundTheme);
+            logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme,false));
+        }catch (ThemeRepositoryException e){
             logger.log(Priority.ERROR,"No theme found for Id: "+themeId);
             return ResponseEntity.notFound().build();
         }
-        foundTheme.setDescription(theme.getDescription());
-        foundTheme.setName(theme.getName());
-        Theme updatedTheme=themeService.editTheme(foundTheme);
-        logger.log(Priority.INFO,"Updated Theme for id: "+themeId);
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(updatedTheme,false));
+
+
     }
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}",method = RequestMethod.PUT)
@@ -160,15 +163,16 @@ public class ThemeRestController {
     //DELET-METHODS
     @RequestMapping(value = "api/public/theme/{themeId}",method = RequestMethod.DELETE)
     public ResponseEntity<ThemeDto> deleteThemeByThemeId(@PathVariable Long themeId){
-        System.out.println("CALLED deleteTheByThemeId: "+themeId);
+        System.out.println("CALLED deleteThemeByThemeId: "+themeId);
         Theme deletedTheme =null;
         try{
             deletedTheme=themeService.removeThemeById(themeId);
-        }catch (ThemeServiceException e){
+            return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme,false));
+        }catch (ThemeRepositoryException e){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().body(DtoConverter.toThemeDto(deletedTheme,false));
+
     }
 
     @RequestMapping(value = "api/public/theme", method = RequestMethod.DELETE)
@@ -192,7 +196,7 @@ public class ThemeRestController {
         List<SubTheme> deletedSubThemes=null;
         try{
             deletedSubThemes = themeService.removeSubThemesByThemeId(themeId);
-        }catch (ThemeServiceException tse){
+        }catch (ThemeRepositoryException tse){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(deletedSubThemes.stream().map(st->DtoConverter.toSubThemeDto(st,false)).collect(Collectors.toList()));

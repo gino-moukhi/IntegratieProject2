@@ -36,33 +36,33 @@ public class ThemeRepositoryImpl implements ThemeRepository {
 
     @Transactional
     @Override
-    public Theme findThemeByName(@Param("name")String name) {
-        Query query = em.createQuery("SELECT theme from ThemeJpa theme WHERE name = :name",ThemeJpa.class).setParameter("name",name);
+    public Theme findThemeByName(@Param("name") String name) {
+        Query query = em.createQuery("SELECT theme from ThemeJpa theme WHERE name = :name", ThemeJpa.class).setParameter("name", name);
         System.out.println(query.getResultList().get(0));
         if (query.getResultList() == null || query.getResultList().get(0) == null) {
             throw new ThemeRepositoryException("No Theme found by name: " + name);
         }
-        ThemeJpa jpa = (ThemeJpa)query.getResultList().get(0);
-        return JpaConverter.toTheme(jpa,false);
+        ThemeJpa jpa = (ThemeJpa) query.getResultList().get(0);
+        return JpaConverter.toTheme(jpa, false);
     }
 
     @Transactional
     @Override
-    public Theme findThemeById(@Param("themeId")long themeId) {
-        Query query= em.createQuery("SELECT theme FROM ThemeJpa theme WHERE themeId=:themeId",ThemeJpa.class).setParameter("themeId",themeId);
-        if(query.getResultList().isEmpty() || query.getResultList().get(0)==null){
-            throw new ThemeRepositoryException("No Theme found for ID: "+themeId);
+    public Theme findThemeById(@Param("themeId") long themeId) {
+        Query query = em.createQuery("SELECT theme FROM ThemeJpa theme WHERE themeId=:themeId", ThemeJpa.class).setParameter("themeId", themeId);
+        if (query.getResultList().isEmpty() || query.getResultList().get(0) == null) {
+            throw new ThemeRepositoryException("No Theme found for ID: " + themeId);
         }
-        ThemeJpa jpa = (ThemeJpa)query.getResultList().get(0);
-        return JpaConverter.toTheme(jpa,false);
+        ThemeJpa jpa = (ThemeJpa) query.getResultList().get(0);
+        return JpaConverter.toTheme(jpa, false);
     }
 
     @Transactional
     @Override
-    public SubTheme findSubThemeById(@Param("subThemeId")long subThemeId){
-        Query query= em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subThemeId=:subThemeId").setParameter("subThemeId",subThemeId);
-        if (query.getResultList().isEmpty()){
-            throw new ThemeRepositoryException("No SubTheme found for ID: "+subThemeId);
+    public SubTheme findSubThemeById(@Param("subThemeId") long subThemeId) {
+        Query query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subThemeId=:subThemeId").setParameter("subThemeId", subThemeId);
+        if (query.getResultList().isEmpty()) {
+            throw new ThemeRepositoryException("No SubTheme found for ID: " + subThemeId);
         }
         SubThemeJpa jpa = (SubThemeJpa) query.getResultList().get(0);
         return JpaConverter.toSubTheme(jpa, false);
@@ -71,25 +71,25 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme createTheme(Theme theme) {
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme, false);
         ThemeJpa response = em.merge(jpa);
-        return JpaConverter.toTheme(response,false);
+        return JpaConverter.toTheme(response, false);
     }
 
     @Transactional
     @Override
     public SubTheme createSubTheme(SubTheme subTheme) {
-        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme,false);
+        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme, false);
         SubThemeJpa response = em.merge(jpa);
-        return JpaConverter.toSubTheme(response,false);
+        return JpaConverter.toSubTheme(response, false);
     }
 
     @Transactional
     @Override
     public Theme editTheme(Theme theme) {
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme, false);
         em.merge(jpa);
-        return JpaConverter.toTheme(jpa,false);
+        return JpaConverter.toTheme(jpa, false);
     }
 
     @Transactional
@@ -133,8 +133,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         }
         List<ThemeJpa> jpas = query.getResultList();
         List<Theme> themes = new ArrayList<>();
-        for(ThemeJpa jpa:jpas){
-            themes.add(JpaConverter.toTheme(jpa,false));
+        for (ThemeJpa jpa : jpas) {
+            themes.add(JpaConverter.toTheme(jpa, false));
         }
         return themes;
     }

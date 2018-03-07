@@ -9,6 +9,7 @@ import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
+import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import be.kdg.kandoe.unit.theme.ThemeRepoMock;
@@ -160,7 +161,7 @@ public class TestThemeService {
         themeService.removeThemeById(theme2.getThemeId());
         assertEquals(themeService.getAllThemes().size(),1);
     }
-    @Test(expected = ThemeServiceException.class)
+    @Test(expected = ThemeRepositoryException.class)
     public void TestDeleteThemeById(){
         Theme themeToDelete = theme1;
         themeService.removeThemeById(themeToDelete.getThemeId());
@@ -171,7 +172,7 @@ public class TestThemeService {
     /**
      * If the themeToDelete is not found or doesn't exist, ThemeServiceException should be thrown
      */
-    @Test(expected = ThemeServiceException.class)
+    @Test(expected = ThemeRepositoryException.class)
     public void TestDeleteByNonExistingThemeId(){
         Theme unknownTheme = DtoConverter.toTheme(new ThemeDto(3,"School","Thema ivm school"),false);
         themeService.removeThemeById(unknownTheme.getThemeId());
@@ -179,7 +180,7 @@ public class TestThemeService {
     /**
      * If the themeToDelete is not found or doesn't exist, ThemeServiceException should be thrown
      */
-    @Test(expected = ThemeServiceException.class)
+    @Test(expected = ThemeRepositoryException.class)
     public void TestDeleteNonExistingTheme(){
         themeService.removeThemeById(25);
     }
@@ -219,7 +220,7 @@ public class TestThemeService {
         assertNotNull(subTheme.getTheme());
     }
 
-    @Test(expected = ThemeServiceException.class)
+    @Test(expected = ThemeRepositoryException.class)
     public void TestDeleteSubThemeById(){
         long subThemeId=2;
         themeService.removeSubThemeById(subThemeId);
@@ -235,7 +236,7 @@ public class TestThemeService {
         Assert.assertTrue(card.getSubThemes().contains(subTheme1));
     }
 
-    @Test(expected = ThemeServiceException.class)
+    @Test(expected = ThemeRepositoryException.class)
     public void TestGetNonExistingCard(){
         Card card = themeService.getCardById(5);
     }

@@ -46,7 +46,7 @@ public class ThemeDto {
         return themeId;
     }
 
-    public void setThemeId(Long themeId){
+    public void setThemeId(long themeId){
         this.themeId=themeId;
     }
 
