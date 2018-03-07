@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ThemeRepositoryImpl implements ThemeRepository {
 
-     @PersistenceContext
+    @PersistenceContext
     private final EntityManager em;
 
     @Autowired
@@ -39,8 +39,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     public Theme findThemeByName(@Param("name")String name) {
         Query query = em.createQuery("SELECT theme from ThemeJpa theme WHERE name = :name",ThemeJpa.class).setParameter("name",name);
         System.out.println(query.getResultList().get(0));
-        if(query.getResultList()==null || query.getResultList().get(0)==null){
-            throw new ThemeRepositoryException("No Theme found by name: "+ name);
+        if (query.getResultList() == null || query.getResultList().get(0) == null) {
+            throw new ThemeRepositoryException("No Theme found by name: " + name);
         }
         ThemeJpa jpa = (ThemeJpa)query.getResultList().get(0);
         return JpaConverter.toTheme(jpa,false);
@@ -64,8 +64,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         if (query.getResultList().isEmpty()){
             throw new ThemeRepositoryException("No SubTheme found for ID: "+subThemeId);
         }
-        SubThemeJpa jpa = (SubThemeJpa)query.getResultList().get(0);
-        return JpaConverter.toSubTheme(jpa,false);
+        SubThemeJpa jpa = (SubThemeJpa) query.getResultList().get(0);
+        return JpaConverter.toSubTheme(jpa, false);
     }
 
     @Transactional
@@ -94,41 +94,41 @@ public class ThemeRepositoryImpl implements ThemeRepository {
 
     @Transactional
     @Override
-    public SubTheme editSubTheme(SubTheme subTheme){
-        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme,false);
+    public SubTheme editSubTheme(SubTheme subTheme) {
+        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme, false);
         em.merge(jpa);
-        return JpaConverter.toSubTheme(jpa,false);
+        return JpaConverter.toSubTheme(jpa, false);
     }
 
 
     @Transactional
     @Override
-    public Theme deleteTheme(Theme theme){
-        ThemeJpa jpa = JpaConverter.toThemeJpa(theme,false);
-        em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
-        return JpaConverter.toTheme(jpa,false);
-    }
-    @Transactional
-    @Override
-    public SubTheme deleteSubTheme(SubTheme subTheme){
-        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme,false);
-        em.remove(em.contains(jpa) ? jpa:em.merge(jpa));
-        return JpaConverter.toSubTheme(jpa,false);
+    public Theme deleteTheme(Theme theme) {
+        ThemeJpa jpa = JpaConverter.toThemeJpa(theme, false);
+        em.remove(em.contains(jpa) ? jpa : em.merge(jpa));
+        return JpaConverter.toTheme(jpa, false);
     }
 
     @Transactional
     @Override
-    public void deleteAll(){
+    public SubTheme deleteSubTheme(SubTheme subTheme) {
+        SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme, false);
+        em.remove(em.contains(jpa) ? jpa : em.merge(jpa));
+        return JpaConverter.toSubTheme(jpa, false);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAll() {
         em.createQuery("DELETE from SubThemeJpa").executeUpdate();
         em.createQuery("DELETE FROM ThemeJpa ").executeUpdate();
-        em.createQuery("DELETE FROM CardJpa ").executeUpdate();
     }
 
     @Transactional
     @Override
     public List<Theme> findAllThemes() {
         Query query = em.createQuery("SELECT theme FROM ThemeJpa theme");
-        if(query.getResultList().isEmpty()){
+        if (query.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No Themes found");
         }
         List<ThemeJpa> jpas = query.getResultList();
@@ -138,25 +138,26 @@ public class ThemeRepositoryImpl implements ThemeRepository {
         }
         return themes;
     }
+
     @Transactional
     @Override
-    public List<SubTheme> findAllSubThemes(){
-        Query query= em.createQuery("SELECT subtheme FROM SubThemeJpa subtheme");
-        if(query.getResultList().isEmpty()){
+    public List<SubTheme> findAllSubThemes() {
+        Query query = em.createQuery("SELECT subtheme FROM SubThemeJpa subtheme");
+        if (query.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No SubThemes found");
         }
         List<SubThemeJpa> jpas = query.getResultList();
-        return jpas.stream().map(jpa->JpaConverter.toSubTheme(jpa,false)).collect(Collectors.toList());
+        return jpas.stream().map(jpa -> JpaConverter.toSubTheme(jpa, false)).collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public List<SubTheme> findSubThemesByThemeId(@Param("themeId")long id){
-        TypedQuery<SubThemeJpa> query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE theme.themeId=:themeId",SubThemeJpa.class).setParameter("themeId",id);
-        if(query.getResultList().isEmpty()){
-            throw new ThemeRepositoryException("No SubTheme found for themeId: "+id);
+    public List<SubTheme> findSubThemesByThemeId(@Param("themeId") long id) {
+        TypedQuery<SubThemeJpa> query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subTheme.theme.themeId=:themeId", SubThemeJpa.class).setParameter("themeId", id);
+        if (query.getResultList().isEmpty()) {
+            throw new ThemeRepositoryException("No SubTheme found for themeId: " + id);
         }
-        return query.getResultList().stream().map(jpa->JpaConverter.toSubTheme(jpa,false)).collect(Collectors.toList());
+        return query.getResultList().stream().map(jpa -> JpaConverter.toSubTheme(jpa, false)).collect(Collectors.toList());
     }
 
     @Override
@@ -179,33 +180,33 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     }
 
     @Override
-    public Card findCardById(@Param("cardId")long cardId) {
+    public Card findCardById(@Param("cardId") long cardId) {
         TypedQuery<CardJpa> q = em.createQuery("SELECT c from CardJpa c where c.cardId = :cardId", CardJpa.class);
-        q.setParameter("cardId",cardId);
-        if(q.getResultList().isEmpty()){
-            throw new ThemeRepositoryException("No Card found for ID: "+cardId);
+        q.setParameter("cardId", cardId);
+        if (q.getResultList().isEmpty()) {
+            throw new ThemeRepositoryException("No Card found for ID: " + cardId);
         }
-        return JpaConverter.toCard(q.getSingleResult(),false);
+        return JpaConverter.toCard(q.getSingleResult(), false);
     }
 
     @Override
     public Card createCard(Card card) {
-        CardJpa jpa = JpaConverter.toCardJpa(card,false);
+        CardJpa jpa = JpaConverter.toCardJpa(card, false);
         em.persist(jpa);
-        return JpaConverter.toCard(jpa,false);
+        return JpaConverter.toCard(jpa, false);
     }
 
     @Override
     public Card saveCard(Card card) {
-        CardJpa jpa = JpaConverter.toCardJpa(card,false);
+        CardJpa jpa = JpaConverter.toCardJpa(card, false);
         return em.merge(card);
     }
 
     @Override
     public Card delete(Card card) {
-        CardJpa jpa = JpaConverter.toCardJpa(card,false);
-        em.remove(em.contains(jpa) ?  jpa :em.merge(jpa));
-        return JpaConverter.toCard(jpa,false);
+        CardJpa jpa = JpaConverter.toCardJpa(card, false);
+        em.remove(em.contains(jpa) ? jpa : em.merge(jpa));
+        return JpaConverter.toCard(jpa, false);
     }
 }
 

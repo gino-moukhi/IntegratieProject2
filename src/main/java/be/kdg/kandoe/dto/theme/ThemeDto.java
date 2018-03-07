@@ -1,6 +1,5 @@
 package be.kdg.kandoe.dto.theme;
 
-import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

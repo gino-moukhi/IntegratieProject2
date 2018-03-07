@@ -120,7 +120,7 @@ public class TestThemeRestController {
         ThemeDto themeDto = restTemplate.getForEntity("http://localhost:9090/api/public/theme/"+theme1.getThemeId(),ThemeDto.class).getBody();
         themeDto.setName("SchoolUpdated");
         themeDto.setDescription("Updated Theme of School");
-        HttpEntity<ThemeDto> httpEntity = new HttpEntity<ThemeDto>(themeDto);
+        HttpEntity<ThemeDto> httpEntity = new HttpEntity<>(themeDto);
         ResponseEntity<ThemeDto> response = restTemplate.exchange("http://localhost:9090/api/public/theme/"+theme1.getThemeId(),HttpMethod.PUT,httpEntity,ThemeDto.class);
 
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
@@ -152,8 +152,9 @@ public class TestThemeRestController {
         Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
         Assert.assertNotNull(response.getBody());
         Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.NOT_FOUND));
+        //Assert.assertThat(response.getBody().getClass(),equalTo(Theme.class));
         Assert.assertThat(response.getBody().getClass(),equalTo(ThemeDto.class));
-        Assert.assertThat(response.getBody().getName(),equalTo(theme1.getName()));
+        Assert.assertThat(response.getBody().getName(),equalTo("School"));
     }
 
     @Test
