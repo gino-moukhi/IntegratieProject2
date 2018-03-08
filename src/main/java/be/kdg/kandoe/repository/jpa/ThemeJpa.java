@@ -23,21 +23,22 @@ import java.util.List;
 public class ThemeJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Generated(GenerationTime.INSERT)
-        @Column(name="themeId",nullable = false)
-        private long themeId;
+    @Generated(GenerationTime.INSERT)
+    @Column(name = "themeId", nullable = false)
+    private long themeId;
 
-        @Column(length = 50,nullable = false)
-        private String name;
+    @Column(length = 50, nullable = false)
+    private String name;
 
-        @Column(nullable = false)
-        private String description;
+    @Column(nullable = false)
+    private String description;
 
-        @OneToMany(targetEntity=SubThemeJpa.class,fetch = FetchType.EAGER,mappedBy = "theme",cascade = CascadeType.REMOVE)
-        @OnDelete(action = OnDeleteAction.CASCADE)
-        @Fetch(FetchMode.SELECT)
-        @JsonIgnore
-        private List<SubThemeJpa> subThemes;
+    @Column
+    @OneToMany(targetEntity = SubThemeJpa.class, fetch = FetchType.EAGER, mappedBy = "theme", cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Fetch(FetchMode.SELECT)
+    @JsonIgnore
+    private List<SubThemeJpa> subThemes;
 
     public ThemeJpa() {
 
@@ -49,21 +50,21 @@ public class ThemeJpa {
         this.description = theme.getDescription();
     }
 
-        public String getName() {
-            return name;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public void setName(String name) {
-            this.name = name;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public String getDescription() {
-            return description;
-        }
+    public String getDescription() {
+        return description;
+    }
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public long getThemeId() {
         return themeId;
@@ -73,12 +74,12 @@ public class ThemeJpa {
         this.themeId = themeId;
     }
 
-        public List<SubThemeJpa> getSubThemes() {
-            return subThemes;
-        }
-
-        public void setSubThemes(List<SubThemeJpa> subThemes){
-            this.subThemes=subThemes;
-        }
-
+    public List<SubThemeJpa> getSubThemes() {
+        return subThemes;
     }
+
+    public void setSubThemes(List<SubThemeJpa> subThemes) {
+        this.subThemes = subThemes;
+    }
+
+}

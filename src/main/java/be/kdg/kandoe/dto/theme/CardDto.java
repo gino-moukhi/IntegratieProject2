@@ -14,24 +14,26 @@ public class CardDto {
     //private String imagePath;
     //private byte[] image;
     private boolean isDefaultCard;
-    private List<SubThemeDto> subThemes;
+    private List<CardSubThemeDto> subThemes;
 
-    public CardDto(){
+    public CardDto() {
         subThemes = new ArrayList<>();
     }
-    public CardDto(long id, String name, String description, boolean isDefaultCard){
-        this.cardId=id;
-        this.name=name;
-        this.description=description;
-        this.isDefaultCard=isDefaultCard;
-        this.subThemes=new ArrayList<>();
+
+    public CardDto(long id, String name, String description, boolean isDefaultCard) {
+        this.cardId = id;
+        this.name = name;
+        this.description = description;
+        this.isDefaultCard = isDefaultCard;
+        this.subThemes = new ArrayList<>();
     }
-    public CardDto(long id, String name, String description, boolean isDefaultCard,List<SubThemeDto> subThemes){
-        this.cardId=id;
-        this.name=name;
-        this.description=description;
-        this.isDefaultCard=isDefaultCard;
-        this.subThemes=subThemes;
+
+    public CardDto(long id, String name, String description, boolean isDefaultCard, List<CardSubThemeDto> subThemes) {
+        this.cardId = id;
+        this.name = name;
+        this.description = description;
+        this.isDefaultCard = isDefaultCard;
+        this.subThemes = subThemes;
     }
 
 
@@ -39,8 +41,8 @@ public class CardDto {
         return cardId;
     }
 
-    public void setCardId(long id){
-        this.cardId=id;
+    public void setCardId(long id) {
+        this.cardId = id;
     }
 
     public String getName() {
@@ -75,12 +77,12 @@ public class CardDto {
         isDefaultCard = defaultCard;
     }
 
-    public List<SubThemeDto> getSubThemes() {
+    public List<CardSubThemeDto> getCardSubThemes() {
         return this.subThemes;
     }
 
-    public void setSubThemes(List<SubThemeDto> subThemes) {
-        this.subThemes = subThemes;
+    public void setCardSubThemes(List<CardSubThemeDto> cardSubThemes) {
+        this.subThemes = cardSubThemes;
     }
 
 }

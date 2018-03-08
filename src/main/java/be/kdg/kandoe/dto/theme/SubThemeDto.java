@@ -1,34 +1,37 @@
 package be.kdg.kandoe.dto.theme;
 
 import be.kdg.kandoe.dto.converter.DtoConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class SubThemeDto {
     private long subThemeId;
     private ThemeDto theme;
     private String subThemeName;
     private String subThemeDescription;
-    @JsonProperty("cards")
-    private List<CardDto> cards;
+    private List<CardSubThemeDto> cards;
 
-    public SubThemeDto(){
+    public SubThemeDto() {
+        cards = new ArrayList<>();
     }
 
-    public SubThemeDto(long id, String name, String description){
-        this.subThemeId=id;
-        this.subThemeName=name;
-        this.subThemeDescription=description;
+    public SubThemeDto(long id, String name, String description) {
+        this.subThemeId = id;
+        this.subThemeName = name;
+        this.subThemeDescription = description;
     }
-    public SubThemeDto(long id,ThemeDto theme, String name, String description,List<CardDto> cards){
-        this.subThemeId=id;
-        this.subThemeName=name;
-        this.subThemeDescription=description;
-        this.theme=theme;
-        this.cards=cards;
+
+    public SubThemeDto(long id, ThemeDto theme, String name, String description, List<CardSubThemeDto> cards) {
+        this.subThemeId = id;
+        this.subThemeName = name;
+        this.subThemeDescription = description;
+        this.theme = theme;
+        this.cards = cards;
     }
 
     public long getSubThemeId() {
@@ -63,15 +66,15 @@ public class SubThemeDto {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public List<CardDto> getCards() {
+    public List<CardSubThemeDto> getCardSubThemes() {
         return this.cards;
     }
 
-    public void setCards(List<CardDto> cards) {
+    public void setCardSubThemes(List<CardSubThemeDto> cards) {
         this.cards = cards;
     }
 
-    public String toJsonString(){
+    public String toJsonString() {
         String JSON = new Gson().toJson(this);
         return JSON;
     }
