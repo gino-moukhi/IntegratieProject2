@@ -1,7 +1,6 @@
 package be.kdg.kandoe.domain.theme;
 
 
-
 import java.util.List;
 
 public class Theme {
@@ -11,13 +10,14 @@ public class Theme {
     private List<SubTheme> subThemes;
 
 
-    public Theme(){
+    public Theme() {
 
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -25,6 +25,7 @@ public class Theme {
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -32,8 +33,9 @@ public class Theme {
     public long getThemeId() {
         return themeId;
     }
-    public void setThemeId(Long id){
-        this.themeId=id;
+
+    public void setThemeId(Long id) {
+        this.themeId = id;
     }
 
     public List<SubTheme> getSubThemes() {

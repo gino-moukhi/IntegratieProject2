@@ -87,15 +87,15 @@ public class TestThemeRestController {
     }
 
     @Test
-    public void TestCreateSubTheme(){
-        SubThemeDto subThemeDto = new SubThemeDto(0,"JSONSubTheme","SubTheme created throughg JSON");
-        ResponseEntity<SubThemeDto> response = restTemplate.postForEntity(callURL+"api/public/subthemes/"+theme1Id,subThemeDto,SubThemeDto.class);
-        ResponseEntity<SubThemeDto> responseGet =restTemplate.getForEntity(callURL+"api/public/subtheme/"+response.getBody().getSubThemeId(),SubThemeDto.class);
-        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.OK));
-        Assert.assertThat(responseGet.getBody().getSubThemeName(),equalTo(subThemeDto.getSubThemeName()));
-        Assert.assertThat(responseGet.getBody().getSubThemeDescription(),equalTo(subThemeDto.getSubThemeDescription()));
-        Assert.assertThat(responseGet.getBody().getTheme().getThemeId(),equalTo(theme1Id));
+    public void TestCreateSubTheme() {
+        SubThemeDto subThemeDto = new SubThemeDto(0, "JSONSubTheme", "SubTheme created throughg JSON");
+        ResponseEntity<SubThemeDto> response = restTemplate.postForEntity(callURL + "api/public/subthemes/" + theme1Id, subThemeDto, SubThemeDto.class);
+        ResponseEntity<SubThemeDto> responseGet = restTemplate.getForEntity(callURL + "api/public/subtheme/" + response.getBody().getSubThemeId(), SubThemeDto.class);
+        Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getStatusCode(), equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getBody().getSubThemeName(), equalTo(subThemeDto.getSubThemeName()));
+        Assert.assertThat(responseGet.getBody().getSubThemeDescription(), equalTo(subThemeDto.getSubThemeDescription()));
+        Assert.assertThat(responseGet.getBody().getTheme().getThemeId(), equalTo(theme1Id));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TestThemeRestController {
     public void TestGetSubThemesByThemeId() {
         ParameterizedTypeReference<List<SubThemeDto>> typeref = new ParameterizedTypeReference<List<SubThemeDto>>() {
         };
-        ResponseEntity<List<SubThemeDto>> response = restTemplate.exchange(callURL + "api/public/theme/"+theme1Id+"/subthemes", HttpMethod.GET, null,typeref);
+        ResponseEntity<List<SubThemeDto>> response = restTemplate.exchange(callURL + "api/public/theme/" + theme1Id + "/subthemes", HttpMethod.GET, null, typeref);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().size(), equalTo(2));
     }

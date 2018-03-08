@@ -26,7 +26,7 @@ public class CardJpa {
     //private byte[] image;
     private boolean isDefaultCard;
     @Column
-    @OneToMany(targetEntity = CardSubThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "card")
+    @OneToMany(targetEntity = CardSubThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "card")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CardSubThemeJpa> cardSubThemes;
 
@@ -38,8 +38,8 @@ public class CardJpa {
         return cardId;
     }
 
-    public void setCardId(long id){
-        this.cardId=id;
+    public void setCardId(long id) {
+        this.cardId = id;
     }
 
     public String getName() {

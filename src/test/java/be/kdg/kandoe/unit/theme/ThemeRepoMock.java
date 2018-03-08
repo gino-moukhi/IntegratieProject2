@@ -14,32 +14,32 @@ public class ThemeRepoMock implements ThemeRepository {
     List<Theme> themes = new ArrayList<>();
     List<SubTheme> subThemes = new ArrayList<>();
     List<CardSubTheme> cardSubThemes = new ArrayList<>();
-    List<Card> cards =new ArrayList<>();
+    List<Card> cards = new ArrayList<>();
 
     public Theme findThemeByName(String name) {
-        for (Theme t: themes
-             ) {
-           if(t.getName().equals(name)) {
-               return t;
-           }
-        }
-        throw new ThemeRepositoryException("No theme found");
-    }
-
-    public Theme findThemeById(long id) {
-        for (Theme t: themes
-             ) {
-            if(t.getThemeId() == id) {
+        for (Theme t : themes
+                ) {
+            if (t.getName().equals(name)) {
                 return t;
             }
         }
         throw new ThemeRepositoryException("No theme found");
     }
 
-    public SubTheme findSubThemeById(long id){
-        for (SubTheme st:subThemes
-             ) {
-            if(st.getSubThemeId()==(id)){
+    public Theme findThemeById(long id) {
+        for (Theme t : themes
+                ) {
+            if (t.getThemeId() == id) {
+                return t;
+            }
+        }
+        throw new ThemeRepositoryException("No theme found");
+    }
+
+    public SubTheme findSubThemeById(long id) {
+        for (SubTheme st : subThemes
+                ) {
+            if (st.getSubThemeId() == (id)) {
                 return st;
             }
         }
@@ -53,7 +53,7 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     public Theme createTheme(Theme theme) {
-        Long size = Long.parseLong(String.valueOf(themes.size()+1));
+        Long size = Long.parseLong(String.valueOf(themes.size() + 1));
         theme.setThemeId(size);
         themes.add(theme);
         return themes.get(themes.indexOf(theme));
@@ -66,16 +66,16 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     public Theme editTheme(Theme theme) {
-        Theme themeToFind =null;
-        for (Theme t:themes
-             ) {
-            if(t.getThemeId()==theme.getThemeId()){
+        Theme themeToFind = null;
+        for (Theme t : themes
+                ) {
+            if (t.getThemeId() == theme.getThemeId()) {
                 t.setName(theme.getName());
                 t.setDescription(theme.getDescription());
-                themeToFind=t;
+                themeToFind = t;
             }
         }
-        if (themeToFind==null){
+        if (themeToFind == null) {
             return null;
         }
         return themeToFind;
@@ -83,9 +83,9 @@ public class ThemeRepoMock implements ThemeRepository {
 
     @Override
     public SubTheme editSubTheme(SubTheme subTheme) {
-        for (SubTheme st :subThemes
-             ) {
-            if(st.getSubThemeId()==subTheme.getSubThemeId()){
+        for (SubTheme st : subThemes
+                ) {
+            if (st.getSubThemeId() == subTheme.getSubThemeId()) {
                 st.setTheme(subTheme.getTheme());
                 st.setCardSubThemes(subTheme.getCardSubThemes());
                 st.setSubThemeName(subTheme.getSubThemeName());
@@ -93,18 +93,18 @@ public class ThemeRepoMock implements ThemeRepository {
                 return st;
             }
         }
-        throw new ThemeRepositoryException("Could not edit subTheme: "+subTheme.getSubThemeId());
+        throw new ThemeRepositoryException("Could not edit subTheme: " + subTheme.getSubThemeId());
     }
 
     public Theme deleteThemeByName(String name) {
-        Theme themeToFind =null;
-        for (Theme t: themes
-             ) {
-            if(t.getName().equals(name)){
-                themeToFind=t;
+        Theme themeToFind = null;
+        for (Theme t : themes
+                ) {
+            if (t.getName().equals(name)) {
+                themeToFind = t;
             }
         }
-        if(themeToFind==null){
+        if (themeToFind == null) {
             return null;
         }
         themes.remove(themeToFind);
@@ -113,14 +113,14 @@ public class ThemeRepoMock implements ThemeRepository {
 
 
     public Theme deleteThemeByThemeId(Long themeId) {
-        Theme themeToFind =null;
-        for (Theme t: themes
+        Theme themeToFind = null;
+        for (Theme t : themes
                 ) {
-            if(t.getThemeId()==themeId){
-                themeToFind=t;
+            if (t.getThemeId() == themeId) {
+                themeToFind = t;
             }
         }
-        if(themeToFind==null){
+        if (themeToFind == null) {
             return null;
         }
         themes.remove(themeToFind);
@@ -128,17 +128,18 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     @Override
-    public SubTheme deleteSubTheme(SubTheme subTheme){
-        SubTheme stToDelete=null;
-        for (SubTheme st:subThemes
-             ) {
-            if(st.equals(subTheme)){
-                stToDelete=st;
+    public SubTheme deleteSubTheme(SubTheme subTheme) {
+        SubTheme stToDelete = null;
+        for (SubTheme st : subThemes
+                ) {
+            if (st.equals(subTheme)) {
+                stToDelete = st;
             }
         }
         subThemes.remove(stToDelete);
         return stToDelete;
     }
+
     @Override
     public Theme deleteTheme(Theme theme) {
         themes.remove(theme);
@@ -146,30 +147,30 @@ public class ThemeRepoMock implements ThemeRepository {
     }
 
     @Override
-    public void deleteAll(){
+    public void deleteAll() {
         themes = new ArrayList<>();
     }
+
     @Override
     public List<Theme> findAllThemes() {
-        if(themes!=null){
+        if (themes != null) {
             return themes;
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
     public List<SubTheme> findAllSubThemes() {
-        if(themes!=null){
+        if (themes != null) {
             return subThemes;
         }
         return null;
     }
 
     @Override
-    public List<SubTheme> findSubThemesByThemeId(long id){
+    public List<SubTheme> findSubThemesByThemeId(long id) {
         List<SubTheme> subThemes = new ArrayList<>();
-        for(SubTheme st: this.subThemes){
-            if(st.getTheme().getThemeId()==id){
+        for (SubTheme st : this.subThemes) {
+            if (st.getTheme().getThemeId() == id) {
                 subThemes.add(st);
             }
         }
@@ -180,12 +181,12 @@ public class ThemeRepoMock implements ThemeRepository {
     @Override
     public List<Card> findCardsBySubthemeId(long subthemeId) {
         List<Card> foundCards = new ArrayList<>();
-        for (Card c:cards
-             ) {
-            for (CardSubTheme st:c.getCardSubThemes()
-                 ) {
-                if(st.getSubTheme().getSubThemeId()==subthemeId){
-                    if(!foundCards.contains(c))foundCards.add(c);
+        for (Card c : cards
+                ) {
+            for (CardSubTheme st : c.getCardSubThemes()
+                    ) {
+                if (st.getSubTheme().getSubThemeId() == subthemeId) {
+                    if (!foundCards.contains(c)) foundCards.add(c);
                 }
             }
         }
@@ -194,8 +195,8 @@ public class ThemeRepoMock implements ThemeRepository {
 
     @Override
     public Card findCardById(long cardId) {
-        for (Card card:cards){
-            if(card.getCardId()==cardId){
+        for (Card card : cards) {
+            if (card.getCardId() == cardId) {
                 return card;
             }
         }
@@ -216,8 +217,8 @@ public class ThemeRepoMock implements ThemeRepository {
 
     @Override
     public Card editCard(Card cardToEdit) {
-        for (Card c:cards){
-            if(c.getCardId()==cardToEdit.getCardId()){
+        for (Card c : cards) {
+            if (c.getCardId() == cardToEdit.getCardId()) {
                 c.setCardSubThemes(cardToEdit.getCardSubThemes());
                 c.setName(cardToEdit.getName());
                 c.setDescription(cardToEdit.getDescription());
@@ -225,7 +226,7 @@ public class ThemeRepoMock implements ThemeRepository {
                 return c;
             }
         }
-        throw new ThemeRepositoryException("Could not edit theme: "+cardToEdit.getCardId());
+        throw new ThemeRepositoryException("Could not edit theme: " + cardToEdit.getCardId());
     }
 
     @Override
@@ -233,16 +234,16 @@ public class ThemeRepoMock implements ThemeRepository {
         return this.cards;
     }
 
-    public void setThemes(ArrayList<Theme> themes){
-        this.themes=themes;
+    public void setThemes(ArrayList<Theme> themes) {
+        this.themes = themes;
     }
 
-    public void setSubThemes(ArrayList<SubTheme> subThemes){
+    public void setSubThemes(ArrayList<SubTheme> subThemes) {
         this.subThemes = subThemes;
     }
 
-    public void setCards(ArrayList<Card> cards){
-        this.cards=cards;
+    public void setCards(ArrayList<Card> cards) {
+        this.cards = cards;
     }
 
 }

@@ -47,20 +47,20 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public Card addCard(Card card) throws ThemeRepositoryException{
+    public Card addCard(Card card) throws ThemeRepositoryException {
         return themeRepo.createCard(card);
     }
 
     @Override
-    public SubTheme addCardToSubTheme(long cardId,long subThemeId){
+    public SubTheme addCardToSubTheme(long cardId, long subThemeId) {
         SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
         Card cardToAdd = themeRepo.findCardById(cardId);
-        for (CardSubTheme card: subThemeForCard.getCardSubThemes()){
-            if (card.getCard().getCardId()==cardId && card.getSubTheme().getSubThemeId()==subThemeId){
+        for (CardSubTheme card : subThemeForCard.getCardSubThemes()) {
+            if (card.getCard().getCardId() == cardId && card.getSubTheme().getSubThemeId() == subThemeId) {
                 throw new ThemeServiceException("Card Already exists in SubTheme");
             }
         }
-        CardSubTheme cst = new CardSubTheme(cardToAdd,subThemeForCard);
+        CardSubTheme cst = new CardSubTheme(cardToAdd, subThemeForCard);
 
         CardSubTheme addedCST = themeRepo.createCardSubTheme(cst);
         subThemeForCard.addCard(addedCST);
@@ -69,6 +69,7 @@ public class ThemeServiceImpl implements ThemeService {
         Card card1 = themeRepo.editCard(cardToAdd);
         return themeRepo.findSubThemeById(subThemeId);
     }
+
     //ADD-METHODS
     //GET-METHODS
     @Override
@@ -105,7 +106,7 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public List<Card> getAllCards(){
+    public List<Card> getAllCards() {
         return themeRepo.findAllCards();
     }
 
@@ -153,10 +154,10 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Override
     public Theme removeThemeById(long themeId) throws ThemeRepositoryException {
-        try{
+        try {
             Theme themeToDelete = themeRepo.findThemeById(themeId);
             return themeRepo.deleteTheme(themeToDelete);
-        }catch (ThemeRepositoryException e){
+        } catch (ThemeRepositoryException e) {
             throw e;
         }
 
@@ -185,7 +186,7 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
     @Override
-    public SubTheme removeCardsFromSubTheme(long subThemeId){
+    public SubTheme removeCardsFromSubTheme(long subThemeId) {
         SubTheme subThemeToEdit = themeRepo.findSubThemeById(subThemeId);
         subThemeToEdit.setCardSubThemes(new ArrayList<>());
         return themeRepo.editSubTheme(subThemeToEdit);

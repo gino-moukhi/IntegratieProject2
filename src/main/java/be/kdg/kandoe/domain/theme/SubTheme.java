@@ -12,7 +12,7 @@ public class SubTheme {
     private String subThemeDescription;
     private List<CardSubTheme> cardSubThemes;
 
-    public SubTheme(){
+    public SubTheme() {
     }
 
     public long getSubThemeId() {
@@ -55,11 +55,12 @@ public class SubTheme {
         this.cardSubThemes = cardSubThemes;
     }
 
-    public void addCard(CardSubTheme cardSubTheme){
+    public void addCard(CardSubTheme cardSubTheme) {
         this.cardSubThemes.add(cardSubTheme);
     }
-    public void removeCard(CardSubTheme cardSubTheme){
-        if(cardSubThemes.contains(cardSubTheme)){
+
+    public void removeCard(CardSubTheme cardSubTheme) {
+        if (cardSubThemes.contains(cardSubTheme)) {
             cardSubThemes.remove(cardSubTheme);
         }
     }

@@ -12,14 +12,14 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name = "SUBTHEME")
 public class SubThemeJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subthemeId")
     private long subThemeId;
 
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = ThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "themeId_PK")
     private ThemeJpa theme;
 
@@ -30,11 +30,11 @@ public class SubThemeJpa {
     private String subThemeDescription;
 
     @Column
-    @OneToMany(targetEntity = CardSubThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "subTheme")
+    @OneToMany(targetEntity = CardSubThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "subTheme")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CardSubThemeJpa> cardSubThemes;
 
-    public SubThemeJpa(){
+    public SubThemeJpa() {
 
     }
 

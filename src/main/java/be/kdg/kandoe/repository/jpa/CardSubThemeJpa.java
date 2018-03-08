@@ -18,21 +18,21 @@ public class CardSubThemeJpa {
     private SubThemeJpa subTheme;
 
     @ManyToOne
-    @JoinColumn(name="cardId_FK")
+    @JoinColumn(name = "cardId_FK")
     private CardJpa card;
 
-    public CardSubThemeJpa(){
+    public CardSubThemeJpa() {
 
     }
 
-    public CardSubThemeJpa(CardJpa card, SubThemeJpa subTheme){
-        this.card=card;
-        this.subTheme=subTheme;
+    public CardSubThemeJpa(CardJpa card, SubThemeJpa subTheme) {
+        this.card = card;
+        this.subTheme = subTheme;
     }
 
-    public CardSubThemeJpa(long id, CardJpa card, SubThemeJpa subTheme){
-        this.card=card;
-        this.subTheme=subTheme;
+    public CardSubThemeJpa(long id, CardJpa card, SubThemeJpa subTheme) {
+        this.card = card;
+        this.subTheme = subTheme;
     }
 
     public long getCardSubThemeId() {

@@ -11,13 +11,14 @@ public class CardSubThemeDto {
         this.card = card;
         this.subTheme = subTheme;
     }
-    public CardSubThemeDto(long id,CardDto card, SubThemeDto subTheme) {
-        this.cardSubThemeId=id;
+
+    public CardSubThemeDto(long id, CardDto card, SubThemeDto subTheme) {
+        this.cardSubThemeId = id;
         this.card = card;
         this.subTheme = subTheme;
     }
 
-    public CardSubThemeDto(){
+    public CardSubThemeDto() {
 
     }
 

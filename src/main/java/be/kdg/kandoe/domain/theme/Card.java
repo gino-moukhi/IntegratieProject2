@@ -16,8 +16,8 @@ public class Card {
     private boolean isDefaultCard;
     private List<CardSubTheme> cardSubThemes;
 
-    public Card(){
-        cardSubThemes= new ArrayList<>();
+    public Card() {
+        cardSubThemes = new ArrayList<>();
     }
 
     public List<CardSubTheme> getCardSubThemes() {
@@ -76,13 +76,14 @@ public class Card {
         isDefaultCard = defaultCard;
     }
 
-    public void addCardSubTheme(CardSubTheme cardSubTheme){
-        if(cardSubTheme!=null){
+    public void addCardSubTheme(CardSubTheme cardSubTheme) {
+        if (cardSubTheme != null) {
             cardSubThemes.add(cardSubTheme);
         }
     }
-    public void removeCardSubTheme(CardSubTheme cardSubTheme){
-        if(cardSubThemes.contains(cardSubTheme)){
+
+    public void removeCardSubTheme(CardSubTheme cardSubTheme) {
+        if (cardSubThemes.contains(cardSubTheme)) {
             cardSubThemes.remove(cardSubTheme);
         }
     }

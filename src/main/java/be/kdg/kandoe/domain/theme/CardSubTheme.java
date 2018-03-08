@@ -7,19 +7,19 @@ public class CardSubTheme {
     private SubTheme subTheme;
 
 
-    public CardSubTheme(){
+    public CardSubTheme() {
 
     }
 
-    public CardSubTheme(Card card, SubTheme subTheme){
-        this.card=card;
-        this.subTheme=subTheme;
+    public CardSubTheme(Card card, SubTheme subTheme) {
+        this.card = card;
+        this.subTheme = subTheme;
     }
 
-    public CardSubTheme(long id, Card card, SubTheme subTheme){
-        this.cardSubThemeId=id;
-        this.card=card;
-        this.subTheme=subTheme;
+    public CardSubTheme(long id, Card card, SubTheme subTheme) {
+        this.cardSubThemeId = id;
+        this.card = card;
+        this.subTheme = subTheme;
     }
 
     public long getCardSubThemeId() {

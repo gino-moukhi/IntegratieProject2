@@ -177,13 +177,13 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     @Transactional
     public List<Card> findCardsBySubthemeId(long subthemeId) {
-        TypedQuery<CardSubThemeJpa> q = em.createQuery("SELECT card FROM CardSubThemeJpa card WHERE card.subTheme.subThemeId=:subThemeId",CardSubThemeJpa.class).setParameter("subThemeId",subthemeId);
+        TypedQuery<CardSubThemeJpa> q = em.createQuery("SELECT card FROM CardSubThemeJpa card WHERE card.subTheme.subThemeId=:subThemeId", CardSubThemeJpa.class).setParameter("subThemeId", subthemeId);
         if (q.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No Cards found for SubTheme with ID: " + subthemeId);
         }
         List<Card> cards = new ArrayList<>();
-        for (CardSubThemeJpa jpa: q.getResultList()){
-            cards.add(JpaConverter.toCard(jpa.getCard(),false));
+        for (CardSubThemeJpa jpa : q.getResultList()) {
+            cards.add(JpaConverter.toCard(jpa.getCard(), false));
         }
         return cards;
     }

@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class SubThemeDto {
     private long subThemeId;
     private ThemeDto theme;
@@ -15,21 +16,22 @@ public class SubThemeDto {
     private String subThemeDescription;
     private List<CardSubThemeDto> cards;
 
-    public SubThemeDto(){
+    public SubThemeDto() {
         cards = new ArrayList<>();
     }
 
-    public SubThemeDto(long id, String name, String description){
-        this.subThemeId=id;
-        this.subThemeName=name;
-        this.subThemeDescription=description;
+    public SubThemeDto(long id, String name, String description) {
+        this.subThemeId = id;
+        this.subThemeName = name;
+        this.subThemeDescription = description;
     }
-    public SubThemeDto(long id,ThemeDto theme, String name, String description,List<CardSubThemeDto> cards){
-        this.subThemeId=id;
-        this.subThemeName=name;
-        this.subThemeDescription=description;
-        this.theme=theme;
-        this.cards=cards;
+
+    public SubThemeDto(long id, ThemeDto theme, String name, String description, List<CardSubThemeDto> cards) {
+        this.subThemeId = id;
+        this.subThemeName = name;
+        this.subThemeDescription = description;
+        this.theme = theme;
+        this.cards = cards;
     }
 
     public long getSubThemeId() {
@@ -72,7 +74,7 @@ public class SubThemeDto {
         this.cards = cards;
     }
 
-    public String toJsonString(){
+    public String toJsonString() {
         String JSON = new Gson().toJson(this);
         return JSON;
     }
