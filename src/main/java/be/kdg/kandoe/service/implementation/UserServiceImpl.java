@@ -12,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
     private UserRepository userRepository;
 
     private PasswordEncoder passwordEncoder;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -150,5 +156,42 @@ public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserSe
         User user = userRepository.findOne(id);
         user.addGameSessionInfo(userGameSessionInfo);
         this.updateUserNoPassword(user);
+    }
+
+    @Override
+    public User updateUserInformation(Long id, User user) throws UserServiceException {
+        User u = userRepository.findOne(id);
+        return null;
+
+//        try{
+//            /*
+//             UPDATE USERS
+//             SET  FIRST_NAME = ...,
+//             WHERE
+//             */
+//            em.getTransaction().begin();
+//            int i = em.createQuery("UPDATE User u " +
+//                                            "SET u.firstName = :firstName," +
+//                                            "u.lastName = :lastName," +
+//                                            "u.year = :year," +
+//                                            "u.month = :month," +
+//                                            "u.day = :day," +
+//                                            "u.gender = :gender")
+//                    .setParameter("firstName", user.getFirstName())
+//                    .setParameter("lastName", user.getLastName())
+//                    .setParameter("year", user.getYear())
+//                    .setParameter("month", user.getMonth())
+//                    .setParameter("day", user.getDay())
+//                    .setParameter("gender", user.getGender())
+//                    .executeUpdate();
+//            em.getTransaction().commit();
+//        }catch (Exception e){
+//            String error = "Something went wrong while accessing the database!";
+//            return null;
+//        }
+//        finally {
+//            em.close();
+//        }
+//        return null;
     }
 }

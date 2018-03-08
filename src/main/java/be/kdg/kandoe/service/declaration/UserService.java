@@ -23,6 +23,8 @@ public interface UserService extends UserDetailsService{
 
     User updateUser(Long userId, User user) throws UserServiceException;
 
+    User updateUserInformation(Long is, User user) throws UserServiceException;
+
     User addUser(User user) throws UserServiceException;
 
     void deleteUser(Long userId) throws UserServiceException;
