@@ -9,28 +9,26 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name = "SUBTHEME")
 public class SubThemeJpa {
     @Id
+    @Column(name = "subThemeId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subthemeId")
     private long subThemeId;
 
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "subtheme_themeId")
+    @ManyToOne(targetEntity = ThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "themeId_FK")
     private ThemeJpa theme;
 
-    @Column
     private String subThemeName;
 
-    @Column
     private String subThemeDescription;
 
-    @ManyToMany(cascade= CascadeType.ALL,mappedBy = "subThemes")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "subThemes")
     @JsonManagedReference
     private List<CardJpa> cards;
 
-    public SubThemeJpa(){
+    public SubThemeJpa() {
 
     }
 

@@ -33,7 +33,6 @@ public class ThemeJpa {
         @Column(nullable = false)
         private String description;
 
-        @Column
         @OneToMany(targetEntity=SubThemeJpa.class,fetch = FetchType.EAGER,mappedBy = "theme",cascade = CascadeType.REMOVE)
         @OnDelete(action = OnDeleteAction.CASCADE)
         @Fetch(FetchMode.SELECT)

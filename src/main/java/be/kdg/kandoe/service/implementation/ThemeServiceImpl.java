@@ -7,12 +7,10 @@ import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.InputValidationException;
 import be.kdg.kandoe.service.exception.ThemeRepositoryException;
-import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -75,6 +73,11 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public List<SubTheme> getSubThemesByThemeId(long id) throws ThemeRepositoryException {
         return themeRepo.findSubThemesByThemeId(id);
+    }
+
+    @Override
+    public SubTheme getSingleSubThemeByThemeId(long themeId, long subThemeId) {
+        return themeRepo.findSingleSubThemeByThemeId(themeId, subThemeId);
     }
 
     @Override

@@ -24,6 +24,7 @@ public interface ThemeRepository {
     List<Theme> findAllThemes();
     List<SubTheme> findAllSubThemes();
     List<SubTheme> findSubThemesByThemeId(long id);
+    SubTheme findSingleSubThemeByThemeId(long themeId, long subThemeId);
 
     List<Card> findCardsByThemeId(long themeId);
 

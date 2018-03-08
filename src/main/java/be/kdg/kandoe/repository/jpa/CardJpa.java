@@ -27,8 +27,8 @@ public class CardJpa {
     @JsonBackReference
     @JoinTable(
             name="subtheme_card",
-            joinColumns = {@JoinColumn(name="card_id")},
-            inverseJoinColumns = {@JoinColumn(name = "subtheme_id")}
+            joinColumns = {@JoinColumn(name="cardId")},
+            inverseJoinColumns = {@JoinColumn(name = "subthemeId")}
     )
     private List<SubThemeJpa> subThemes;
 

@@ -41,7 +41,7 @@ public class ThemeRepoMock implements ThemeRepository {
                 return st;
             }
         }
-        throw new ThemeRepositoryException("No subtheme foudn");
+        throw new ThemeRepositoryException("No subtheme found");
     }
 
     public Theme createTheme(Theme theme) {
@@ -163,6 +163,23 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         return subThemes;
+    }
+
+    @Override
+    public SubTheme findSingleSubThemeByThemeId(long themeId, long subThemeId) {
+        for (Theme t :
+                themes) {
+            if (t.getThemeId() == themeId) {
+                for (SubTheme st :
+                        subThemes) {
+                    if (st.getSubThemeId() == subThemeId) {
+                        return st;
+                    }
+                }
+                throw new ThemeRepositoryException("No subtheme found for theme: "+t.getThemeId());
+            }
+        }
+        throw new ThemeRepositoryException("No theme found with ID: "+ themeId);
     }
 
     @Override

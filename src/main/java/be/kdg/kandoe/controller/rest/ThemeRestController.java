@@ -10,7 +10,6 @@ import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.ThemeRepositoryException;
-import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -81,13 +80,23 @@ public class ThemeRestController {
     }
 
     @RequestMapping(value = "api/public/theme/{themeId}/subthemes", method= RequestMethod.GET)
-    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@RequestParam(name="themeId")long themeId){
+    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@PathVariable(name="themeId")long themeId){
         System.out.println("CALL RECEIVED: getSubThemesByThemeId: "+themeId);
         List<SubTheme> subThemes = themeService.getSubThemesByThemeId(themeId);
         if(subThemes==null){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(subThemes.stream().map(s->DtoConverter.toSubThemeDto(s,false)).collect(Collectors.toList()));
+    }
+
+    @RequestMapping(value = "api/public/theme/{themeId}/subtheme/{subThemeId}", method= RequestMethod.GET)
+    public ResponseEntity<SubThemeDto> getSingleSubThemeByThemeId(@PathVariable(name="themeId")long themeId, @PathVariable(name = "subThemeId")long subThemeId){
+        System.out.println("CALL RECEIVED: getSingleSubThemeByThemeId: THEME "+themeId+" SUBTHEME: "+subThemeId);
+        SubTheme subTheme = themeService.getSingleSubThemeByThemeId(themeId, subThemeId);
+        if(subTheme==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(DtoConverter.toSubThemeDto(subTheme, false));
     }
 
     //GET-METHODS

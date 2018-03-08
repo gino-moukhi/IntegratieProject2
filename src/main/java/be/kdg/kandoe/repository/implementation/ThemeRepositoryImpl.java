@@ -37,7 +37,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme findThemeByName(@Param("name") String name) {
-        Query query = em.createQuery("SELECT theme from ThemeJpa theme WHERE name = :name", ThemeJpa.class).setParameter("name", name);
+        Query query = em.createQuery("SELECT theme from ThemeJpa theme WHERE theme.name = :name", ThemeJpa.class).setParameter("name", name);
         System.out.println(query.getResultList().get(0));
         if (query.getResultList() == null || query.getResultList().get(0) == null) {
             throw new ThemeRepositoryException("No Theme found by name: " + name);
@@ -49,7 +49,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public Theme findThemeById(@Param("themeId") long themeId) {
-        Query query = em.createQuery("SELECT theme FROM ThemeJpa theme WHERE themeId=:themeId", ThemeJpa.class).setParameter("themeId", themeId);
+        Query query = em.createQuery("SELECT theme FROM ThemeJpa theme WHERE theme.themeId=:themeId", ThemeJpa.class).setParameter("themeId", themeId);
         if (query.getResultList().isEmpty() || query.getResultList().get(0) == null) {
             throw new ThemeRepositoryException("No Theme found for ID: " + themeId);
         }
@@ -60,7 +60,7 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public SubTheme findSubThemeById(@Param("subThemeId") long subThemeId) {
-        Query query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subThemeId=:subThemeId").setParameter("subThemeId", subThemeId);
+        Query query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subTheme.subThemeId=:subThemeId").setParameter("subThemeId", subThemeId);
         if (query.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No SubTheme found for ID: " + subThemeId);
         }
@@ -158,6 +158,16 @@ public class ThemeRepositoryImpl implements ThemeRepository {
             throw new ThemeRepositoryException("No SubTheme found for themeId: " + id);
         }
         return query.getResultList().stream().map(jpa -> JpaConverter.toSubTheme(jpa, false)).collect(Collectors.toList());
+    }
+
+    @Override
+    public SubTheme findSingleSubThemeByThemeId(long themeId, long subThemeId) {
+        TypedQuery<SubThemeJpa> query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subTheme.theme.themeId=:themeId AND subTheme.subThemeId=:subThemeId", SubThemeJpa.class).setParameter("themeId", themeId).setParameter("subThemeId", subThemeId);
+        if (query.getResultList() == null || query.getResultList().get(0) == null){
+            throw new ThemeRepositoryException("SubTheme with ID: "+ subThemeId+" from Theme with ID: "+themeId+" does not exist");
+        }
+        SubThemeJpa jpa = (SubThemeJpa) query.getResultList().get(0);
+        return JpaConverter.toSubTheme(jpa, false);
     }
 
     @Override
