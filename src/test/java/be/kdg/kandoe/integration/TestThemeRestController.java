@@ -1,5 +1,6 @@
 package be.kdg.kandoe.integration;
 
+import be.kdg.kandoe.KandoeApplication;
 import be.kdg.kandoe.controller.rest.ThemeRestController;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
@@ -11,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -27,9 +29,10 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest
 public class TestThemeRestController {
+
     static ThemeRestController controller;
 
     static ThemeDto theme1;

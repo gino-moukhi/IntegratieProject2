@@ -5,11 +5,13 @@ import be.kdg.kandoe.repository.declaration.GameSessionRepository;
 import be.kdg.kandoe.service.declaration.GameSessionService;
 import be.kdg.kandoe.service.exception.GameSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Primary
 public class GameSessionServiceImpl implements GameSessionService{
 
 

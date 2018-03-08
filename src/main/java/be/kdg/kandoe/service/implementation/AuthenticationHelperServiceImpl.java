@@ -4,12 +4,14 @@ import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
+@Primary
 public class AuthenticationHelperServiceImpl implements AuthenticationHelperService {
 
     private final UserService userService;

@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan
 @EntityScan
+
 public class KandoeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KandoeApplication.class, args);

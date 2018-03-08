@@ -25,10 +25,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.booleanThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -50,16 +53,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @EnableWebSecurity
+@Rollback
+@Transactional
 public class GameSessionRestControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
     protected WebApplicationContext wac;
 
-    @MockBean
+    @MockBean(name="userService2")
     private UserService userService;
 
-    @MockBean
+    @MockBean(name="gameSessionService1")
     private GameSessionService gameSessionService;
 
     @Autowired
@@ -70,7 +75,7 @@ public class GameSessionRestControllerTest {
 
     private DeviceDummy deviceDummy;
 
-    @MockBean
+    @MockBean(name="userDetailService")
     private CustomUserDetailsService userDetailsService;
 
     private User bob;
@@ -111,6 +116,26 @@ public class GameSessionRestControllerTest {
         adminRole.setUser(sven);
         sven.setAuthorities(Arrays.asList(adminRole));
 
+        userDetailsService.addUser(sven);
+
+
+/*        try {
+            mockMvc.perform(post("/api/private/users/"+sven.getUsername())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(sven.toString()))
+                    .andExpect(status().isOk());
+            mockMvc.perform(post("/api/private/users/"+mindy.getUsername())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(mindy.toString()))
+                    .andExpect(status().isOk());
+            mockMvc.perform(post("/api/private/users/"+bob.getUsername())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(bob.toString()))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+*/
         List<Notification> allNotifications = new ArrayList<>();
         allNotifications.add(Notification.StartGame);
         allNotifications.add(Notification.EndGame);
@@ -225,6 +250,7 @@ public class GameSessionRestControllerTest {
         when(gameSessionService.getAllGameSessions()).thenReturn(gameSessions);
 
         String jwtToken = createToken("sven", "ROLE_ADMIN");
+
 
         MvcResult result = mockMvc.perform(get("/api/private/gamesessions")
                                 .accept(MediaType.APPLICATION_JSON)
