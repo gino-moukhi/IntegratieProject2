@@ -5,6 +5,8 @@ import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,25 +25,21 @@ public class CardJpa {
     //private String imagePath;
     //private byte[] image;
     private boolean isDefaultCard;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JsonBackReference
-    @JoinTable(
-            name="subtheme_card",
-            joinColumns = {@JoinColumn(name="card_id")},
-            inverseJoinColumns = {@JoinColumn(name = "subtheme_id")}
-    )
-    private List<SubThemeJpa> subThemes;
+    @Column
+    @OneToMany(targetEntity = CardSubThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "card")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<CardSubThemeJpa> cardSubThemes;
 
     public CardJpa() {
-        this.subThemes = new ArrayList<>();
+        this.cardSubThemes = new ArrayList<>();
     }
 
     public long getCardId() {
         return cardId;
     }
 
-    public void setCardId(long id){
-        this.cardId=id;
+    public void setCardId(long id) {
+        this.cardId = id;
     }
 
     public String getName() {
@@ -76,11 +74,11 @@ public class CardJpa {
         isDefaultCard = defaultCard;
     }
 
-    public List<SubThemeJpa> getSubThemes() {
-        return this.subThemes;
+    public List<CardSubThemeJpa> getCardSubThemes() {
+        return this.cardSubThemes;
     }
 
-    public void setSubThemes(List<SubThemeJpa> subThemes) {
-        this.subThemes = subThemes;
+    public void setCardSubThemes(List<CardSubThemeJpa> subThemes) {
+        this.cardSubThemes = subThemes;
     }
 }

@@ -3,21 +3,24 @@ package be.kdg.kandoe.repository.jpa;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name = "SUBTHEME")
 public class SubThemeJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subthemeId")
     private long subThemeId;
 
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "subtheme_themeId")
+    @ManyToOne(targetEntity = ThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "themeId_PK")
     private ThemeJpa theme;
 
     @Column
@@ -26,11 +29,12 @@ public class SubThemeJpa {
     @Column
     private String subThemeDescription;
 
-    @ManyToMany(cascade= CascadeType.ALL,mappedBy = "subThemes")
-    @JsonManagedReference
-    private List<CardJpa> cards;
+    @Column
+    @OneToMany(targetEntity = CardSubThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "subTheme")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<CardSubThemeJpa> cardSubThemes;
 
-    public SubThemeJpa(){
+    public SubThemeJpa() {
 
     }
 
@@ -66,11 +70,11 @@ public class SubThemeJpa {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public List<CardJpa> getCards() {
-        return cards;
+    public List<CardSubThemeJpa> getCardSubThemes() {
+        return cardSubThemes;
     }
 
-    public void setCards(List<CardJpa> cards) {
-        this.cards = cards;
+    public void setCardSubThemes(List<CardSubThemeJpa> cardSubThemes) {
+        this.cardSubThemes = cardSubThemes;
     }
 }
