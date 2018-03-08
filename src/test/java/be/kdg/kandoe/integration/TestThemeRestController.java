@@ -6,6 +6,7 @@ import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.dto.theme.CardDto;
+import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
@@ -86,6 +87,18 @@ public class TestThemeRestController {
     }
 
     @Test
+    public void TestCreateSubTheme(){
+        SubThemeDto subThemeDto = new SubThemeDto(0,"JSONSubTheme","SubTheme created throughg JSON");
+        ResponseEntity<SubThemeDto> response = restTemplate.postForEntity(callURL+"api/public/subthemes/"+theme1Id,subThemeDto,SubThemeDto.class);
+        ResponseEntity<SubThemeDto> responseGet =restTemplate.getForEntity(callURL+"api/public/subtheme/"+response.getBody().getSubThemeId(),SubThemeDto.class);
+        Assert.assertThat(response.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getStatusCode(),equalTo(HttpStatus.OK));
+        Assert.assertThat(responseGet.getBody().getSubThemeName(),equalTo(subThemeDto.getSubThemeName()));
+        Assert.assertThat(responseGet.getBody().getSubThemeDescription(),equalTo(subThemeDto.getSubThemeDescription()));
+        Assert.assertThat(responseGet.getBody().getTheme().getThemeId(),equalTo(theme1Id));
+    }
+
+    @Test
     public void TestGetAllThemes() {
         ParameterizedTypeReference<List<ThemeDto>> typeref = new ParameterizedTypeReference<List<ThemeDto>>() {
         };
@@ -133,10 +146,9 @@ public class TestThemeRestController {
     public void TestGetSubThemesByThemeId() {
         ParameterizedTypeReference<List<SubThemeDto>> typeref = new ParameterizedTypeReference<List<SubThemeDto>>() {
         };
-        ResponseEntity<List<SubThemeDto>> response = restTemplate.exchange(callURL + "api/public/theme/" + theme1Id + "/subthemes", HttpMethod.GET, null,typeref);
+        ResponseEntity<List<SubThemeDto>> response = restTemplate.exchange(callURL + "api/public/theme/"+theme1Id+"/subthemes", HttpMethod.GET, null,typeref);
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        //Assert.assertThat(response.getBody().size(), equalTo(2));
-
+        Assert.assertThat(response.getBody().size(), equalTo(2));
     }
 
     @Test
@@ -233,20 +245,20 @@ public class TestThemeRestController {
     @Test
     public void TestAddCardToSubTheme() {
         CardDto mockCard = new CardDto(0, "MOCKCard", "Mock Card to test AddCardToTheme", false);
-        long addedCardId = restTemplate.postForEntity(callURL + "api/public/cards", mockCard, CardDto.class).getBody().getCardId();
-        ResponseEntity<SubThemeDto> responseGet = restTemplate.getForEntity(callURL + "api/public/subtheme/" + subTheme2Id, SubThemeDto.class);
-        ResponseEntity<SubThemeDto> response = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme2Id + "/card/" + addedCardId, HttpMethod.PUT, null, SubThemeDto.class);
-        CardDto updatedCard = restTemplate.getForEntity(callURL + "api/public/card/" + addedCardId, CardDto.class).getBody();
+        mockCard = restTemplate.postForEntity(callURL + "api/public/cards", mockCard, CardDto.class).getBody();
+        ResponseEntity<SubThemeDto> response = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme2Id + "/cards/" + mockCard.getCardId(), HttpMethod.POST, null, SubThemeDto.class);
+        CardDto updatedCard = restTemplate.getForEntity(callURL + "api/public/card/" + mockCard.getCardId(), CardDto.class).getBody();
+        SubThemeDto updatedSubTHeme = restTemplate.getForEntity(callURL + "api/public/subtheme/" + subTheme2Id, SubThemeDto.class).getBody();
         Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Assert.assertThat(response.getBody().getSubThemeId(), equalTo(subTheme2Id));
         boolean cardInSubTheme = false;
-        for (CardDto c : response.getBody().getCards()
+        for (CardSubThemeDto c : response.getBody().getCardSubThemes()
                 ) {
-            if (c.getCardId() == addedCardId) cardInSubTheme = true;
+            if (c.getCard().getCardId() == mockCard.getCardId()) cardInSubTheme = true;
         }
         boolean subThemeInCard = false;
-        for (SubThemeDto st : updatedCard.getSubThemes()) {
-            if (st.getSubThemeId() == subTheme2Id) subThemeInCard = true;
+        for (CardSubThemeDto cst : updatedCard.getCardSubThemes()) {
+            if (cst.getSubTheme().getSubThemeId() == subTheme2Id) subThemeInCard = true;
         }
         Assert.assertTrue("SubTheme should contain Card", cardInSubTheme);
         Assert.assertTrue("Card should contain SubTheme", subThemeInCard);
@@ -284,8 +296,8 @@ public class TestThemeRestController {
         ResponseEntity<CardDto> response6 = restTemplate.postForEntity(callURL + "api/public/cards", card2, CardDto.class);
         card2Id = response6.getBody().getCardId();
 
-        ResponseEntity<SubThemeDto> response7 = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme1Id + "/cards/" + card1Id, HttpMethod.PUT, null, SubThemeDto.class);
-        ResponseEntity<SubThemeDto> response8 = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme1Id + "/cards/" + card2Id, HttpMethod.PUT, null, SubThemeDto.class);
+        ResponseEntity<SubThemeDto> response7 = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme1Id + "/cards/" + card1Id, HttpMethod.POST, null, SubThemeDto.class);
+        ResponseEntity<SubThemeDto> response8 = restTemplate.exchange(callURL + "api/public/subtheme/" + subTheme1Id + "/cards/" + card2Id, HttpMethod.POST, null, SubThemeDto.class);
 
     }
 }

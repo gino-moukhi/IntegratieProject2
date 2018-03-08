@@ -14,7 +14,7 @@ public class CardDto {
     //private String imagePath;
     //private byte[] image;
     private boolean isDefaultCard;
-    private List<SubThemeDto> subThemes;
+    private List<CardSubThemeDto> subThemes;
 
     public CardDto(){
         subThemes = new ArrayList<>();
@@ -26,7 +26,7 @@ public class CardDto {
         this.isDefaultCard=isDefaultCard;
         this.subThemes=new ArrayList<>();
     }
-    public CardDto(long id, String name, String description, boolean isDefaultCard,List<SubThemeDto> subThemes){
+    public CardDto(long id, String name, String description, boolean isDefaultCard,List<CardSubThemeDto> subThemes){
         this.cardId=id;
         this.name=name;
         this.description=description;
@@ -75,12 +75,12 @@ public class CardDto {
         isDefaultCard = defaultCard;
     }
 
-    public List<SubThemeDto> getSubThemes() {
+    public List<CardSubThemeDto> getCardSubThemes() {
         return this.subThemes;
     }
 
-    public void setSubThemes(List<SubThemeDto> subThemes) {
-        this.subThemes = subThemes;
+    public void setCardSubThemes(List<CardSubThemeDto> cardSubThemes) {
+        this.subThemes = cardSubThemes;
     }
 
 }

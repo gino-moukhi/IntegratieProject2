@@ -82,18 +82,15 @@ public class ThemeRestController {
     }
 
     @RequestMapping(value = "api/public/theme/{themeId}/subthemes", method= RequestMethod.GET)
-    public ResponseEntity<String> getSubThemesByThemeId(@RequestParam(name="themeId")long themeId){
+    public ResponseEntity<List<SubThemeDto>> getSubThemesByThemeId(@PathVariable(name="themeId")long themeId){
         System.out.println("CALL RECEIVED: getSubThemesByThemeId: "+themeId);
-        List<SubThemeDto> subThemes = themeService.getSubThemesByThemeId(themeId).stream().map(st->DtoConverter.toSubThemeDto(st,false)).collect(Collectors.toList());
-        StringBuilder subThemesJSON = new StringBuilder();
-        for (SubThemeDto st: subThemes){
-            subThemesJSON.append(st.toJsonString());
-        }
-        System.out.println(subThemesJSON.toString());
-        if(subThemes==null){
+        try{
+            List<SubTheme> subThemes = themeService.getSubThemesByThemeId(themeId);
+            return ResponseEntity.ok().body(subThemes.stream().map(st->DtoConverter.toSubThemeDto(st,false)).collect(Collectors.toList()));
+        }catch (ThemeRepositoryException te){
+            te.printStackTrace();
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(subThemesJSON.toString());
     }
 
     @RequestMapping(value = "api/public/subtheme/{subThemeId}/cards",method = RequestMethod.GET)
@@ -260,10 +257,11 @@ public class ThemeRestController {
             return ResponseEntity.notFound().build();
         }
     }
-    @RequestMapping(value = "/api/public/subtheme/{subThemeId}/card/{cardId}",method = RequestMethod.PUT)
+    @RequestMapping(value = "/api/public/subtheme/{subThemeId}/cards/{cardId}",method = RequestMethod.POST)
     public ResponseEntity<SubTheme> addCardToSubTheme(@PathVariable(name = "subThemeId")long subThemeId,@PathVariable(name = "cardId")long cardId){
         try{
             SubTheme updatedSubTheme = themeService.addCardToSubTheme(cardId,subThemeId);
+            SubTheme getSubtheme = themeService.getSubThemeById(subThemeId);
             return ResponseEntity.ok().body(updatedSubTheme);
         }catch (ThemeRepositoryException te){
             return ResponseEntity.notFound().build();

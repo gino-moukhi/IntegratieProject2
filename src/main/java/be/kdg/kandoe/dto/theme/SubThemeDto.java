@@ -10,12 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 public class SubThemeDto {
     private long subThemeId;
-    @JsonIgnore
     private ThemeDto theme;
     private String subThemeName;
     private String subThemeDescription;
-    @JsonIgnore
-    private List<CardDto> cards;
+    private List<CardSubThemeDto> cards;
 
     public SubThemeDto(){
         cards = new ArrayList<>();
@@ -26,7 +24,7 @@ public class SubThemeDto {
         this.subThemeName=name;
         this.subThemeDescription=description;
     }
-    public SubThemeDto(long id,ThemeDto theme, String name, String description,List<CardDto> cards){
+    public SubThemeDto(long id,ThemeDto theme, String name, String description,List<CardSubThemeDto> cards){
         this.subThemeId=id;
         this.subThemeName=name;
         this.subThemeDescription=description;
@@ -66,11 +64,11 @@ public class SubThemeDto {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public List<CardDto> getCards() {
+    public List<CardSubThemeDto> getCardSubThemes() {
         return this.cards;
     }
 
-    public void setCards(List<CardDto> cards) {
+    public void setCardSubThemes(List<CardSubThemeDto> cards) {
         this.cards = cards;
     }
 

@@ -1,6 +1,7 @@
 package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
@@ -41,7 +42,8 @@ public class ThemeServiceImpl implements ThemeService {
     public SubTheme addSubThemeByThemeId(SubTheme subTheme, long themeId) throws ThemeRepositoryException {
         Theme themeToAdd = themeRepo.findThemeById(themeId);
         subTheme.setTheme(themeToAdd);
-        return themeRepo.createSubTheme(subTheme);
+        SubTheme result = themeRepo.createSubTheme(subTheme);
+        return result;
     }
 
     @Override
@@ -53,11 +55,19 @@ public class ThemeServiceImpl implements ThemeService {
     public SubTheme addCardToSubTheme(long cardId,long subThemeId){
         SubTheme subThemeForCard = themeRepo.findSubThemeById(subThemeId);
         Card cardToAdd = themeRepo.findCardById(cardId);
-        subThemeForCard.addCard(cardToAdd);
-        cardToAdd.addSubTheme(subThemeForCard);
-        themeRepo.editCard(cardToAdd);
-        return themeRepo.editSubTheme(subThemeForCard);
+        for (CardSubTheme card: subThemeForCard.getCardSubThemes()){
+            if (card.getCard().getCardId()==cardId && card.getSubTheme().getSubThemeId()==subThemeId){
+                throw new ThemeServiceException("Card Already exists in SubTheme");
+            }
+        }
+        CardSubTheme cst = new CardSubTheme(cardToAdd,subThemeForCard);
 
+        CardSubTheme addedCST = themeRepo.createCardSubTheme(cst);
+        subThemeForCard.addCard(addedCST);
+        cardToAdd.addCardSubTheme(addedCST);
+        SubTheme result1 = themeRepo.editSubTheme(subThemeForCard);
+        Card card1 = themeRepo.editCard(cardToAdd);
+        return themeRepo.findSubThemeById(subThemeId);
     }
     //ADD-METHODS
     //GET-METHODS
@@ -177,7 +187,7 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public SubTheme removeCardsFromSubTheme(long subThemeId){
         SubTheme subThemeToEdit = themeRepo.findSubThemeById(subThemeId);
-        subThemeToEdit.setCards(new ArrayList<>());
+        subThemeToEdit.setCardSubThemes(new ArrayList<>());
         return themeRepo.editSubTheme(subThemeToEdit);
     }
     //REMOVE-METHODS

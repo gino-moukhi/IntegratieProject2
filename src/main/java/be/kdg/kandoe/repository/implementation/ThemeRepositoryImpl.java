@@ -1,10 +1,12 @@
 package be.kdg.kandoe.repository.implementation;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.repository.jpa.CardJpa;
+import be.kdg.kandoe.repository.jpa.CardSubThemeJpa;
 import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
 import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
@@ -96,8 +98,8 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     public SubTheme editSubTheme(SubTheme subTheme) {
         SubThemeJpa jpa = JpaConverter.toSubThemeJpa(subTheme, false);
-        em.merge(jpa);
-        return JpaConverter.toSubTheme(jpa, false);
+        SubThemeJpa result = em.merge(jpa);
+        return JpaConverter.toSubTheme(result, false);
     }
 
     @Transactional
@@ -162,7 +164,9 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Transactional
     @Override
     public List<SubTheme> findSubThemesByThemeId(@Param("themeId") long id) {
-        TypedQuery<SubThemeJpa> query = em.createQuery("SELECT subTheme FROM SubThemeJpa subTheme WHERE subTheme.theme.themeId=:themeId", SubThemeJpa.class).setParameter("themeId", id);
+        TypedQuery<SubThemeJpa> query = em.createQuery("SELECT subTheme FROM SubThemeJpa " +
+                "subTheme WHERE subTheme.theme.themeId=:themeId", SubThemeJpa.class)
+                .setParameter("themeId", id);
         if (query.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No SubTheme found for themeId: " + id);
         }
@@ -173,14 +177,23 @@ public class ThemeRepositoryImpl implements ThemeRepository {
     @Override
     @Transactional
     public List<Card> findCardsBySubthemeId(long subthemeId) {
-        TypedQuery<CardJpa> q = em.createQuery("SELECT card FROM CardJpa card " +
-                "join card.subThemes st where st.subThemeId=:subThemeId", CardJpa.class)
-                .setParameter("subThemeId", subthemeId);
-
+        TypedQuery<CardSubThemeJpa> q = em.createQuery("SELECT card FROM CardSubThemeJpa card WHERE card.subTheme.subThemeId=:subThemeId",CardSubThemeJpa.class).setParameter("subThemeId",subthemeId);
         if (q.getResultList().isEmpty()) {
             throw new ThemeRepositoryException("No Cards found for SubTheme with ID: " + subthemeId);
         }
-        return q.getResultList().stream().map(c -> JpaConverter.toCard(c, false)).collect(Collectors.toList());
+        List<Card> cards = new ArrayList<>();
+        for (CardSubThemeJpa jpa: q.getResultList()){
+            cards.add(JpaConverter.toCard(jpa.getCard(),false));
+        }
+        return cards;
+    }
+
+    @Override
+    @Transactional
+    public CardSubTheme createCardSubTheme(CardSubTheme cst) {
+        CardSubThemeJpa jpa = JpaConverter.toCardSubThemeJpa(cst);
+        CardSubThemeJpa result = em.merge(jpa);
+        return JpaConverter.toCardSubTheme(result);
     }
 
     @Override

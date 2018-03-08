@@ -1,6 +1,7 @@
 package be.kdg.kandoe.unit.theme;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 public class ThemeRepoMock implements ThemeRepository {
     List<Theme> themes = new ArrayList<>();
     List<SubTheme> subThemes = new ArrayList<>();
+    List<CardSubTheme> cardSubThemes = new ArrayList<>();
     List<Card> cards =new ArrayList<>();
 
     public Theme findThemeByName(String name) {
@@ -42,6 +44,12 @@ public class ThemeRepoMock implements ThemeRepository {
             }
         }
         throw new ThemeRepositoryException("No subtheme foudn");
+    }
+
+    @Override
+    public CardSubTheme createCardSubTheme(CardSubTheme cardSubTheme) {
+        cardSubThemes.add(cardSubTheme);
+        return cardSubThemes.get(cardSubThemes.indexOf(cardSubTheme));
     }
 
     public Theme createTheme(Theme theme) {
@@ -79,7 +87,7 @@ public class ThemeRepoMock implements ThemeRepository {
              ) {
             if(st.getSubThemeId()==subTheme.getSubThemeId()){
                 st.setTheme(subTheme.getTheme());
-                st.setCards(subTheme.getCards());
+                st.setCardSubThemes(subTheme.getCardSubThemes());
                 st.setSubThemeName(subTheme.getSubThemeName());
                 st.setSubThemeDescription(st.getSubThemeDescription());
                 return st;
@@ -174,9 +182,9 @@ public class ThemeRepoMock implements ThemeRepository {
         List<Card> foundCards = new ArrayList<>();
         for (Card c:cards
              ) {
-            for (SubTheme st:c.getSubThemes()
+            for (CardSubTheme st:c.getCardSubThemes()
                  ) {
-                if(st.getSubThemeId()==subthemeId){
+                if(st.getSubTheme().getSubThemeId()==subthemeId){
                     if(!foundCards.contains(c))foundCards.add(c);
                 }
             }
@@ -210,7 +218,7 @@ public class ThemeRepoMock implements ThemeRepository {
     public Card editCard(Card cardToEdit) {
         for (Card c:cards){
             if(c.getCardId()==cardToEdit.getCardId()){
-                c.setSubThemes(cardToEdit.getSubThemes());
+                c.setCardSubThemes(cardToEdit.getCardSubThemes());
                 c.setName(cardToEdit.getName());
                 c.setDescription(cardToEdit.getDescription());
                 c.setDefaultCard(cardToEdit.isDefaultCard());

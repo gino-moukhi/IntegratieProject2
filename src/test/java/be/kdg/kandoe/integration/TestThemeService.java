@@ -1,6 +1,7 @@
 package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
@@ -73,17 +74,20 @@ public class TestThemeService {
         card1.setName("Schommel");
         card1.setDescription("Schommel aanleggen");
         card1.setDefaultCard(false);
-        card1.setSubThemes(Arrays.asList(new SubTheme[]{subTheme1}));
+        CardSubTheme cst1 = new CardSubTheme(1,card1,subTheme1);
+        card1.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst1}));
 
         card2 = new Card();
         card2.setCardId(2);
         card2.setName("Surveillance");
         card2.setDescription("Beveiliging en camerabewaking");
         card2.setDefaultCard(false);
-        card2.setSubThemes(Arrays.asList(new SubTheme[]{subTheme1,subTheme2}));
+        CardSubTheme cst2 = new CardSubTheme(2,card2,subTheme1);
+        CardSubTheme cst3 = new CardSubTheme(3, card2,subTheme2);
+        card2.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst2}));
 
-        subTheme1.setCards(Arrays.asList(new Card[]{card1,card2}));
-        subTheme2.setCards(Arrays.asList(new Card[]{card2}));
+        subTheme1.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst1,cst2}));
+        subTheme2.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst3}));
 
         repo.setThemes(new ArrayList(Arrays.asList(new Theme[]{theme1,theme2})));
         repo.setSubThemes(new ArrayList(Arrays.asList(new SubTheme[]{subTheme1,subTheme2})));
@@ -193,7 +197,7 @@ public class TestThemeService {
         subThemeToAdd.setSubThemeId(3);
         subThemeToAdd.setSubThemeName("Activiteiten");
         subThemeToAdd.setSubThemeDescription("Subthema voor sport");
-        subThemeToAdd.setCards(new ArrayList<>());
+        subThemeToAdd.setCardSubThemes(new ArrayList<>());
 
         SubTheme subThemeReceived = themeService.addSubThemeByThemeId(subThemeToAdd,theme2.getThemeId());
         Assert.assertThat(subThemeReceived.getSubThemeId(),equalTo(subThemeToAdd.getSubThemeId()));
@@ -235,7 +239,13 @@ public class TestThemeService {
         Card card =themeService.getCardById(cardId);
         Assert.assertThat(card.getCardId(),equalTo(cardId));
         Assert.assertThat(card.getName(),equalTo(card1.getName()));
-        Assert.assertTrue(card.getSubThemes().contains(subTheme1));
+        boolean contains = false;
+        for (CardSubTheme cst: card.getCardSubThemes()){
+            if(cst.getSubTheme().getSubThemeId()==subTheme1.getSubThemeId()){
+                contains=true;
+            }
+        }
+        Assert.assertTrue(contains);
     }
 
     @Test
@@ -258,16 +268,16 @@ public class TestThemeService {
 
         boolean subThemeContainsCard=false;
         SubTheme subThemeToGet = themeService.getSubThemeById(3);
-        for (Card card:subThemeToGet.getCards()
+        for (CardSubTheme cst:subThemeToGet.getCardSubThemes()
              ) {
-            if(card.getCardId()==mockCard.getCardId()){
+            if(cst.getCard().getCardId()==mockCard.getCardId()){
                 subThemeContainsCard=true;
             }
         }
 
         boolean cardContainsSubTheme=false;
-        for (SubTheme s: addedCard.getSubThemes()){
-            if(s.getSubThemeId()==editedSubTheme.getSubThemeId()){
+        for (CardSubTheme cst: addedCard.getCardSubThemes()){
+            if(cst.getSubTheme().getSubThemeId()==editedSubTheme.getSubThemeId()){
                 cardContainsSubTheme=true;
             }
         }
@@ -277,9 +287,9 @@ public class TestThemeService {
 
     @Test
     public void DeleteCardsFromSubTheme(){
-        Assert.assertThat("SubTheme should initially have cards",subTheme1.getCards().size(),not(0));
+        Assert.assertThat("SubTheme should initially have cards",subTheme1.getCardSubThemes().size(),not(0));
         SubTheme subThemeNoCards = themeService.removeCardsFromSubTheme(1);
-        Assert.assertThat(subThemeNoCards.getCards().size(),equalTo(0));
+        Assert.assertThat(subThemeNoCards.getCardSubThemes().size(),equalTo(0));
     }
 
     @Test

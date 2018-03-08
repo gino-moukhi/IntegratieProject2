@@ -1,5 +1,6 @@
 package be.kdg.kandoe.domain.theme;
 
+import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -13,18 +14,18 @@ public class Card {
     //private MultipartFile image;
     //private String imagePath;
     private boolean isDefaultCard;
-    private List<SubTheme> subThemes;
+    private List<CardSubTheme> cardSubThemes;
 
     public Card(){
-        subThemes= new ArrayList<>();
+        cardSubThemes= new ArrayList<>();
     }
 
-    public List<SubTheme> getSubThemes() {
-        return this.subThemes;
+    public List<CardSubTheme> getCardSubThemes() {
+        return this.cardSubThemes;
     }
 
-    public void setSubThemes(List<SubTheme> subThemes) {
-        this.subThemes = subThemes;
+    public void setCardSubThemes(List<CardSubTheme> cardSubThemes) {
+        this.cardSubThemes = cardSubThemes;
     }
 
     public long getCardId() {
@@ -75,14 +76,14 @@ public class Card {
         isDefaultCard = defaultCard;
     }
 
-    public void addSubTheme(SubTheme subTheme){
-        if(subTheme!=null){
-            subThemes.add(subTheme);
+    public void addCardSubTheme(CardSubTheme cardSubTheme){
+        if(cardSubTheme!=null){
+            cardSubThemes.add(cardSubTheme);
         }
     }
-    public void removeSubTheme(SubTheme subTheme){
-        if(subThemes.contains(subTheme)){
-            subThemes.remove(subTheme);
+    public void removeCardSubTheme(CardSubTheme cardSubTheme){
+        if(cardSubThemes.contains(cardSubTheme)){
+            cardSubThemes.remove(cardSubTheme);
         }
     }
 

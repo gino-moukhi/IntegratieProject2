@@ -1,9 +1,11 @@
 package be.kdg.kandoe.dto.converter;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.theme.CardDto;
+import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.service.exception.ConversionException;
@@ -66,10 +68,8 @@ public abstract class DtoConverter {
             if(subTheme.getTheme()!=null){
                 dto.setTheme(DtoConverter.toThemeDto(subTheme.getTheme(),true));
             }
-            if(subTheme.getCards()!=null){
-                dto.setCards(subTheme.getCards().stream().map(c->DtoConverter.toCardDto(c,true)).collect(Collectors.toList()));
-            }else{
-                dto.setCards(new ArrayList<>());
+            if(subTheme.getCardSubThemes()!=null){
+                dto.setCardSubThemes(subTheme.getCardSubThemes().stream().map(c->DtoConverter.toCardSubThemeDto(c)).collect(Collectors.toList()));
             }
         }
         return dto;
@@ -93,11 +93,9 @@ public abstract class DtoConverter {
         subTheme.setSubThemeName(dto.getSubThemeName());
         subTheme.setSubThemeDescription(dto.getSubThemeDescription());
         if(!callByConverter){
-            if(dto.getCards()!=null) {
-                subTheme.setCards(dto.getCards().stream().map(c->DtoConverter.toCard(c,true)).collect(Collectors.toList()));
-            }else{
-                subTheme.setCards(new ArrayList<>());
-            }
+           if(dto.getCardSubThemes()!=null){
+               subTheme.setCardSubThemes(dto.getCardSubThemes().stream().map(cst->DtoConverter.toCardSubTheme(cst)).collect(Collectors.toList()));
+           }
         }
         return subTheme;
     }
@@ -122,10 +120,8 @@ public abstract class DtoConverter {
         newCard.setDescription(cardDto.getDescription());
         newCard.setDefaultCard(cardDto.isDefaultCard());
         if(!callByConverter){
-            if(cardDto.getSubThemes()!=null){
-                newCard.setSubThemes(cardDto.getSubThemes().stream().map(st->DtoConverter.toSubTheme(st,true)).collect(Collectors.toList()));
-            }else{
-                newCard.setSubThemes(new ArrayList<>());
+            if(cardDto.getCardSubThemes()!=null){
+                newCard.setCardSubThemes(cardDto.getCardSubThemes().stream().map(cst->DtoConverter.toCardSubTheme(cst)).collect(Collectors.toList()));
             }
 
         }
@@ -151,12 +147,32 @@ public abstract class DtoConverter {
         dto.setDescription(card.getDescription());
         dto.setDefaultCard(card.isDefaultCard());
         if(!callByConverter){
-            if(card.getSubThemes()!=null){
-                dto.setSubThemes(card.getSubThemes().stream().map(st->DtoConverter.toSubThemeDto(st,true)).collect(Collectors.toList()));
-            }else{
-                dto.setSubThemes(new ArrayList<>());
+            if(card.getCardSubThemes()!=null){
+               dto.setCardSubThemes(card.getCardSubThemes().stream().map(cst->DtoConverter.toCardSubThemeDto(cst)).collect(Collectors.toList()));
             }
         }
+        return dto;
+    }
+
+    public static CardSubTheme toCardSubTheme(CardSubThemeDto cardSubThemeDto){
+        if(cardSubThemeDto==null){
+            return null;
+        }
+        CardSubTheme cst= new CardSubTheme();
+        cst.setCardSubThemeId(cardSubThemeDto.getCardSubThemeId());
+        cst.setCard(DtoConverter.toCard(cardSubThemeDto.getCard(),true));
+        cst.setSubTheme(DtoConverter.toSubTheme(cardSubThemeDto.getSubTheme(),true));
+        return cst;
+    }
+
+    public static CardSubThemeDto toCardSubThemeDto(CardSubTheme cardSubTheme){
+        if(cardSubTheme==null){
+            return null;
+        }
+        CardSubThemeDto dto = new CardSubThemeDto();
+        dto.setCardSubThemeId(cardSubTheme.getCardSubThemeId());
+        dto.setCard(DtoConverter.toCardDto(cardSubTheme.getCard(),true));
+        dto.setSubTheme(DtoConverter.toSubThemeDto(cardSubTheme.getSubTheme(),true));
         return dto;
     }
 

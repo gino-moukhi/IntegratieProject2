@@ -1,14 +1,17 @@
 package be.kdg.kandoe.repository.jpa.converter;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.repository.jpa.CardJpa;
+import be.kdg.kandoe.repository.jpa.CardSubThemeJpa;
 import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
 import be.kdg.kandoe.service.exception.ConversionException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,8 +67,8 @@ public abstract class JpaConverter {
         subTheme.setSubThemeName(jpa.getSubThemeName());
         subTheme.setSubThemeDescription(jpa.getSubThemeDescription());
         if(!callByConverter){
-            if(jpa.getCards()!=null){
-                subTheme.setCards(jpa.getCards().stream().map(c-> JpaConverter.toCard(c,true)).collect(Collectors.toList()));
+            if(jpa.getCardSubThemes()!=null){
+                subTheme.setCardSubThemes(jpa.getCardSubThemes().stream().map(cst->JpaConverter.toCardSubTheme(cst)).collect(Collectors.toList()));
             }
         }
 
@@ -85,8 +88,8 @@ public abstract class JpaConverter {
         jpa.setSubThemeDescription(subTheme.getSubThemeDescription());
         jpa.setTheme(JpaConverter.toThemeJpa(subTheme.getTheme(),true));
         if(!callByConverter){
-            if(subTheme.getCards()!=null){
-                jpa.setCards(subTheme.getCards().stream().map(c->JpaConverter.toCardJpa(c,true)).collect(Collectors.toList()));
+            if(subTheme.getCardSubThemes()!=null){
+                jpa.setCardSubThemes(subTheme.getCardSubThemes().stream().map(cst->JpaConverter.toCardSubThemeJpa(cst)).collect(Collectors.toList()));
             }
         }
         return jpa;
@@ -105,7 +108,7 @@ public abstract class JpaConverter {
         newCard.setDescription(cardJpa.getDescription());
         newCard.setDefaultCard(cardJpa.isDefaultCard());
         if(!callByConverter){
-            newCard.setSubThemes(cardJpa.getSubThemes().stream().map(st->JpaConverter.toSubTheme(st,true)).collect(Collectors.toList()));
+            newCard.setCardSubThemes(cardJpa.getCardSubThemes().stream().map(cst->JpaConverter.toCardSubTheme(cst)).collect(Collectors.toList()));
         }
         return newCard;
     }
@@ -123,8 +126,30 @@ public abstract class JpaConverter {
         newJpa.setDescription(card.getDescription());
         newJpa.setDefaultCard(card.isDefaultCard());
         if(!callByConverter){
-            newJpa.setSubThemes(card.getSubThemes().stream().map(st->JpaConverter.toSubThemeJpa(st,true)).collect(Collectors.toList()));
+            newJpa.setCardSubThemes(card.getCardSubThemes().stream().map(cst->JpaConverter.toCardSubThemeJpa(cst)).collect(Collectors.toList()));
         }
         return newJpa;
+    }
+
+    public static CardSubTheme toCardSubTheme(CardSubThemeJpa jpa){
+        if(jpa==null){
+            return null;
+        }
+        CardSubTheme cardSubTheme = new CardSubTheme();
+        cardSubTheme.setCardSubThemeId(jpa.getCardSubThemeId());
+        cardSubTheme.setCard(toCard(jpa.getCard(),true));
+        cardSubTheme.setSubTheme(toSubTheme(jpa.getSubTheme(),true));
+        return cardSubTheme;
+    }
+
+    public static CardSubThemeJpa toCardSubThemeJpa(CardSubTheme cardSubTheme){
+        if(cardSubTheme==null){
+            return null;
+        }
+        CardSubThemeJpa jpa = new CardSubThemeJpa();
+        jpa.setCardSubThemeId(cardSubTheme.getCardSubThemeId());
+        jpa.setCard(toCardJpa(cardSubTheme.getCard(),true));
+        jpa.setSubTheme(toSubThemeJpa(cardSubTheme.getSubTheme(),true));
+        return jpa;
     }
 }

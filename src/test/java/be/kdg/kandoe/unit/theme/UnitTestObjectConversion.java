@@ -1,13 +1,16 @@
 package be.kdg.kandoe.unit.theme;
 
 import be.kdg.kandoe.domain.theme.Card;
+import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
 import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.dto.theme.CardDto;
+import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.repository.jpa.CardJpa;
+import be.kdg.kandoe.repository.jpa.CardSubThemeJpa;
 import be.kdg.kandoe.repository.jpa.SubThemeJpa;
 import be.kdg.kandoe.repository.jpa.ThemeJpa;
 import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
@@ -85,26 +88,29 @@ public class UnitTestObjectConversion {
         subThemeJpaToTestCards.setTheme(themeJpaToTest);
 
         subThemeDtoToTestCards = new SubThemeDto(new Long(6),"Development","Improving development");
+        CardSubThemeDto cstDto = new CardSubThemeDto(3,cardDtoToTest,subThemeDtoToTest);
+        cardDtoToTest.setCardSubThemes(Arrays.asList(new CardSubThemeDto[]{cstDto}));
+        subThemeDtoToTest.setCardSubThemes(Arrays.asList(new CardSubThemeDto[]{cstDto}));
 
         cardToTest = new Card();
         cardToTest.setCardId(1);
         cardToTest.setName("Better packaging");
         cardToTest.setDescription("Longer lasting product");
         cardToTest.setDefaultCard(false);
-        cardToTest.setSubThemes(Arrays.asList(new SubTheme[]{subThemeToTest,subThemeToTestCards}));
+        CardSubTheme cst = new CardSubTheme(1,cardToTest,subThemeToTest);
+        cardToTest.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst}));
+        subThemeToTest.setCardSubThemes(Arrays.asList(new CardSubTheme[]{cst}));
 
         cardDtoToTest = new CardDto(2,"Bigger platform","Expanding platform size",false);
-        cardDtoToTest.setSubThemes(Arrays.asList(new SubThemeDto[]{subThemeDtoToTestCards}));
         cardJpaToTest = new CardJpa();
         cardJpaToTest.setCardId(3);
         cardJpaToTest.setName("Losing weight");
         cardJpaToTest.setDescription("Just fat");
         cardJpaToTest.setDefaultCard(false);
-        cardJpaToTest.setSubThemes(Arrays.asList(new SubThemeJpa[]{subThemeJpaToTestCards}));
+        CardSubThemeJpa cstJpa = new CardSubThemeJpa(2,cardJpaToTest,subThemeJpaToTest);
+        cardJpaToTest.setCardSubThemes(Arrays.asList(new CardSubThemeJpa[]{cstJpa}));
+        subThemeJpaToTest.setCardSubThemes(Arrays.asList(new CardSubThemeJpa[]{cstJpa}));
 
-        subThemeToTest.setCards(Arrays.asList(new Card[]{cardToTest}));
-        subThemeDtoToTest.setCards(Arrays.asList(new CardDto[]{cardDtoToTest}));
-        subThemeJpaToTest.setCards(Arrays.asList(new CardJpa[]{cardJpaToTest}));
     }
 
     @Test
@@ -148,8 +154,8 @@ public class UnitTestObjectConversion {
         Assert.assertThat(dto.getSubThemeId(),equalTo(subThemeToTest.getSubThemeId()));
         Assert.assertThat(dto.getSubThemeName(),equalTo(subThemeToTest.getSubThemeName()));
         Assert.assertThat(dto.getSubThemeDescription(),equalTo(subThemeToTest.getSubThemeDescription()));
-        Assert.assertThat(dto.getCards().size(),equalTo(subThemeToTest.getCards().size()));
-        Assert.assertThat(dto.getCards().get(0).getCardId(),equalTo(cardToTest.getCardId()));
+        Assert.assertThat(dto.getCardSubThemes().size(),equalTo(subThemeToTest.getCardSubThemes().size()));
+        Assert.assertThat(dto.getCardSubThemes().get(0).getSubTheme(),equalTo(cardToTest.getCardId()));
     }
 
     @Test
@@ -162,6 +168,7 @@ public class UnitTestObjectConversion {
         Assert.assertThat(jpa.getSubThemeId(),equalTo(subThemeToTest.getSubThemeId()));
         Assert.assertThat(jpa.getSubThemeName(),equalTo(subThemeToTest.getSubThemeName()));
         Assert.assertThat(jpa.getSubThemeDescription(),equalTo(subThemeToTest.getSubThemeDescription()));
+        Assert.assertThat(jpa.getCardSubThemes().size(),equalTo(subThemeToTest.getCardSubThemes().size()));
     }
 
     @Test
@@ -174,6 +181,7 @@ public class UnitTestObjectConversion {
         Assert.assertThat(subTheme.getSubThemeId(),equalTo(subThemeDtoToTest.getSubThemeId()));
         Assert.assertThat(subTheme.getSubThemeName(),equalTo(subThemeDtoToTest.getSubThemeName()));
         Assert.assertThat(subTheme.getSubThemeDescription(),equalTo(subThemeDtoToTest.getSubThemeDescription()));
+        Assert.assertThat(subTheme.getCardSubThemes().size(),equalTo(subThemeDtoToTest.getCardSubThemes().size()));
     }
 
     @Test
@@ -186,6 +194,12 @@ public class UnitTestObjectConversion {
         Assert.assertThat(subThemeFromJpa.getSubThemeId(),equalTo(subThemeJpaToTest.getSubThemeId()));
         Assert.assertThat(subThemeFromJpa.getSubThemeName(),equalTo(subThemeJpaToTest.getSubThemeName()));
         Assert.assertThat(subThemeFromJpa.getSubThemeDescription(),equalTo(subThemeJpaToTest.getSubThemeDescription()));
+        Assert.assertThat(subThemeFromJpa.getCardSubThemes().size(),equalTo(1));
+    }
+
+    @Test
+    public void TestCardJpaToCard(){
+        Card card = JpaConverter.toCard(cardJpaToTest,false);
     }
 
     public boolean isJSONValid(String test) {

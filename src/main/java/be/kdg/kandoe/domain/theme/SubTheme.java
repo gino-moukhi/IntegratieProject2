@@ -10,7 +10,7 @@ public class SubTheme {
     private Theme theme;
     private String subThemeName;
     private String subThemeDescription;
-    private List<Card> cards;
+    private List<CardSubTheme> cardSubThemes;
 
     public SubTheme(){
     }
@@ -47,20 +47,20 @@ public class SubTheme {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public List<Card> getCards() {
-        return cards;
+    public List<CardSubTheme> getCardSubThemes() {
+        return cardSubThemes;
     }
 
-    public void setCards(List<Card> cards) {
-        this.cards = cards;
+    public void setCardSubThemes(List<CardSubTheme> cardSubThemes) {
+        this.cardSubThemes = cardSubThemes;
     }
 
-    public void addCard(Card card){
-        this.cards.add(card);
+    public void addCard(CardSubTheme cardSubTheme){
+        this.cardSubThemes.add(cardSubTheme);
     }
-    public void removeCard(Card card){
-        if(cards.contains(card)){
-            cards.remove(card);
+    public void removeCard(CardSubTheme cardSubTheme){
+        if(cardSubThemes.contains(cardSubTheme)){
+            cardSubThemes.remove(cardSubTheme);
         }
     }
 }
