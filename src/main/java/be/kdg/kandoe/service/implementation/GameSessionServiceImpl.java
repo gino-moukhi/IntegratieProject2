@@ -1,6 +1,7 @@
 package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.domain.GameSession;
+import be.kdg.kandoe.domain.GameSessionRole;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.repository.declaration.GameSessionRepository;
@@ -43,6 +44,10 @@ public class GameSessionServiceImpl implements GameSessionService{
 
     @Override
     public GameSession getGameSessionWithId(Long id) {
+        GameSession gameSession = gameSessionRepository.findOne(id);
+
+        if (gameSession == null) throw new GameSessionException("Gamesession with " + id + "was not found!");
+
         return gameSessionRepository.findOne(id);
     }
 
@@ -83,4 +88,5 @@ public class GameSessionServiceImpl implements GameSessionService{
 
         return false;
     }
+
 }

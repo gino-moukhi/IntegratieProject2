@@ -3,14 +3,12 @@ package be.kdg.kandoe.controller;
 import be.kdg.kandoe.domain.GameSession;
 import be.kdg.kandoe.domain.GameSessionRole;
 import be.kdg.kandoe.domain.Notification;
-import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.Gender;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.gameSession.CreateGameSessionDto;
 import be.kdg.kandoe.dto.gameSession.NotificationDto;
 import be.kdg.kandoe.security.TokenHelper;
-import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.GameSessionService;
 import be.kdg.kandoe.service.declaration.UserService;
 import be.kdg.kandoe.service.implementation.CustomUserDetailsService;
@@ -39,8 +37,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.booleanThat;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -134,14 +130,14 @@ public class GameSessionRestControllerTest {
         //Contains bob and mindy
         GameSession gameSession2 = new GameSession(createGameSessionDto2, bob);
         gameSession2.setGameSessionId(2l);
-        gameSession2.addUserToGameSession(new UserGameSessionInfo(someEnabledNotifications, false, GameSessionRole.Participant, mindy, gameSession));
+        //gameSession2.addUserToGameSession(new UserGameSessionInfo(someEnabledNotifications, false, GameSessionRole.Participant, mindy, gameSession));
 
 
         CreateGameSessionDto createGameSessionDto3 = new CreateGameSessionDto("test session", mindy.getUsername(), true, false, 3, 4, 3600);
         //Contains mindy and sven
         GameSession gameSession3 = new GameSession(createGameSessionDto3, mindy);
         gameSession3.setGameSessionId(3l);
-        gameSession3.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Participant, sven, gameSession));
+        //gameSession3.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Participant, sven, gameSession));
 
 
 
@@ -149,7 +145,7 @@ public class GameSessionRestControllerTest {
         //only mindy
         GameSession gameSession4 = new GameSession(createGameSessionDto, mindy);
         gameSession4.setGameSessionId(4l);
-        gameSession4.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Moderator, bob, gameSession));
+        //gameSession4.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Moderator, bob, gameSession));
 
 
 
@@ -166,7 +162,7 @@ public class GameSessionRestControllerTest {
     private boolean checkForGameSessionDetails(String json, GameSession gameSession){
         boolean containsTitle = json.contains(gameSession.getTitle());
         boolean containsImage = json.contains(gameSession.getImage());
-        boolean containsOrganisatorName = json.contains(gameSession.getOrganisatorName());
+        boolean containsOrganisatorName = json.contains(gameSession.getHighestAccesLevelModerator());
         boolean containsTimerLength = json.contains(String.valueOf(gameSession.getTimerLength()));
         boolean containsSelectionLimit = json.contains(String.valueOf(gameSession.getSelectionLimit()));
         boolean containsAddLimit = json.contains(String.valueOf(gameSession.getAddLimit()));

@@ -48,6 +48,7 @@ public class GameSession {
     @Column
     private String image = "default-session.png";
 
+
     public GameSession() {
     }
 
@@ -147,12 +148,23 @@ public class GameSession {
         this.title = title;
     }
 
-    public String getOrganisatorName(){
+    public String getHighestAccesLevelModerator(){
         for(UserGameSessionInfo info : userGameSessionInfos){
             if (info.getRole() == GameSessionRole.ModeratorParticipant || info.getRole() == GameSessionRole.Moderator)
                 return info.getUser().getUsername();
         }
         return "";
+    }
+
+    public String[] getSubModerators(){
+        List<String> submoderators = new ArrayList<>();
+
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if (info.getRole() == GameSessionRole.SubModerator)
+                submoderators.add(info.getUser().getUsername());
+        }
+
+        return (String[]) submoderators.toArray();
     }
 
     public String getImage() {
@@ -161,5 +173,39 @@ public class GameSession {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public GameSessionRole getRoleOfUser(User user){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser() == user){
+                return info.getRole();
+            }
+        }
+        return null;
+    }
+
+    public GameSessionRole getRoleOfUser(String username){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser().getUsername().equalsIgnoreCase(username)){
+                return info.getRole();
+            }
+        }
+        return null;
+    }
+
+    public void setRoleOfUser(User user, GameSessionRole role){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser() == user){
+                info.setRole(role);
+            }
+        }
+    }
+
+    public void setRoleOfUser(String username, GameSessionRole role){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser().getUsername().equalsIgnoreCase(username)) {
+                info.setRole(role);
+            }
+        }
     }
 }

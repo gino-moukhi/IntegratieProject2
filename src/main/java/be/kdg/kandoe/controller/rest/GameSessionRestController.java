@@ -1,6 +1,7 @@
 package be.kdg.kandoe.controller.rest;
 
 import be.kdg.kandoe.domain.GameSession;
+import be.kdg.kandoe.domain.GameSessionRole;
 import be.kdg.kandoe.domain.Notification;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.User;
@@ -74,7 +75,7 @@ public class GameSessionRestController {
         List<CreateGameSessionDto> returnGameSessionDtos = new ArrayList<>();
 
         for(GameSession gameSession : gameSessions){
-            CreateGameSessionDto dto = new CreateGameSessionDto(gameSession.getTitle(), gameSession.getOrganisatorName(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength());
+            CreateGameSessionDto dto = new CreateGameSessionDto(gameSession.getTitle(), gameSession.getHighestAccesLevelModerator(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength());
             dto.setGameSessionId(gameSession.getGameSessionId());
             returnGameSessionDtos.add(dto);
         }
@@ -184,7 +185,7 @@ public class GameSessionRestController {
             ResponseEntity.status(HttpStatus.NO_CONTENT);
         }
 
-        String organisatorName = gameSession.getOrganisatorName();
+        String organisatorName = gameSession.getHighestAccesLevelModerator();
 
         if(!authenticationHelperService.userIsAllowedToAccessResource(request, organisatorName)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -199,6 +200,52 @@ public class GameSessionRestController {
         GameSession savedGameSession = gameSessionService.addUserToGameSession(gameSession.getGameSessionId(), userToAddToSession);
 
         return ResponseEntity.ok(savedGameSession.getGameSessionId());
+    }
+
+
+    @PostMapping("/api/private/sessions/{id}/users/{username}/upgradeacceslevel")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity upgradeGameSessionRoleOfAUser(@PathVariable Long id, @PathVariable String username, HttpServletRequest request){
+        GameSession gameSession = gameSessionService.getGameSessionWithId(id);
+
+
+        //GameSessionId bestaat die?
+        //Username in de token --> Is deze user een Moderator, ModeratorParticipant of Submoderator anders unauthorized
+        //Username (vd user om rechten te geven) bestaat die en is die nog geen Moderator, ModeratorParticipant of Submoderator
+
+        if(gameSession == null ){
+            ResponseEntity.status(HttpStatus.NO_CONTENT).body("Gamesession was not found!");
+        }
+
+        String tokenUsername = (String) request.getAttribute("username");
+
+        //Role of the user from the token
+        GameSessionRole role = gameSession.getRoleOfUser(tokenUsername);
+
+        if(role == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User that made the request is not part of this game session!");
+        }
+
+        if(role == GameSessionRole.Participant){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User doesn't have the right permissions to grant a higher acces level to a user");
+        }
+
+        //Role of the user that needs to be granted a higher acces level
+        GameSessionRole gameSessionRole = gameSession.getRoleOfUser(username);
+
+        if(gameSessionRole == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("The user that needs to be granted a higher acces level is not part of the game session");
+        }
+
+        if(gameSessionRole != GameSessionRole.Participant){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User is already a moderator!");
+        }
+
+        gameSession.setRoleOfUser(username, GameSessionRole.SubModerator);
+
+        gameSessionService.updateGameSession(gameSession);
+
+        return ResponseEntity.ok().build();
     }
 
 }

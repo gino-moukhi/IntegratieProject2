@@ -24,7 +24,7 @@ public class GameSessionRepositoryImpl implements GameSessionRepositoryCustom {
                     "GameSession gs " +
                     "JOIN gs.userGameSessionInfos ugsi " +
                     "JOIN ugsi.user u " +
-                    "WHERE u.username = :username " ).setParameter("username", username);
+                    "WHERE u.username = :username ").setParameter("username", username);
             return q.getResultList();
         }catch (Exception e){
             String error = "Something went wrong while accessing the database!";

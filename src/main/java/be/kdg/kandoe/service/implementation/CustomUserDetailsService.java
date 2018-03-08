@@ -75,18 +75,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return true;
     }
 
-//    public boolean checkUsernameCredentials(String username){
-//        User sameUsernameUser = userRepository.findUserByUsername(username);
-//        return sameUsernameUser == null;
-//    }
-//
-//    public boolean checkEmailCredentials(String email){
-//        User sameEmailUser = userRepository.findUserByEmail(email);
-//        return sameEmailUser == null;
-//    }
-
-
-
     public User saveUser(User user) throws UserServiceException {
         User u = userRepository.save(user);
         if (u == null)

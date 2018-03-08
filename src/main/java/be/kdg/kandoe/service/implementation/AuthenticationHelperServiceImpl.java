@@ -24,15 +24,16 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class AuthenticationHelperServiceImpl implements AuthenticationHelperService {
 
-    private final UserService userService;
+    private UserService userService;
 
-    private final TokenHelper tokenHelper;
+    private TokenHelper tokenHelper;
 
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
-    private final CustomUserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
 
-    private final DeviceProvider deviceProvider;
+    private DeviceProvider deviceProvider;
+
 
     @Autowired
     public AuthenticationHelperServiceImpl(UserService userService, TokenHelper tokenHelper, AuthenticationManager authenticationManager, CustomUserDetailsService userDetailsService, DeviceProvider deviceProvider) {
@@ -105,7 +106,6 @@ public class AuthenticationHelperServiceImpl implements AuthenticationHelperServ
         }
     }
 
-
     @Override
     public boolean isAdmin(User user) {
         for(GrantedAuthority authority : user.getAuthorities()){
@@ -144,5 +144,25 @@ public class AuthenticationHelperServiceImpl implements AuthenticationHelperServ
 
     private String getUsernameFromTokem(HttpServletRequest request){
         return (String) request.getAttribute("username");
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setTokenHelper(TokenHelper tokenHelper) {
+        this.tokenHelper = tokenHelper;
+    }
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public void setUserDetailsService(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    public void setDeviceProvider(DeviceProvider deviceProvider) {
+        this.deviceProvider = deviceProvider;
     }
 }

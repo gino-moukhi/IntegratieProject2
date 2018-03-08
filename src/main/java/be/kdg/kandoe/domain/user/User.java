@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -52,12 +53,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Authority> authorities;
+    private List<Authority> authorities = new ArrayList<>();
 
     @Column(nullable = false)
     @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<UserGameSessionInfo> gameSessionInfos;
+    private List<UserGameSessionInfo> gameSessionInfos = new ArrayList<>();
 
     @Column
     private String profilePictureFileName = "default-profile.png";
