@@ -77,16 +77,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return true;
     }
 
-    public boolean checkUsernameCredentials(String username){
-        User sameUsernameUser = userRepository.findUserByUsername(username);
-        return sameUsernameUser == null;
-    }
-
-    public boolean checkEmailCredentials(String email){
-        User sameEmailUser = userRepository.findUserByEmail(email);
-        return sameEmailUser == null;
-    }
-
     public User saveUser(User user) throws UserServiceException {
         User u = userRepository.save(user);
         if (u == null)
@@ -98,7 +88,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Authority authority = new Authority();
         authority.setName("ROLE_USER");
         authority.setUser(user);
-        user.setEncryptedPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
         user.setAuthorities(Arrays.asList(authority));
         return this.saveUser(user);
     }

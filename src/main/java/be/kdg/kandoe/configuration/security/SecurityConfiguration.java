@@ -3,11 +3,8 @@ package be.kdg.kandoe.configuration.security;
 import be.kdg.kandoe.security.TokenHelper;
 import be.kdg.kandoe.security.auth.RestAuthenticationEntryPoint;
 import be.kdg.kandoe.security.auth.TokenAuthenticationFilter;
-
 import be.kdg.kandoe.service.implementation.CustomUserDetailsService;
-import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,10 +18,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -74,6 +71,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //.addFilterBefore(new be.kdg.kandoe.configuration.cors.CorsFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();
+
     }
 
     @Override

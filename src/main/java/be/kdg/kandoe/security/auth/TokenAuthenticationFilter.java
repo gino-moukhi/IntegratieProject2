@@ -52,8 +52,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
                     authentication.setToken(authToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    if(claims.containsValue("ROLE_ADMIN")) request.setAttribute("isAdmin", true);
-                    else request.setAttribute("isAdmin", false);
                 }
             }
             request.setAttribute("username", username);

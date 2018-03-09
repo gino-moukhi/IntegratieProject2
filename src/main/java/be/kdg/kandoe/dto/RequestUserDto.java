@@ -1,11 +1,7 @@
 package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.user.Gender;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 
-import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 

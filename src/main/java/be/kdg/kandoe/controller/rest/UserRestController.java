@@ -1,41 +1,21 @@
 package be.kdg.kandoe.controller.rest;
 
-import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.RequestUserDto;
-import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.StorageService;
 import be.kdg.kandoe.service.declaration.UserService;
-import com.google.common.net.MediaType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import sun.misc.IOUtils;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -63,11 +43,26 @@ public class UserRestController {
     }
 
 
+
+    //GET ALL INFO ABOUT ALL USERS (LIMITED)
+    @GetMapping("/api/private/users/limited")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity getAllUsersLimited(HttpServletRequest request){
+        List<User> users = userService.findUsers();
+
+        List<RequestUserDto> userDtos = new ArrayList<>();
+        for(User user : users){
+            userDtos.add(new RequestUserDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail()));
+        }
+
+        return ResponseEntity.ok(userDtos);
+    }
+
+
     //GET ONE USER ON USERID
     @GetMapping("/api/private/userid/{userId}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<RequestUserDto> getUser(HttpServletRequest request, @PathVariable long userId){
-
         User requestUser = userService.findUserById(userId);
         String username = "";
 
@@ -112,56 +107,11 @@ public class UserRestController {
 //        return userService.addUser(user);
 //    }
 
-    //UPDATE
-//    @PutMapping("/api/private/users/{username}")
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    public ResponseEntity<UpdateuserDto> updateUser(@PathVariable String username, @Valid @RequestBody UpdateuserDto changedUser, HttpServletRequest request){
-//        User userBasedOnUrlUserId = userService.findUserById(user);
-//
-//        String usernameFromToken = (String) request.getAttribute("username");
-//        User tokenUser = userService.findUserByUsername(usernameFromToken);
-//
-//        if(userBasedOnUrlUserId == null){
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        if(!userBasedOnUrlUserId.getUsername().equalsIgnoreCase(changedUser.getUsername()) ||
-//                !userBasedOnUrlUserId.getUsername().equalsIgnoreCase(usernameFromToken) ||
-//                !changedUser.getUsername().equalsIgnoreCase(usernameFromToken)){
-//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-//        }
-//
-//        //Omzetten DTO naar user object
-//        User updatedUser = new User(changedUser);
-//        updatedUser.setUserId(tokenUser.getUserId());
-//        updatedUser.setUsername(tokenUser.getUsername());
-//        updatedUser.setEmail(tokenUser.getEmail());
-//        updatedUser.setAuthorities(tokenUser.getUserRoles());
-//
-//        User savedUser = userService.updateUser(userId, updatedUser);
-//        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
-//
-////        User savedUser = userService.saveUser(updatedUser);
-////        UpdateuserDto updateuserDto = new UpdateuserDto(savedUser);
-//        return ResponseEntity.ok(updateuserDto);
-//    }
-
-
 
     //UPDATE USER
     @PutMapping("/api/private/users/{username}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<RequestUserDto> updateUser(@PathVariable String username, @Valid @RequestBody UserDto changedUser, HttpServletRequest request){
-//        User userBasedOnUsername = userService.findUserByUsername(username);
-//
-//        String usernameFromToken = (String) request.getAttribute("username");
-//        User tokenUser = userService.findUserByUsername(usernameFromToken);
-//
-//        if(userBasedOnUsername == null){
-//            return ResponseEntity.notFound().build();
-//        }
-
-
         String usernameFromToken = (String) request.getAttribute("username");
         User requestUser = userService.findUserByUsername(username);
 
@@ -180,21 +130,37 @@ public class UserRestController {
         }
 
 
+        requestUser.setFirstName(changedUser.getFirstName());
+        requestUser.setLastName(changedUser.getLastName());
+        requestUser.setGender(changedUser.getGender());
+        requestUser.setYear(changedUser.getYear());
+        requestUser.setMonth(changedUser.getMonth());
+        requestUser.setDay(changedUser.getDay());
 
-
-        //Omzetten DTO naar user object
-        User updatedUser = new User(changedUser);
-        updatedUser.setUserId(requestUser.getUserId());
-        updatedUser.setUsername(requestUser.getUsername());
-        updatedUser.setEmail(requestUser.getEmail());
-        updatedUser.setAuthorities(requestUser.getUserRoles());
-
-        User savedUser = userService.updateUser(requestUser.getUserId(), updatedUser);
+        User savedUser = userService.updateUserNoPassword(requestUser);
         RequestUserDto requestUserDto = new RequestUserDto(savedUser.getUsername(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
         return ResponseEntity.ok(requestUserDto);
     }
 
+    @PostMapping("/api/private/users/{username}/updatepassword")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity updatePasswordOfUser(@PathVariable String username, @RequestBody UserDto changedUser,  HttpServletRequest request){
+        User requestUser = userService.findUserByUsername(username);
 
+        if (!authenticationHelperService.userIsAllowedToAccessResource(request, username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        };
+
+        if(requestUser == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        requestUser.setEncryptedPassword(changedUser.getPassword());
+
+        userService.updateUser(requestUser.getUserId(), requestUser);
+
+        return ResponseEntity.ok().build();
+    }
 
 
 

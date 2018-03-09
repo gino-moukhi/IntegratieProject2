@@ -1,5 +1,7 @@
 package be.kdg.kandoe.dto.gameSession;
 
+import java.util.List;
+
 public class CreateGameSessionDto {
     private String title;
     private String organisator; //Username of organisator
@@ -9,6 +11,9 @@ public class CreateGameSessionDto {
     private int selectionLimit;
     private int timer; //Turn length
     private Long gameSessionId;
+
+    //test
+    private List<String> subOrganisators;
 
     public CreateGameSessionDto() {
     }
@@ -21,6 +26,17 @@ public class CreateGameSessionDto {
         this.limit = limit;
         this.selectionLimit = selectionLimit;
         this.timer = timer;
+    }
+
+    public CreateGameSessionDto(String title, String organisator, boolean isOrganisatorPlaying, boolean allowUsersToAdd, int limit, int selectionLimit, int timer, List<String> subOrganisators) {
+        this.title = title;
+        this.organisator = organisator;
+        this.isOrganisatorPlaying = isOrganisatorPlaying;
+        this.allowUsersToAdd = allowUsersToAdd;
+        this.limit = limit;
+        this.selectionLimit = selectionLimit;
+        this.timer = timer;
+        this.subOrganisators = subOrganisators;
     }
 
     public String getTitle() {
@@ -85,6 +101,18 @@ public class CreateGameSessionDto {
 
     public void setGameSessionId(Long gameSessionId) {
         this.gameSessionId = gameSessionId;
+    }
+
+    public void setOrganisatorPlaying(boolean organisatorPlaying) {
+        isOrganisatorPlaying = organisatorPlaying;
+    }
+
+    public List<String> getSubOrganisators() {
+        return subOrganisators;
+    }
+
+    public void setSubOrganisators(List<String> subOrganisators) {
+        this.subOrganisators = subOrganisators;
     }
 }
 

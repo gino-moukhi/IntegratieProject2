@@ -1,6 +1,5 @@
 package be.kdg.kandoe.domain.user;
 
-import be.kdg.kandoe.domain.GameSession;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
@@ -54,13 +53,13 @@ public class User implements UserDetails {
     @Column
     @OneToMany(mappedBy = "user",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Authority> authorities;
+    private List<Authority> authorities = new ArrayList<>();
 
 
     @Column
     @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<UserGameSessionInfo> gameSessionInfos;
+    private List<UserGameSessionInfo> gameSessionInfos = new ArrayList<>();
 
     @Column
     private String profilePictureFileName = "default-profile.png";
@@ -105,6 +104,10 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    public void addGameSessionInfo(UserGameSessionInfo userGameSessionInfo){
+        this.gameSessionInfos.add(userGameSessionInfo);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -132,7 +135,11 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getEncryptedPassword();
+        return this.encryptedPassword;
+    }
+
+    public String getEncryptedPassword() {
+        return this.encryptedPassword;
     }
 
     public long getUserId() {
@@ -173,10 +180,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getEncryptedPassword(){
-        return this.encryptedPassword;
     }
 
     public void setEncryptedPassword(String password) {

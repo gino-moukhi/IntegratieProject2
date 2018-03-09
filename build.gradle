@@ -30,7 +30,6 @@ tasks.withType(Jar) {
 
 dependencies {
 	compile('io.ratpack:ratpack-spring-boot:1.1.1')
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.0.0.RELEASE'
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
