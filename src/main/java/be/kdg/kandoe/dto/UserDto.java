@@ -3,8 +3,6 @@ package be.kdg.kandoe.dto;
 import be.kdg.kandoe.domain.user.Gender;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class UserDto {
     private String username;
@@ -14,7 +12,6 @@ public class UserDto {
     private String email;
     private int age;
     private Gender gender;
-//    private Date birthday;
     private Calendar birthday;
 
     public UserDto() {
@@ -107,4 +104,5 @@ public class UserDto {
     public int getDay(){
         return birthday.get(Calendar.DAY_OF_MONTH);
     }
+
 }
