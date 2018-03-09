@@ -75,7 +75,7 @@ public class GameSessionRestController {
         List<CreateGameSessionDto> returnGameSessionDtos = new ArrayList<>();
 
         for(GameSession gameSession : gameSessions){
-            CreateGameSessionDto dto = new CreateGameSessionDto(gameSession.getTitle(), gameSession.getHighestAccesLevelModerator(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength());
+            CreateGameSessionDto dto = new CreateGameSessionDto(gameSession.getTitle(), gameSession.getHighestAccesLevelModerator(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength(), gameSession.getAllSubOrganisators());
             dto.setGameSessionId(gameSession.getGameSessionId());
             returnGameSessionDtos.add(dto);
         }

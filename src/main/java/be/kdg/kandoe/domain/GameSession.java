@@ -208,4 +208,14 @@ public class GameSession {
             }
         }
     }
+
+    public List<String> getAllSubOrganisators(){
+        List<String> subOrganisators = new ArrayList<>();
+        for(UserGameSessionInfo userGameSessionInfo : this.userGameSessionInfos){
+            if(userGameSessionInfo.getRole() == GameSessionRole.SubModerator){
+                subOrganisators.add(userGameSessionInfo.getUser().getUsername());
+            }
+        }
+        return subOrganisators;
+    }
 }
