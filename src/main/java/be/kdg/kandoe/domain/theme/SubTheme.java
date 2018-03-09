@@ -1,6 +1,6 @@
 package be.kdg.kandoe.domain.theme;
 
-import be.kdg.kandoe.dto.SubThemeDto;
+import be.kdg.kandoe.dto.theme.SubThemeDto;
 
 import java.util.List;
 
@@ -10,28 +10,9 @@ public class SubTheme {
     private Theme theme;
     private String subThemeName;
     private String subThemeDescription;
+    private List<CardSubTheme> cardSubThemes;
 
-    public SubTheme(){
-
-    }
-
-    public SubTheme(SubThemeDto dto){
-        this.subThemeId=dto.getSubThemeId();
-        this.subThemeName=dto.getSubThemeName();
-        this.subThemeDescription=dto.getSubThemeDescription();
-        if(dto.getTheme()!=null){
-            this.theme=dto.getTheme().toTheme();
-        }else{
-            this.theme=null;
-        }
-    }
-
-    public Theme getTheme() {
-        return theme;
-    }
-
-    public void setTheme(Theme theme) {
-        this.theme = theme;
+    public SubTheme() {
     }
 
     public long getSubThemeId() {
@@ -40,6 +21,14 @@ public class SubTheme {
 
     public void setSubThemeId(long subThemeId) {
         this.subThemeId = subThemeId;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     public String getSubThemeName() {
@@ -56,5 +45,23 @@ public class SubTheme {
 
     public void setSubThemeDescription(String subThemeDescription) {
         this.subThemeDescription = subThemeDescription;
+    }
+
+    public List<CardSubTheme> getCardSubThemes() {
+        return cardSubThemes;
+    }
+
+    public void setCardSubThemes(List<CardSubTheme> cardSubThemes) {
+        this.cardSubThemes = cardSubThemes;
+    }
+
+    public void addCard(CardSubTheme cardSubTheme) {
+        this.cardSubThemes.add(cardSubTheme);
+    }
+
+    public void removeCard(CardSubTheme cardSubTheme) {
+        if (cardSubThemes.contains(cardSubTheme)) {
+            cardSubThemes.remove(cardSubTheme);
+        }
     }
 }

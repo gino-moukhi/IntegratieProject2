@@ -1,12 +1,7 @@
 package be.kdg.kandoe.domain.theme;
 
-import be.kdg.kandoe.dto.ThemeDto;
-import be.kdg.kandoe.repository.jpa.ThemeJpa;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Theme {
     private long themeId;
@@ -15,14 +10,8 @@ public class Theme {
     private List<SubTheme> subThemes;
 
 
-    public Theme(){
+    public Theme() {
 
-    }
-    public Theme(ThemeDto themeDto){
-        this.themeId=themeDto.getThemeId();
-        this.name=themeDto.getName();
-        this.description=themeDto.getDescription();
-        this.subThemes=themeDto.getSubThemes().stream().map(st->st.toSubTheme()).collect(Collectors.toList());
     }
 
     public String getName() {
@@ -44,8 +33,9 @@ public class Theme {
     public long getThemeId() {
         return themeId;
     }
-    public void setThemeId(long id){
-        this.themeId=id;
+
+    public void setThemeId(Long id) {
+        this.themeId = id;
     }
 
     public List<SubTheme> getSubThemes() {

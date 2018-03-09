@@ -1,15 +1,9 @@
-package be.kdg.kandoe.dto;
+package be.kdg.kandoe.dto.theme;
 
-import be.kdg.kandoe.domain.theme.SubTheme;
-import be.kdg.kandoe.domain.theme.Theme;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Mediate Object-class to translate JSON-objects to Theme-objects
@@ -22,13 +16,12 @@ public class ThemeDto {
     private String description;
     private List<SubThemeDto> subThemes;
 
-    public ThemeDto(){
-
-
+    public ThemeDto() {
+        subThemes = new ArrayList<>();
     }
 
     public ThemeDto(long themeId, String name, String description) {
-        this.themeId=themeId;
+        this.themeId = themeId;
         this.name = name;
         this.description = description;
         subThemes = new ArrayList<>();
@@ -54,8 +47,8 @@ public class ThemeDto {
         return themeId;
     }
 
-    public void setThemeId(long themeId){
-        this.themeId=themeId;
+    public void setThemeId(long themeId) {
+        this.themeId = themeId;
     }
 
     public List<SubThemeDto> getSubThemes() {
@@ -66,24 +59,8 @@ public class ThemeDto {
         this.subThemes = subThemes;
     }
 
-    public String toJsonString(){
+    public String toJsonString() {
         String JSON = new Gson().toJson(this);
         return JSON;
-    }
-    public Theme toTheme(){
-        Theme theme = new Theme();
-        theme.setDescription(this.description);
-        theme.setThemeId(this.themeId);
-
-        theme.setName(this.getName());
-        return theme;
-    }
-
-    public static ThemeDto fromTheme(Theme theme){
-        ThemeDto newThemeDto =  new ThemeDto(theme.getThemeId(),theme.getName(),theme.getDescription());
-        if(theme.getSubThemes()!=null){
-            newThemeDto.setSubThemes(theme.getSubThemes().stream().map(st->SubThemeDto.fromSubTheme(st)).collect(Collectors.toList()));
-        }
-        return newThemeDto;
     }
 }
