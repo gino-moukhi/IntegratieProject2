@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table()
 public class GameSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,40 +48,40 @@ public class GameSession {
     @Column
     private String image = "default-session.png";
 
+
     public GameSession() {
     }
 
     public GameSession(CreateGameSessionDto gameSessionDto, User user){
         this.title = gameSessionDto.getTitle();
-        //TODO organisator
         this.isOrganisatorPlaying = gameSessionDto.isOrganisatorPlaying();
         this.allowUsersToAdd = gameSessionDto.isAllowUsersToAdd();
         this.addLimit = gameSessionDto.getLimit();
         this.selectionLimit = gameSessionDto.getSelectionLimit();
         this.timerLength = gameSessionDto.getTimer();
 
-        //TODO notificatons
+        //Role
+        GameSessionRole role;
+        role = isOrganisatorPlaying ? GameSessionRole.ModeratorParticipant : GameSessionRole.Moderator;
+        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(getDefaultNotifications(), false, role, user, this);
+
+        this.userGameSessionInfos.add(userGameSessionInfo);
+    }
+
+
+    public UserGameSessionInfo addUserToGameSession(User user){
+        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(getDefaultNotifications(), false, GameSessionRole.Participant, user, this);
+        this.userGameSessionInfos.add(userGameSessionInfo);
+        return userGameSessionInfo;
+    }
+
+    private List<Notification> getDefaultNotifications(){
         List<Notification> notifications = new ArrayList<>();
         notifications.add(Notification.StartGame);
         notifications.add(Notification.EndGame);
         notifications.add(Notification.YourTurn);
         notifications.add(Notification.EndTurn);
-
-        //Role
-        GameSessionRole role;
-        role = isOrganisatorPlaying ? GameSessionRole.ModeratorParticipant : GameSessionRole.Moderator;
-        UserGameSessionInfo userGameSessionInfo = new UserGameSessionInfo(notifications, false, role, user, this);
-
-        this.userGameSessionInfos.add(userGameSessionInfo);
-    }
-
-
-    public void addUserToGameSession(UserGameSessionInfo userGameSessionInfo){
-        this.userGameSessionInfos.add(userGameSessionInfo);
-    }
-
-    public void removeUserFromGameSession(UserGameSessionInfo userGameSessionInfo){
-        this.userGameSessionInfos.remove(userGameSessionInfo);
+        return notifications;
     }
 
     public boolean isOrganisatorPlaying() {
@@ -148,12 +148,23 @@ public class GameSession {
         this.title = title;
     }
 
-    public String getOrganisatorName(){
+    public String getHighestAccesLevelModerator(){
         for(UserGameSessionInfo info : userGameSessionInfos){
             if (info.getRole() == GameSessionRole.ModeratorParticipant || info.getRole() == GameSessionRole.Moderator)
                 return info.getUser().getUsername();
         }
         return "";
+    }
+
+    public String[] getSubModerators(){
+        List<String> submoderators = new ArrayList<>();
+
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if (info.getRole() == GameSessionRole.SubModerator)
+                submoderators.add(info.getUser().getUsername());
+        }
+
+        return (String[]) submoderators.toArray();
     }
 
     public String getImage() {
@@ -162,5 +173,49 @@ public class GameSession {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public GameSessionRole getRoleOfUser(User user){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser() == user){
+                return info.getRole();
+            }
+        }
+        return null;
+    }
+
+    public GameSessionRole getRoleOfUser(String username){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser().getUsername().equalsIgnoreCase(username)){
+                return info.getRole();
+            }
+        }
+        return null;
+    }
+
+    public void setRoleOfUser(User user, GameSessionRole role){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser() == user){
+                info.setRole(role);
+            }
+        }
+    }
+
+    public void setRoleOfUser(String username, GameSessionRole role){
+        for(UserGameSessionInfo info : userGameSessionInfos){
+            if(info.getUser().getUsername().equalsIgnoreCase(username)) {
+                info.setRole(role);
+            }
+        }
+    }
+
+    public List<String> getAllSubOrganisators(){
+        List<String> subOrganisators = new ArrayList<>();
+        for(UserGameSessionInfo userGameSessionInfo : this.userGameSessionInfos){
+            if(userGameSessionInfo.getRole() == GameSessionRole.SubModerator){
+                subOrganisators.add(userGameSessionInfo.getUser().getUsername());
+            }
+        }
+        return subOrganisators;
     }
 }

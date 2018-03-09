@@ -1,15 +1,11 @@
 package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.controller.rest.ThemeRestController;
-import be.kdg.kandoe.domain.theme.Card;
-import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.dto.theme.CardDto;
 import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
-import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import be.kdg.kandoe.unit.theme.ThemeRepoMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,10 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,6 +28,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 @ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class TestThemeRestController {
