@@ -1,7 +1,6 @@
 package be.kdg.kandoe.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,14 +9,14 @@ public class MessageDto {
     private long id;
     private String from;
     private String content;
-    private Session session;
+    private GameSession session;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "GMT")
     private LocalDateTime DateTime;
 
     public MessageDto() {
     }
 
-    public MessageDto(long id, String from, String content, Session session, LocalDateTime dateTime) {
+    public MessageDto(long id, String from, String content, GameSession session, LocalDateTime dateTime) {
         this.id = id;
         this.from = from;
         this.content = content;
@@ -49,11 +48,11 @@ public class MessageDto {
         this.content = content;
     }
 
-    public Session getSession() {
+    public GameSession getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(GameSession session) {
         this.session = session;
     }
 
@@ -70,13 +69,13 @@ class Message {
     private long id;
     private String from;
     private String content;
-    private Session session;
+    private GameSession session;
     private LocalDateTime DateTime;
 
     public Message() {
     }
 
-    public Message(long id, String from, String content, Session session, LocalDateTime dateTime) {
+    public Message(long id, String from, String content, GameSession session, LocalDateTime dateTime) {
         this.id = id;
         this.from = from;
         this.content = content;
@@ -108,11 +107,11 @@ class Message {
         this.content = content;
     }
 
-    public Session getSession() {
+    public GameSession getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(GameSession session) {
         this.session = session;
     }
 
@@ -126,7 +125,7 @@ class Message {
 }
 
 @Entity
-@Table("MESSAGE")
+@Table(name = "MESSAGE")
 class MessageJpa {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -140,12 +139,12 @@ class MessageJpa {
     private String content;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Session session;
+    private GameSession session;
 
     @Column(nullable = false)
     private LocalDateTime DateTime;
 
-    public MessageJpa(String from, String content, Session session, LocalDateTime dateTime) {
+    public MessageJpa(String from, String content, GameSession session, LocalDateTime dateTime) {
         this.from = from;
         this.content = content;
         this.session = session;
@@ -179,11 +178,11 @@ class MessageJpa {
         this.content = content;
     }
 
-    public Session getSession() {
+    public GameSession getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(GameSession session) {
         this.session = session;
     }
 
