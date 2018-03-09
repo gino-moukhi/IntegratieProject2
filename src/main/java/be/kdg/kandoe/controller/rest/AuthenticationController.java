@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class AuthenticationController {
     private final Logger logger = Logger.getLogger(UserRestController.class);
     private final AuthenticationHelperService authenticationHelperService;

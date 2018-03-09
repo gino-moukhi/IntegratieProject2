@@ -14,12 +14,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USER_ENTITY")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private long userId;
 
     @Column(length = 50, nullable = false)
@@ -50,12 +50,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-    @Column(nullable = false)
-    @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Column
+    @OneToMany(mappedBy = "user",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities = new ArrayList<>();
 
-    @Column(nullable = false)
+
+    @Column
     @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<UserGameSessionInfo> gameSessionInfos = new ArrayList<>();
