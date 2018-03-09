@@ -1,26 +1,26 @@
 package be.kdg.kandoe.repository.jpa;
 
-import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
+import be.kdg.kandoe.dto.converter.DtoConverter;
+import be.kdg.kandoe.repository.jpa.converter.JpaConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name="SUBTHEME")
+@Table(name = "SUBTHEME")
 public class SubThemeJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Generated(GenerationTime.INSERT)
-    @Column(nullable = false,name = "subthemeId")
+    @Column(name = "subthemeId")
     private long subThemeId;
 
-
-    @ManyToOne(targetEntity = ThemeJpa.class,cascade = CascadeType.REMOVE)
-    @JoinColumn(name="themeId_FK")
+    @ManyToOne(targetEntity = ThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "themeId_PK")
     private ThemeJpa theme;
 
     @Column
@@ -29,27 +29,29 @@ public class SubThemeJpa {
     @Column
     private String subThemeDescription;
 
-    public SubThemeJpa(){
+    @Column
+    @OneToMany(targetEntity = CardSubThemeJpa.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "subTheme")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<CardSubThemeJpa> cardSubThemes;
+
+    public SubThemeJpa() {
 
     }
-    public SubThemeJpa(SubTheme subTheme){
-        if(subTheme.getTheme()!=null){
-            this.theme=ThemeJpa.fromTheme(subTheme.getTheme());
-        }
-        this.subThemeName=subTheme.getSubThemeName();
-        this.subThemeDescription=subTheme.getSubThemeDescription();
-    }
 
-    public long getSubThemeId() {
+    public Long getSubThemeId() {
         return subThemeId;
+    }
+
+    public void setSubThemeId(Long subThemeId) {
+        this.subThemeId = subThemeId;
     }
 
     public ThemeJpa getTheme() {
         return this.theme;
     }
 
-    public void setTheme(Theme theme) {
-        this.theme = ThemeJpa.fromTheme(theme);
+    public void setTheme(ThemeJpa theme) {
+        this.theme = theme;
     }
 
     public String getSubThemeName() {
@@ -68,18 +70,11 @@ public class SubThemeJpa {
         this.subThemeDescription = subThemeDescription;
     }
 
-    public static SubThemeJpa fromSubTheme(SubTheme subTheme){
-        return new SubThemeJpa(subTheme);
+    public List<CardSubThemeJpa> getCardSubThemes() {
+        return cardSubThemes;
     }
 
-    public SubTheme toSubTheme(){
-        SubTheme subTheme = new SubTheme();
-        if(this.theme!=null){
-            subTheme.setTheme(this.theme.toTheme());
-        }
-        subTheme.setSubThemeId(this.subThemeId);
-        subTheme.setSubThemeName(this.subThemeName);
-        subTheme.setSubThemeDescription(this.subThemeDescription);
-        return subTheme;
+    public void setCardSubThemes(List<CardSubThemeJpa> cardSubThemes) {
+        this.cardSubThemes = cardSubThemes;
     }
 }

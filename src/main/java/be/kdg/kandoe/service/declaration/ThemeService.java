@@ -1,8 +1,10 @@
 package be.kdg.kandoe.service.declaration;
 
 
+import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.dto.theme.CardDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,4 +29,14 @@ public interface ThemeService {
     List<Theme> getAllThemes();
     List<SubTheme> getAllSubThemes();
     List<SubTheme> getSubThemesByThemeId(long id);
+
+    List<Card> getCardsBySubthemeId(long subthemeId);
+    Card getCardById(long cardId);
+    Card editCard(Card card);
+    Card removeCardById(long cardId);
+
+    Card addCard(Card newCard);
+    SubTheme addCardToSubTheme(long cardId, long subThemeId);
+    SubTheme removeCardsFromSubTheme(long i);
+    List<Card> getAllCards();
 }
