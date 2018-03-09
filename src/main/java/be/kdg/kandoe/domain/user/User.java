@@ -1,6 +1,6 @@
 package be.kdg.kandoe.domain.user;
 
-import be.kdg.kandoe.domain.user.role.Role;
+import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,9 +50,9 @@ public class User implements UserDetails {
 
 
     @Column(nullable = false)
-    @OneToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Role> roles = new ArrayList<>();
+    private List<Authority> authorities;
 
 
 
@@ -71,7 +71,17 @@ public class User implements UserDetails {
         this.encryptedPassword = userDto.getPassword();
     }
 
-    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Role> roles) {
+    public User(UpdateuserDto updateuserDto){
+        this.firstName = updateuserDto.getFirstName();
+        this.lastName = updateuserDto.getLastName();
+        this.encryptedPassword = updateuserDto.getPassword();
+        this.gender = updateuserDto.getGender();
+        this.year = updateuserDto.getYear();
+        this.month = updateuserDto.getMonth();
+        this.day = updateuserDto.getDay();
+    }
+
+    public User(String firstName, String lastName, String username, String email, int day, int month, int year, String encryptedPassword, Gender gender, List<Authority> authorities) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -81,13 +91,12 @@ public class User implements UserDetails {
         this.year = year;
         this.encryptedPassword = encryptedPassword;
         this.gender = gender;
-        this.roles = roles;
+        this.authorities = authorities;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
@@ -171,11 +180,37 @@ public class User implements UserDetails {
         this.gender = gender;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public int getDay() {
+        return day;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setDay(int day) {
+        this.day = day;
     }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public List<Authority> getUserRoles(){
+        return this.authorities;
+    }
+
+
 }
