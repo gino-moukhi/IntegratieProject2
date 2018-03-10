@@ -2,6 +2,7 @@ package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.service.declaration.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender emailSender;
 
     @Autowired
-    public EmailServiceImpl(JavaMailSender javaMailSender) {
+    public EmailServiceImpl(@Qualifier("getJavaMailSender") JavaMailSender javaMailSender) {
         this.emailSender = javaMailSender;
     }
 

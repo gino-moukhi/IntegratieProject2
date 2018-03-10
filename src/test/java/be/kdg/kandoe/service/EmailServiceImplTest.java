@@ -1,6 +1,7 @@
 package be.kdg.kandoe.service;
 
 import be.kdg.kandoe.KandoeApplication;
+import be.kdg.kandoe.service.declaration.EmailService;
 import be.kdg.kandoe.service.implementation.EmailServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +11,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.mockito.Mockito.*;
 
+import javax.mail.SendFailedException;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = KandoeApplication.class)
 public class EmailServiceImplTest {
-    private EmailServiceImpl mailService;
+    private EmailService mailService;
     private JavaMailSender javaMailSender;
 
     @Before
@@ -26,8 +28,9 @@ public class EmailServiceImplTest {
     }
 
     @Test
-    public void sendSimpleMessage() throws Exception {
-        String target = "gino.moukhi@student.kdg.be";
+    public void sendSimpleMessage() throws SendFailedException {
+        String target = "moukhig@gmail.com";
+        //String target = "gino.moukhi@student.kdg.be";
         String subject = "Hello there";
         String body = "This was a message from general Kenobi";
         mailService.sendSimpleMessage(target,subject,body);
