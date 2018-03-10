@@ -194,11 +194,11 @@ public class ThemeRepoMock implements ThemeRepository {
         throw new ThemeRepositoryException("No theme found with ID: "+ themeId);
     }
 
-    @Override
+    /*@Override
     public List<Card> findCardsByThemeId(long themeId) {
         return null;
     }
-
+*/
     @Override
     public List<Card> findCardsBySubthemeId(long subthemeId) {
         List<Card> foundCards = new ArrayList<>();
