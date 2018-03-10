@@ -1,6 +1,6 @@
 package be.kdg.kandoe.service.implementation;
 
-import be.kdg.kandoe.domain.MessageDto;
+import be.kdg.kandoe.domain.Message;
 import be.kdg.kandoe.repository.declaration.ChatRepository;
 import be.kdg.kandoe.service.declaration.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,13 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public MessageDto saveMessage(MessageDto message) {
-        return chatRepository.addMessage(message);
+    public Message saveMessage(Message message) {
+        return message;
+        //return chatRepository.addMessage(message);
     }
 
     @Override
-    public List<MessageDto> getLastMessages(int count, long sessionId) {
+    public List<Message> getLastMessages(int count, long sessionId) {
         return chatRepository.findLasteMessages(count, sessionId);
     }
 }

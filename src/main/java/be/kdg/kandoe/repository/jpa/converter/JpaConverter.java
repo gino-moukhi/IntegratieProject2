@@ -1,18 +1,13 @@
 package be.kdg.kandoe.repository.jpa.converter;
 
+import be.kdg.kandoe.domain.Message;
 import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.converter.DtoConverter;
-import be.kdg.kandoe.repository.jpa.CardJpa;
-import be.kdg.kandoe.repository.jpa.CardSubThemeJpa;
-import be.kdg.kandoe.repository.jpa.SubThemeJpa;
-import be.kdg.kandoe.repository.jpa.ThemeJpa;
+import be.kdg.kandoe.repository.jpa.*;
 import be.kdg.kandoe.service.exception.ConversionException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class JpaConverter {
@@ -151,5 +146,31 @@ public abstract class JpaConverter {
         jpa.setCard(toCardJpa(cardSubTheme.getCard(), true));
         jpa.setSubTheme(toSubThemeJpa(cardSubTheme.getSubTheme(), true));
         return jpa;
+    }
+
+    public static MessageJpa toMessageJpa(Message message) {
+        if (message == null) {
+            return null;
+        }
+        MessageJpa jpa = new MessageJpa();
+        jpa.setContent(message.getContent());
+        jpa.setDateTime(message.getDateTime());
+        jpa.setFrom(message.getFrom());
+        jpa.setId(message.getId());
+        jpa.setSession(message.getSession());
+        return jpa;
+    }
+
+    public static Message toMessage(MessageJpa jpa){
+        if(jpa == null){
+            return null;
+        }
+        Message message = new Message();
+        message.setFrom(jpa.getFrom());
+        message.setContent(jpa.getContent());
+        message.setDateTime(jpa.getDateTime());
+        message.setId(jpa.getId());
+        message.setSession(jpa.getSession());
+        return message;
     }
 }

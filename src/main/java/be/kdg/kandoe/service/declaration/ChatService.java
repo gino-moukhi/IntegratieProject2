@@ -1,11 +1,11 @@
 package be.kdg.kandoe.service.declaration;
 
-import be.kdg.kandoe.domain.MessageDto;
+import be.kdg.kandoe.domain.Message;
 
 import java.util.List;
 
 public interface ChatService {
-    MessageDto saveMessage(MessageDto message);
+    Message saveMessage(Message message);
 
-    List<MessageDto> getLastMessages(int count, long sessionId);
+    List<Message> getLastMessages(int count, long sessionId);
 }
