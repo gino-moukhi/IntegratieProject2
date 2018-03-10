@@ -1,14 +1,8 @@
 package be.kdg.kandoe.dto;
 
 import be.kdg.kandoe.domain.user.Gender;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class UserDto {
     private String username;

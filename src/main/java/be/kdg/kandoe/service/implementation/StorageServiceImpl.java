@@ -2,7 +2,6 @@ package be.kdg.kandoe.service.implementation;
 
 import be.kdg.kandoe.service.declaration.StorageService;
 import be.kdg.kandoe.service.exception.StorageServiceException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
-public class StorageServiceImpl implements StorageService{
+public class StorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
 
