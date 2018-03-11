@@ -22,10 +22,7 @@ public class StorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
 
-    private String location = "\\Users\\Gwen\\Desktop\\IP2\\IntegratieProject2\\src\\main\\resources\\profilePictures"; //Here we will store files
-
-    //C:\Users\Gwen\Desktop\IP2\IntegratieProject2\src\main\java\be\kdg\kandoe\service\implementation\StorageServiceImpl.java
-    //C:\Users\Gwen\Desktop\IP2\IntegratieProject2\src\main\resources\profilePictures\default-profile.png
+    private String location = System.getProperty("user.dir") + "\\src\\main\\resources\\profilePictures"; //Here we will store files
 
     public StorageServiceImpl() {
         this.rootLocation = Paths.get(location);
