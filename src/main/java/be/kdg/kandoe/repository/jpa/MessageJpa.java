@@ -14,7 +14,7 @@ public class MessageJpa {
     private long id;
 
     @Column(nullable = false)
-    private String from;
+    private String sender;
 
     @Column(nullable = false)
     private String content;
@@ -25,8 +25,8 @@ public class MessageJpa {
     @Column(nullable = false)
     private LocalDateTime DateTime;
 
-    public MessageJpa(String from, String content, GameSession session, LocalDateTime dateTime) {
-        this.from = from;
+    public MessageJpa(String sender, String content, GameSession session, LocalDateTime dateTime) {
+        this.sender = sender;
         this.content = content;
         this.session = session;
         DateTime = dateTime;
@@ -43,12 +43,12 @@ public class MessageJpa {
         this.id = id;
     }
 
-    public String getFrom() {
-        return from;
+    public String getSender() {
+        return sender;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getContent() {

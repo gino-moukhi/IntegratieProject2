@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class MessageDto {
     private long id;
-    private String from;
+    private String sender;
     private String content;
     private GameSession session;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "GMT")
@@ -16,9 +16,9 @@ public class MessageDto {
     public MessageDto() {
     }
 
-    public MessageDto(long id, String from, String content, GameSession session, LocalDateTime dateTime) {
+    public MessageDto(long id, String sender, String content, GameSession session, LocalDateTime dateTime) {
         this.id = id;
-        this.from = from;
+        this.sender = sender;
         this.content = content;
         this.session = session;
         DateTime = dateTime;
@@ -32,12 +32,12 @@ public class MessageDto {
         this.id = id;
     }
 
-    public String getFrom() {
-        return from;
+    public String getSender() {
+        return sender;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getContent() {

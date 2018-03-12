@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Message {
     private long id;
-    private String from;
+    private String sender;
     private String content;
     private GameSession session;
     private LocalDateTime DateTime;
@@ -12,9 +12,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(long id, String from, String content, GameSession session, LocalDateTime dateTime) {
+    public Message(long id, String sender, String content, GameSession session, LocalDateTime dateTime) {
         this.id = id;
-        this.from = from;
+        this.sender = sender;
         this.content = content;
         this.session = session;
         DateTime = dateTime;
@@ -28,12 +28,12 @@ public class Message {
         this.id = id;
     }
 
-    public String getFrom() {
-        return from;
+    public String getSender() {
+        return sender;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getContent() {

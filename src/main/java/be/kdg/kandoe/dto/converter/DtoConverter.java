@@ -181,7 +181,7 @@ public abstract class DtoConverter {
         MessageDto dto = new MessageDto();
         dto.setContent(message.getContent());
         dto.setDateTime(message.getDateTime());
-        dto.setFrom(message.getFrom());
+        dto.setSender(message.getSender());
         dto.setId(message.getId());
         dto.setSession(message.getSession());
         return dto;
@@ -192,7 +192,7 @@ public abstract class DtoConverter {
             return null;
         }
         Message message = new Message();
-        message.setFrom(dto.getFrom());
+        message.setSender(dto.getSender());
         message.setContent(dto.getContent());
         message.setDateTime(dto.getDateTime());
         message.setId(dto.getId());

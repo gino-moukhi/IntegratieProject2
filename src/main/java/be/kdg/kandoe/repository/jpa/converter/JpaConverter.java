@@ -155,7 +155,7 @@ public abstract class JpaConverter {
         MessageJpa jpa = new MessageJpa();
         jpa.setContent(message.getContent());
         jpa.setDateTime(message.getDateTime());
-        jpa.setFrom(message.getFrom());
+        jpa.setSender(message.getSender());
         jpa.setId(message.getId());
         jpa.setSession(message.getSession());
         return jpa;
@@ -166,7 +166,7 @@ public abstract class JpaConverter {
             return null;
         }
         Message message = new Message();
-        message.setFrom(jpa.getFrom());
+        message.setSender(jpa.getSender());
         message.setContent(jpa.getContent());
         message.setDateTime(jpa.getDateTime());
         message.setId(jpa.getId());
