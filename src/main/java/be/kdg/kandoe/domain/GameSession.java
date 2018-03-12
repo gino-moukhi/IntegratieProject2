@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table()
+@Table(name = "GAMESESSION")
 public class GameSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

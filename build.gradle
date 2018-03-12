@@ -58,6 +58,7 @@ dependencies {
 	compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
 	runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.1'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.0.0.RELEASE'
+	testCompile("org.subethamail:subethasmtp:3.1.7")
 }
     compileJava {
         //options.compilerArgs += ["-Xlint:all", "-Werror"]
