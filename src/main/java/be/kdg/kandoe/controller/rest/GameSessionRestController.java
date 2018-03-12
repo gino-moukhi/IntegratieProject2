@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://angularkandoe.herokuapp.com")
 public class GameSessionRestController {
 
     private final UserService userService;

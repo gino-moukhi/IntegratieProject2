@@ -12,7 +12,7 @@ public class UserGameSessionInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "serial")
     private Long userGameSessionInfoId;
 
     @Column(nullable = false)
@@ -27,11 +27,11 @@ public class UserGameSessionInfo {
     @Column(nullable = false)
     private GameSessionRole role;
 
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(targetEntity = User.class,fetch = FetchType.EAGER)
     @JsonIgnore
     private User user;
 
-    @ManyToOne(targetEntity = GameSession.class)
+    @ManyToOne(targetEntity = GameSession.class,fetch = FetchType.EAGER)
     @JsonIgnore
     private GameSession gameSession;
 

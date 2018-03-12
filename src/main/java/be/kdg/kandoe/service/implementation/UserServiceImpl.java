@@ -6,6 +6,7 @@ import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.repository.declaration.UserRepository;
 import be.kdg.kandoe.service.exception.UserServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Primary
 public class UserServiceImpl implements be.kdg.kandoe.service.declaration.UserService {
 
     private UserRepository userRepository;

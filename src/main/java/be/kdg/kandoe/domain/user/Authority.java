@@ -6,17 +6,19 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 
 @Entity
+@Table
 public class Authority implements GrantedAuthority{
     @Id
-    @Column
+    @Column(columnDefinition = "serial")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String name;
 
-    @ManyToOne(targetEntity = User.class)
-    @JsonIgnore
+    @ManyToOne(targetEntity = User.class,fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    //JsonIgnore
+    @JoinColumn(name="user_id")
     private User user;
 
     public Authority() {
