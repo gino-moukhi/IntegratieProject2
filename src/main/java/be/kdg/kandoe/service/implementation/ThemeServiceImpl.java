@@ -10,6 +10,7 @@ import be.kdg.kandoe.service.exception.InputValidationException;
 import be.kdg.kandoe.service.exception.ThemeRepositoryException;
 import be.kdg.kandoe.service.exception.ThemeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Primary
 public class ThemeServiceImpl implements ThemeService {
 
     private ThemeRepository themeRepo;

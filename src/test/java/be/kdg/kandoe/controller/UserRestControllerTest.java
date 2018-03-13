@@ -110,6 +110,8 @@ public class UserRestControllerTest {
         users.add(bob);
         users.add(plop);
         users.add(mindy);
+
+
     }
 
     private boolean checkForUserDetails(String json, User user){
