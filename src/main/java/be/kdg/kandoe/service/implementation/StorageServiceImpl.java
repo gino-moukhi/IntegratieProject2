@@ -10,6 +10,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -22,12 +23,21 @@ import java.util.stream.Stream;
 @Primary
 public class StorageServiceImpl implements StorageService {
 
-    private final Path rootLocation;
+    private Path rootLocation;
 
-    private String location = "/home/sven/Desktop/IntegratieProject2/src/main/resources/profilePictures"; //Here we will store files
+    private String location = ""; //Here we will store files
+    private String relativePathToResources = "/src/main/resources/profilePictures/";
+
 
     public StorageServiceImpl() {
-        this.rootLocation = Paths.get(location);
+        File currentDirFile = new File(".");
+        String helper = currentDirFile.getAbsolutePath();
+        try{
+            this.location = helper + relativePathToResources;
+            this.rootLocation = Paths.get(location);
+        }catch (Exception e){
+            e.getMessage();
+        }
     }
 
     @Override
