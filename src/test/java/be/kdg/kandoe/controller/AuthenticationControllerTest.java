@@ -24,8 +24,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.Array;
@@ -45,17 +47,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
+@Rollback
+@Transactional
 public class AuthenticationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-//    @MockBean
-//    private CustomUserDetailsService userService;
+   /* @MockBean
+    private CustomUserDetailsService CustomUserService;*/
 
-    @MockBean
+    @MockBean(name = "userService")
     private UserService userService;
 
-    @MockBean
+    @MockBean(name = "authenticationHelperService")
     private AuthenticationHelperService authenticationHelperService;
 
     @Autowired
@@ -77,9 +81,14 @@ public class AuthenticationControllerTest {
     @Test
     public void tryRegistrationWithUsernameThatIsAlreadyTakenTest() throws Exception{
         JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
+        JSONObject user2 = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bobje.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
 
         when(authenticationHelperService.register(any(UserDto.class))).thenThrow(CustomAuthenticationException.class);
 
+        mockMvc.perform(post("/api/public/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(user2.toString()))
+                .andExpect(status().isOk());
         mockMvc.perform(post("/api/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(user.toString()))
@@ -89,9 +98,13 @@ public class AuthenticationControllerTest {
     @Test
     public void tryRegistrationWithEmailThatIsAlreadyTakenTest() throws Exception{
         JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
+        JSONObject user2 = new JSONObject("{\"firstName\":\"bobje\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobjedb\",\"password\":\"bobdbPassword\"}");
 
         when(authenticationHelperService.register(any(UserDto.class))).thenThrow(CustomAuthenticationException.class);
-
+        mockMvc.perform(post("/api/public/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(user2.toString()))
+                .andExpect(status().isOk());
         mockMvc.perform(post("/api/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(user.toString()))
@@ -103,6 +116,11 @@ public class AuthenticationControllerTest {
         JSONObject user = new JSONObject("{\"firstName\":\"bob\",\"lastName\":\"de bouwer\",\"birthday\":\"1990-03-06\",\"gender\":\"Male\",\"email\":\"bob.db@gmail.com\",\"username\":\"bobdb\",\"password\":\"bobdbPassword\"}");
 
         when(authenticationHelperService.register(any(UserDto.class))).thenThrow(CustomAuthenticationException.class);
+
+        mockMvc.perform(post("/api/public/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(user.toString()))
+                .andExpect(status().isOk());
 
         mockMvc.perform(post("/api/public/register")
                 .contentType(MediaType.APPLICATION_JSON)
