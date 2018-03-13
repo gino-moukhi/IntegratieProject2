@@ -36,7 +36,7 @@ public class StorageServiceImpl implements StorageService {
             this.location = helper + relativePathToResources;
             this.rootLocation = Paths.get(location);
         }catch (Exception e){
-            System.out.println(rootLocation);
+            System.out.println("LOCATION: " + this.rootLocation);
             e.getMessage();
         }
     }
