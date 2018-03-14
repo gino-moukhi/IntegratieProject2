@@ -2,7 +2,7 @@ package be.kdg.kandoe.dto.gameSession;
 
 import java.util.List;
 
-public class CreateGameSessionDto {
+public class GameSessionDto {
     private String title;
     private String organisator; //Username of organisator
     private boolean isOrganisatorPlaying;
@@ -15,10 +15,10 @@ public class CreateGameSessionDto {
     //test
     private List<String> subOrganisators;
 
-    public CreateGameSessionDto() {
+    public GameSessionDto() {
     }
 
-    public CreateGameSessionDto(String title, String organisator, boolean isOrganisatorPlaying, boolean allowUsersToAdd, int limit, int selectionLimit, int timer) {
+    public GameSessionDto(String title, String organisator, boolean isOrganisatorPlaying, boolean allowUsersToAdd, int limit, int selectionLimit, int timer) {
         this.title = title;
         this.organisator = organisator;
         this.isOrganisatorPlaying = isOrganisatorPlaying;
@@ -28,7 +28,7 @@ public class CreateGameSessionDto {
         this.timer = timer;
     }
 
-    public CreateGameSessionDto(String title, String organisator, boolean isOrganisatorPlaying, boolean allowUsersToAdd, int limit, int selectionLimit, int timer, List<String> subOrganisators) {
+    public GameSessionDto(String title, String organisator, boolean isOrganisatorPlaying, boolean allowUsersToAdd, int limit, int selectionLimit, int timer, List<String> subOrganisators) {
         this.title = title;
         this.organisator = organisator;
         this.isOrganisatorPlaying = isOrganisatorPlaying;
