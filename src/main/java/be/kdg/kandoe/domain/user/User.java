@@ -3,6 +3,7 @@ package be.kdg.kandoe.domain.user;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,7 +52,7 @@ public class User implements UserDetails {
     private Gender gender;
 
     @Column
-    @OneToMany(mappedBy = "user",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
     private List<Authority> authorities = new ArrayList<>();
 
@@ -64,12 +65,15 @@ public class User implements UserDetails {
     @Column
     private String profilePictureFileName = "default-profile.png";
 
-
+    @Column
+    @JsonIgnore
+    private boolean registered;
 
     public User() {
+        registered = false;
     }
 
-    public User(UserDto userDto){
+    public User(UserDto userDto) {
         this.firstName = userDto.getFirstName();
         this.lastName = userDto.getLastName();
         this.username = userDto.getUsername();
@@ -81,7 +85,7 @@ public class User implements UserDetails {
         this.encryptedPassword = userDto.getPassword();
     }
 
-    public User(UpdateuserDto updateuserDto){
+    public User(UpdateuserDto updateuserDto) {
         this.firstName = updateuserDto.getFirstName();
         this.lastName = updateuserDto.getLastName();
         this.encryptedPassword = updateuserDto.getPassword();
@@ -102,9 +106,10 @@ public class User implements UserDetails {
         this.encryptedPassword = encryptedPassword;
         this.gender = gender;
         this.authorities = authorities;
+        this.registered = false;
     }
 
-    public void addGameSessionInfo(UserGameSessionInfo userGameSessionInfo){
+    public void addGameSessionInfo(UserGameSessionInfo userGameSessionInfo) {
         this.gameSessionInfos.add(userGameSessionInfo);
     }
 
@@ -222,11 +227,11 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
-    public List<Authority> getUserRoles(){
+    public List<Authority> getUserRoles() {
         return this.authorities;
     }
 
-    public Calendar getBirthday(){
+    public Calendar getBirthday() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(getYear(), getMonth() - 1, getDay());
         return calendar;
@@ -246,5 +251,13 @@ public class User implements UserDetails {
 
     public void setProfilePictureFileName(String profilePictureFileName) {
         this.profilePictureFileName = profilePictureFileName;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
     }
 }
