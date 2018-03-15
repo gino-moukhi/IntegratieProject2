@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 
+//Will be used for statistics
 @Component
 public class DeviceProvider {
 

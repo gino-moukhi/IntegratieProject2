@@ -1,42 +1,52 @@
 package be.kdg.kandoe.integration;
 
 import be.kdg.kandoe.controller.rest.ThemeRestController;
-import be.kdg.kandoe.domain.theme.Card;
-import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.dto.converter.DtoConverter;
 import be.kdg.kandoe.dto.theme.CardDto;
 import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
 import be.kdg.kandoe.dto.theme.ThemeDto;
-import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import be.kdg.kandoe.unit.theme.ThemeRepoMock;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
 @ContextConfiguration
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+
 public class TestThemeRestController {
     static ThemeRestController controller;
 
@@ -61,6 +71,9 @@ public class TestThemeRestController {
     long card2Id;
     private static TestRestTemplate restTemplate = new TestRestTemplate();
 
+    @Autowired
+    private MockMvc mockMvc;
+
     @Before
     public void init() {
         controller = new ThemeRestController(new ThemeRepoMock());
@@ -72,18 +85,34 @@ public class TestThemeRestController {
 
         card1 = new CardDto(0, "Expanding rooms physically", "Make classrooms bigger by expanding surface", false);
         card2 = new CardDto(0, "Remove furniture", "Gain more surface by removing furniture", false);
-        setupDb();
+       // setupDb();
     }
 
     @Test
-    public void TestCreateTheme() {
+    public void TestCreateTheme() throws Exception {
+        JSONObject theme1 = new JSONObject("{\"themeId\":0,\"name\":\"JSONTheme\",\"description\":\"Theme created via JSON\"}");
         ThemeDto themeDto = new ThemeDto(0, "JSONTheme", "Theme created via JSON");
-        ResponseEntity<ThemeDto> response = restTemplate.postForEntity(callURL + "api/public/themes", themeDto, ThemeDto.class);
-        ResponseEntity<ThemeDto> responseGet = restTemplate.getForEntity(callURL + "api/public/theme/" + response.getBody().getThemeId(), ThemeDto.class);
-        Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        Assert.assertThat(responseGet.getStatusCode(), equalTo(HttpStatus.OK));
-        Assert.assertThat(response.getBody().getClass(), equalTo(ThemeDto.class));
-        Assert.assertThat(responseGet.getBody().getName(), equalTo("JSONTheme"));
+        //ResponseEntity<ThemeDto> response         //restTemplate.postForEntity(callURL + "api/public/themes", themeDto, ThemeDto.class);
+        MvcResult mvcResult = mockMvc.perform(post("/api/public/themes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(theme1.toString()))
+                .andReturn();
+        Assert.assertNotNull(mvcResult);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        //System.out.println("RESPONSE:" + mvcResult.getResponse().getContentAsString());
+//JSON from String to Object
+       ThemeDto returnedValue = mapper.readValue(mvcResult.getResponse().getContentAsString(), ThemeDto.class);
+
+        MvcResult getResult = mockMvc.perform(get("/api/public/theme/"+returnedValue.getThemeId()).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        ThemeDto returnedGetValue = mapper.readValue(getResult.getResponse().getContentAsString(), ThemeDto.class);
+
+        //ResponseEntity<ThemeDto> responseGet = restTemplate.getForEntity(callURL + "api/public/theme/" + response.getBody().getThemeId(), ThemeDto.class);
+        Assert.assertThat(mvcResult.getResponse().getStatus(), equalTo(HttpStatus.OK));
+        Assert.assertThat(getResult.getResponse().getStatus(), equalTo(HttpStatus.OK));
+        Assert.assertThat(mvcResult.getResponse().getContentAsString().getClass(), equalTo(ThemeDto.class));
+        Assert.assertThat(returnedGetValue.getName(), equalTo("JSONTheme"));
     }
 
     @Test
@@ -292,7 +321,7 @@ public class TestThemeRestController {
     }
 
     private void setupDb() {
-        System.out.println(restTemplate.exchange(callURL + "api/public/themes", HttpMethod.DELETE, null, String.class).getStatusCode());
+      //  System.out.println(restTemplate.exchange(callURL + "api/public/themes", HttpMethod.DELETE, null, String.class).getStatusCode());
         ResponseEntity<ThemeDto> response1 = restTemplate.postForEntity(callURL + "api/public/themes", theme1, ThemeDto.class);
         theme1Id = response1.getBody().getThemeId();
         ResponseEntity<ThemeDto> response2 = restTemplate.postForEntity(callURL + "api/public/themes", theme2, ThemeDto.class);

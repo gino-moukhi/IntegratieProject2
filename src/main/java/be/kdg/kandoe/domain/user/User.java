@@ -1,5 +1,6 @@
 package be.kdg.kandoe.domain.user;
 
+import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.dto.UpdateuserDto;
 import be.kdg.kandoe.dto.UserDto;
 import org.hibernate.annotations.Fetch;
@@ -8,16 +9,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USER_ENTITY")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private long userId;
 
     @Column(length = 50, nullable = false)
@@ -48,11 +50,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-
-    @Column(nullable = false)
-    @OneToMany(targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Column
+    @OneToMany(mappedBy = "user",targetEntity = Authority.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(org.hibernate.annotations.FetchMode.SELECT)
-    private List<Authority> authorities;
+    private List<Authority> authorities = new ArrayList<>();
+
+
+    @Column
+    @OneToMany(targetEntity = UserGameSessionInfo.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @Fetch(org.hibernate.annotations.FetchMode.SELECT)
+    private List<UserGameSessionInfo> gameSessionInfos = new ArrayList<>();
+
+    @Column
+    private String profilePictureFileName = "default-profile.png";
 
 
 
@@ -94,6 +104,10 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    public void addGameSessionInfo(UserGameSessionInfo userGameSessionInfo){
+        this.gameSessionInfos.add(userGameSessionInfo);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -121,7 +135,11 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getEncryptedPassword();
+        return this.encryptedPassword;
+    }
+
+    public String getEncryptedPassword() {
+        return this.encryptedPassword;
     }
 
     public long getUserId() {
@@ -162,10 +180,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getEncryptedPassword(){
-        return this.encryptedPassword;
     }
 
     public void setEncryptedPassword(String password) {
@@ -212,5 +226,25 @@ public class User implements UserDetails {
         return this.authorities;
     }
 
+    public Calendar getBirthday(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth() - 1, getDay());
+        return calendar;
+    }
 
+    public List<UserGameSessionInfo> getGameSessionInfos() {
+        return gameSessionInfos;
+    }
+
+    public void setGameSessionInfos(List<UserGameSessionInfo> gameSessionInfos) {
+        this.gameSessionInfos = gameSessionInfos;
+    }
+
+    public String getProfilePictureFileName() {
+        return profilePictureFileName;
+    }
+
+    public void setProfilePictureFileName(String profilePictureFileName) {
+        this.profilePictureFileName = profilePictureFileName;
+    }
 }
