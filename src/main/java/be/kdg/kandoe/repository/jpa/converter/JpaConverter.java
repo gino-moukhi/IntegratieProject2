@@ -1,6 +1,7 @@
 package be.kdg.kandoe.repository.jpa.converter;
 
 import be.kdg.kandoe.domain.Message;
+import be.kdg.kandoe.domain.Vote;
 import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
@@ -172,5 +173,32 @@ public abstract class JpaConverter {
         message.setId(jpa.getId());
         message.setSession(jpa.getSession());
         return message;
+    }
+
+
+    public static Vote toVote(VoteJpa jpa){
+        if(jpa == null){
+            return null;
+        }
+        Vote vote = new Vote();
+        vote.setVoteId(jpa.getVoteId());
+        vote.setGameSession(jpa.getGameSession());
+        vote.setCard(JpaConverter.toCard(jpa.getCard(),true));
+        vote.setUser(jpa.getUser());
+        vote.setTime(jpa.getTime());
+        return vote;
+    }
+
+    public static VoteJpa toVoteJpa(Vote vote){
+        if(vote == null){
+            return null;
+        }
+        VoteJpa jpa=new VoteJpa();
+        jpa.setCard(JpaConverter.toCardJpa(vote.getCard(), true));
+        jpa.setGameSession(vote.getGameSession());
+        jpa.setTime(vote.getTime());
+        jpa.setUser(vote.getUser());
+        jpa.setVoteId(vote.getVoteId());
+        return jpa;
     }
 }

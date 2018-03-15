@@ -1,5 +1,4 @@
 package be.kdg.kandoe.dto.converter;
-
 import be.kdg.kandoe.domain.Message;
 import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.CardSubTheme;
@@ -18,9 +17,7 @@ import java.util.stream.Collectors;
 public abstract class DtoConverter {
 
     public static ThemeDto toThemeDto(Theme theme, boolean callByConverter) {
-        if (theme == null) {
-            return null;
-        }
+        if (theme == null) return null;
         ThemeDto newDto = new ThemeDto();
         newDto.setThemeId(theme.getThemeId());
         newDto.setName(theme.getName());
@@ -34,9 +31,7 @@ public abstract class DtoConverter {
     }
 
     public static Theme toTheme(ThemeDto dto, boolean callByConverter) {
-        if (dto == null) {
-            return null;
-        }
+        if (dto == null) return null;
         Theme theme = new Theme();
         theme.setThemeId(dto.getThemeId());
         theme.setDescription(dto.getDescription());
@@ -58,9 +53,7 @@ public abstract class DtoConverter {
      * @return SubThemeDto of SubTheme
      */
     public static SubThemeDto toSubThemeDto(SubTheme subTheme, boolean callByConverter) {
-        if (subTheme == null) {
-            return null;
-        }
+        if (subTheme == null) return null;
         SubThemeDto dto = new SubThemeDto();
         dto.setSubThemeId(subTheme.getSubThemeId());
         dto.setSubThemeName(subTheme.getSubThemeName());
@@ -82,9 +75,7 @@ public abstract class DtoConverter {
      * @return SubTheme of SubThemeDto
      */
     public static SubTheme toSubTheme(SubThemeDto dto, boolean callByConverter) {
-        if (dto == null) {
-            return null;
-        }
+        if (dto == null) return null;
         SubTheme subTheme = new SubTheme();
         if (dto.getTheme() != null) {
             subTheme.setTheme(DtoConverter.toTheme(dto.getTheme(), true));
@@ -107,9 +98,7 @@ public abstract class DtoConverter {
      * @return Card of CardDto
      */
     public static Card toCard(CardDto cardDto, boolean callByConverter) {
-        if (cardDto == null) {
-            return null;
-        }
+        if (cardDto == null) return null;
         if (!cardDto.getClass().equals(CardDto.class)) {
             throw new ConversionException("Parameter is not correct Class for conversion");
         }
@@ -133,9 +122,7 @@ public abstract class DtoConverter {
      * @return CardDto of Card
      */
     public static CardDto toCardDto(Card card, boolean callByConverter) {
-        if (card == null) {
-            return null;
-        }
+        if (card == null) return null;
         if (!card.getClass().equals(Card.class)) {
             throw new ConversionException("Parameter is not correct Class for conversion");
         }
@@ -153,9 +140,7 @@ public abstract class DtoConverter {
     }
 
     public static CardSubTheme toCardSubTheme(CardSubThemeDto cardSubThemeDto) {
-        if (cardSubThemeDto == null) {
-            return null;
-        }
+        if (cardSubThemeDto == null) return null;
         CardSubTheme cst = new CardSubTheme();
         cst.setCardSubThemeId(cardSubThemeDto.getCardSubThemeId());
         cst.setCard(DtoConverter.toCard(cardSubThemeDto.getCard(), true));
@@ -164,9 +149,7 @@ public abstract class DtoConverter {
     }
 
     public static CardSubThemeDto toCardSubThemeDto(CardSubTheme cardSubTheme) {
-        if (cardSubTheme == null) {
-            return null;
-        }
+        if (cardSubTheme == null) return null;
         CardSubThemeDto dto = new CardSubThemeDto();
         dto.setCardSubThemeId(cardSubTheme.getCardSubThemeId());
         dto.setCard(DtoConverter.toCardDto(cardSubTheme.getCard(), true));
@@ -175,9 +158,7 @@ public abstract class DtoConverter {
     }
 
     public static MessageDto toMessageDto(Message message) {
-        if (message == null) {
-            return null;
-        }
+        if (message == null) return null;
         MessageDto dto = new MessageDto();
         dto.setContent(message.getContent());
         dto.setDateTime(message.getDateTime());
@@ -188,9 +169,7 @@ public abstract class DtoConverter {
     }
 
     public static Message toMessage(MessageDto dto){
-        if(dto == null){
-            return null;
-        }
+        if(dto == null) return null;
         Message message = new Message();
         message.setSender(dto.getSender());
         message.setContent(dto.getContent());

@@ -12,13 +12,19 @@ public class WebSocketBrokerConfig extends AbstractWebSocketMessageBrokerConfigu
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+
+        // For ChatRoom
         config.enableSimpleBroker("/chatroom");
-        config.setApplicationDestinationPrefixes("/app");
+        config.setApplicationDestinationPrefixes("/room");
+
+        //For Playing
+        config.enableSimpleBroker("/gamesession");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat").setAllowedOrigins("*").withSockJS();
+        //For Chatroom /chat - For Playing - /play
+        registry.addEndpoint("/chat", "/play").setAllowedOrigins("*").withSockJS();
     }
 
 }
