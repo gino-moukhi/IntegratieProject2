@@ -18,7 +18,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private EmailService emailService;
 
     @Autowired
-    public RegistrationListener(UserService userService, MessageSource messageSource/*, EmailService emailService*/) {
+    public RegistrationListener(UserService userService, MessageSource messageSource, EmailService emailService) {
         this.userService = userService;
         this.messageSource = messageSource;
         this.emailService = emailService;

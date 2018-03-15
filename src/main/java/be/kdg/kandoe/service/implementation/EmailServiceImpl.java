@@ -51,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
         StringBuilder builder = new StringBuilder();
         builder.append("Please click the following link to register your account");
         builder.append("<br />");
-        builder.append("<a src=\"").append(destinationUrlWithToken).append("\">");
+        builder.append("<a href=\"").append(destinationUrlWithToken).append("\">");
         builder.append("Registration link</a>");
         builder.append("<br />").append("<br />");
         builder.append("Thank you for choosing Kandoe developed by team CPP");
