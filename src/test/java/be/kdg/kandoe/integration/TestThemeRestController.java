@@ -181,6 +181,17 @@ public class TestThemeRestController {
     }
 
     @Test
+    public void TestGetSingleSubThemeByThemeId() {
+        String url = "http://localhost:9090/api/public/theme/" + theme1Id + "/subtheme/" + subTheme1Id;
+        ResponseEntity<SubThemeDto> response = restTemplate.getForEntity(url, SubThemeDto.class);
+        Assert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Assert.assertThat(response.getBody().getSubThemeId(), equalTo(subTheme1Id));
+        Assert.assertThat(response.getBody().getSubThemeName(), equalTo(subTheme1.getSubThemeName()));
+        Assert.assertThat(response.getBody().getTheme().getThemeId(), equalTo(theme1Id));
+        Assert.assertThat(response.getBody().getTheme().getName(), equalTo(theme1.getName()));
+    }
+
+    @Test
     public void TestEditTheme() {
         ThemeDto themeDto = restTemplate.getForEntity(callURL + "api/public/theme/" + theme1Id, ThemeDto.class).getBody();
         themeDto.setName("SchoolUpdated");

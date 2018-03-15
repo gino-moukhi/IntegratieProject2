@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -105,6 +104,11 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public List<SubTheme> getSubThemesByThemeId(long id) throws ThemeRepositoryException {
         return themeRepo.findSubThemesByThemeId(id);
+    }
+
+    @Override
+    public SubTheme getSingleSubThemeByThemeId(long themeId, long subThemeId) {
+        return themeRepo.findSingleSubThemeByThemeId(themeId, subThemeId);
     }
 
     @Override

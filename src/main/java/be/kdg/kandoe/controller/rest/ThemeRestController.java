@@ -10,7 +10,6 @@ import be.kdg.kandoe.dto.theme.ThemeDto;
 import be.kdg.kandoe.repository.declaration.ThemeRepository;
 import be.kdg.kandoe.service.declaration.ThemeService;
 import be.kdg.kandoe.service.exception.ThemeRepositoryException;
-import be.kdg.kandoe.service.exception.ThemeServiceException;
 import be.kdg.kandoe.service.implementation.ThemeServiceImpl;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -105,6 +104,16 @@ public class ThemeRestController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+    }
+
+    @RequestMapping(value = "api/public/theme/{themeId}/subtheme/{subThemeId}", method= RequestMethod.GET)
+    public ResponseEntity<SubThemeDto> getSingleSubThemeByThemeId(@PathVariable(name="themeId")long themeId, @PathVariable(name = "subThemeId")long subThemeId){
+        System.out.println("CALL RECEIVED: getSingleSubThemeByThemeId: THEME "+themeId+" SUBTHEME: "+subThemeId);
+        SubTheme subTheme = themeService.getSingleSubThemeByThemeId(themeId, subThemeId);
+        if(subTheme==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(DtoConverter.toSubThemeDto(subTheme, false));
     }
 
     //GET-METHODS
