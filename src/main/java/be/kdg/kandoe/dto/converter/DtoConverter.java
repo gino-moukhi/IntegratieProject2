@@ -1,10 +1,15 @@
 package be.kdg.kandoe.dto.converter;
+import be.kdg.kandoe.domain.GameSession;
 import be.kdg.kandoe.domain.Message;
+import be.kdg.kandoe.domain.Vote;
 import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
+import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.MessageDto;
+import be.kdg.kandoe.dto.UserDto;
+import be.kdg.kandoe.dto.VoteDto;
 import be.kdg.kandoe.dto.theme.CardDto;
 import be.kdg.kandoe.dto.theme.CardSubThemeDto;
 import be.kdg.kandoe.dto.theme.SubThemeDto;
@@ -179,4 +184,26 @@ public abstract class DtoConverter {
         return message;
     }
 
+    public static Vote toVote(VoteDto dto){
+        if(dto == null) return null;
+        Vote vote = new Vote();
+        vote.setVoteId(dto.getVoteId());
+        vote.setUser(new User(dto.getUserDto()));
+        vote.setGameSession(new GameSession(dto.getGameSession(),vote.getUser()));
+        vote.setCard(DtoConverter.toCard(dto.getCard(),true));
+        vote.setTime(dto.getTime());
+        return vote;
+    }
+
+    //todo: User-UserDto?
+    public static VoteDto toVoteDto(Vote vote){
+        if(vote == null) return null;
+        VoteDto dto=new VoteDto();
+        dto.setCard(DtoConverter.toCardDto(vote.getCard(), true));
+        //dto.setGameSession(vote.getGameSession());
+        dto.setTime(vote.getTime());
+        //dto.setUserDto(new UserDto(vote.getUser()));
+        dto.setVoteId(vote.getVoteId());
+        return dto;
+    }
 }
