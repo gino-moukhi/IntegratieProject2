@@ -3,14 +3,12 @@ package be.kdg.kandoe.controller;
 import be.kdg.kandoe.domain.GameSession;
 import be.kdg.kandoe.domain.GameSessionRole;
 import be.kdg.kandoe.domain.Notification;
-import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.Authority;
 import be.kdg.kandoe.domain.user.Gender;
 import be.kdg.kandoe.domain.user.User;
-import be.kdg.kandoe.dto.gameSession.CreateGameSessionDto;
+import be.kdg.kandoe.dto.gameSession.GameSessionDto;
 import be.kdg.kandoe.dto.gameSession.NotificationDto;
 import be.kdg.kandoe.security.TokenHelper;
-import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.GameSessionService;
 import be.kdg.kandoe.service.declaration.UserService;
 import be.kdg.kandoe.service.implementation.CustomUserDetailsService;
@@ -41,9 +39,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -149,30 +145,30 @@ public class GameSessionRestControllerTest {
 
 
         gameSessions = new ArrayList<>();
-        CreateGameSessionDto createGameSessionDto = new CreateGameSessionDto("test session", bob.getUsername(), true, true, 3, 4, 3600);
+        GameSessionDto gameSessionDto = new GameSessionDto("test session", bob.getUsername(), true, true, 3, 4, 3600);
         //Only contains the creator (bob)
-        GameSession gameSession = new GameSession(createGameSessionDto, bob);
+        GameSession gameSession = new GameSession(gameSessionDto, bob);
         gameSession.setGameSessionId(1l);
 
 
-        CreateGameSessionDto createGameSessionDto2 = new CreateGameSessionDto("test session 2", bob.getUsername(), false, true, 3, 4, 3600);
+        GameSessionDto gameSessionDto2 = new GameSessionDto("test session 2", bob.getUsername(), false, true, 3, 4, 3600);
         //Contains bob and mindy
-        GameSession gameSession2 = new GameSession(createGameSessionDto2, bob);
+        GameSession gameSession2 = new GameSession(gameSessionDto2, bob);
         gameSession2.setGameSessionId(2l);
 //        gameSession2.addUserToGameSession(new UserGameSessionInfo(someEnabledNotifications, false, GameSessionRole.Participant, mindy, gameSession));
 
 
-        CreateGameSessionDto createGameSessionDto3 = new CreateGameSessionDto("test session", mindy.getUsername(), true, false, 3, 4, 3600);
+        GameSessionDto gameSessionDto3 = new GameSessionDto("test session", mindy.getUsername(), true, false, 3, 4, 3600);
         //Contains mindy and sven
-        GameSession gameSession3 = new GameSession(createGameSessionDto3, mindy);
+        GameSession gameSession3 = new GameSession(gameSessionDto3, mindy);
         gameSession3.setGameSessionId(3l);
 //        gameSession3.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Participant, sven, gameSession));
 
 
 
-        CreateGameSessionDto createGameSessionDto4 = new CreateGameSessionDto("test session", mindy.getUsername(), false, false, 3, 4, 3600);
+        GameSessionDto gameSessionDto4 = new GameSessionDto("test session", mindy.getUsername(), false, false, 3, 4, 3600);
         //only mindy
-        GameSession gameSession4 = new GameSession(createGameSessionDto, mindy);
+        GameSession gameSession4 = new GameSession(gameSessionDto, mindy);
         gameSession4.setGameSessionId(4l);
 //        gameSession4.addUserToGameSession(new UserGameSessionInfo(allNotifications, false, GameSessionRole.Moderator, bob, gameSession));
 
@@ -301,7 +297,7 @@ public class GameSessionRestControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     public void createGameSessionWithAdminAccount() throws Exception{
-        CreateGameSessionDto dto = new CreateGameSessionDto("My new session", sven.getUsername(), true, true, 3, 4, 8000);
+        GameSessionDto dto = new GameSessionDto("My new session", sven.getUsername(), true, true, 3, 4, 8000);
         GameSession expectedGameSession = new GameSession(dto, mindy);
         expectedGameSession.setGameSessionId(1l);
 
@@ -325,7 +321,7 @@ public class GameSessionRestControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     public void createGameSessionWithUserAccount() throws Exception{
-        CreateGameSessionDto dto = new CreateGameSessionDto("My new session", bob.getUsername(), true, true, 3, 4, 8000);
+        GameSessionDto dto = new GameSessionDto("My new session", bob.getUsername(), true, true, 3, 4, 8000);
         GameSession expectedGameSession = new GameSession(dto, bob);
         expectedGameSession.setGameSessionId(1l);
 
