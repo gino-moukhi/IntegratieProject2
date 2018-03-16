@@ -6,7 +6,7 @@ import be.kdg.kandoe.domain.Notification;
 import be.kdg.kandoe.domain.UserGameSessionInfo;
 import be.kdg.kandoe.domain.user.User;
 import be.kdg.kandoe.dto.RequestUserDto;
-import be.kdg.kandoe.dto.gameSession.GameSessionDto;
+import be.kdg.kandoe.dto.gameSession.CreateGameSessionDto;
 import be.kdg.kandoe.dto.gameSession.NotificationDto;
 import be.kdg.kandoe.service.declaration.AuthenticationHelperService;
 import be.kdg.kandoe.service.declaration.GameSessionService;
@@ -73,10 +73,10 @@ public class GameSessionRestController {
         }
 
         List<GameSession> gameSessions = gameSessionService.getUserGameSessions(username);
-        List<GameSessionDto> returnGameSessionDtos = new ArrayList<>();
+        List<CreateGameSessionDto> returnGameSessionDtos = new ArrayList<>();
 
         for(GameSession gameSession : gameSessions){
-            GameSessionDto dto = new GameSessionDto(gameSession.getTitle(), gameSession.getHighestAccesLevelModerator(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength(), gameSession.getAllSubOrganisators());
+            CreateGameSessionDto dto = new CreateGameSessionDto(gameSession.getTitle(), gameSession.getHighestAccesLevelModerator(), gameSession.isOrganisatorPlaying(), gameSession.isAllowUsersToAdd(), gameSession.getAddLimit(), gameSession.getSelectionLimit(), gameSession.getTimerLength(), gameSession.getAllSubOrganisators());
             dto.setGameSessionId(gameSession.getGameSessionId());
             returnGameSessionDtos.add(dto);
         }
@@ -87,8 +87,8 @@ public class GameSessionRestController {
     //CREATE SESSION
     @PostMapping("/api/private/sessions")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity createGameSession(@RequestBody GameSessionDto gameSessionDto){
-        GameSession gameSession = new GameSession(gameSessionDto, userService.findUserByUsername(gameSessionDto.getOrganisator()));
+    public ResponseEntity createGameSession(@RequestBody CreateGameSessionDto createGameSessionDto){
+        GameSession gameSession = new GameSession(createGameSessionDto, userService.findUserByUsername(createGameSessionDto.getOrganisator()));
         GameSession savedGameSession = gameSessionService.addGameSession(gameSession);
         return ResponseEntity.ok(savedGameSession.getGameSessionId());
     }

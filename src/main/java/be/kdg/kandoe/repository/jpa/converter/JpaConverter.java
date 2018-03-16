@@ -1,14 +1,18 @@
 package be.kdg.kandoe.repository.jpa.converter;
 
-import be.kdg.kandoe.domain.Message;
-import be.kdg.kandoe.domain.Vote;
 import be.kdg.kandoe.domain.theme.Card;
 import be.kdg.kandoe.domain.theme.CardSubTheme;
 import be.kdg.kandoe.domain.theme.SubTheme;
 import be.kdg.kandoe.domain.theme.Theme;
-import be.kdg.kandoe.repository.jpa.*;
+import be.kdg.kandoe.dto.converter.DtoConverter;
+import be.kdg.kandoe.repository.jpa.CardJpa;
+import be.kdg.kandoe.repository.jpa.CardSubThemeJpa;
+import be.kdg.kandoe.repository.jpa.SubThemeJpa;
+import be.kdg.kandoe.repository.jpa.ThemeJpa;
 import be.kdg.kandoe.service.exception.ConversionException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class JpaConverter {
@@ -146,59 +150,6 @@ public abstract class JpaConverter {
         jpa.setCardSubThemeId(cardSubTheme.getCardSubThemeId());
         jpa.setCard(toCardJpa(cardSubTheme.getCard(), true));
         jpa.setSubTheme(toSubThemeJpa(cardSubTheme.getSubTheme(), true));
-        return jpa;
-    }
-
-    public static MessageJpa toMessageJpa(Message message) {
-        if (message == null) {
-            return null;
-        }
-        MessageJpa jpa = new MessageJpa();
-        jpa.setContent(message.getContent());
-        jpa.setDateTime(message.getDateTime());
-        jpa.setSender(message.getSender());
-        jpa.setId(message.getId());
-        jpa.setSession(message.getSession());
-        return jpa;
-    }
-
-    public static Message toMessage(MessageJpa jpa){
-        if(jpa == null){
-            return null;
-        }
-        Message message = new Message();
-        message.setSender(jpa.getSender());
-        message.setContent(jpa.getContent());
-        message.setDateTime(jpa.getDateTime());
-        message.setId(jpa.getId());
-        message.setSession(jpa.getSession());
-        return message;
-    }
-
-
-    public static Vote toVote(VoteJpa jpa){
-        if(jpa == null){
-            return null;
-        }
-        Vote vote = new Vote();
-        vote.setVoteId(jpa.getVoteId());
-        vote.setGameSession(jpa.getGameSession());
-        vote.setCard(JpaConverter.toCard(jpa.getCard(),true));
-        vote.setUser(jpa.getUser());
-        vote.setTime(jpa.getTime());
-        return vote;
-    }
-
-    public static VoteJpa toVoteJpa(Vote vote){
-        if(vote == null){
-            return null;
-        }
-        VoteJpa jpa=new VoteJpa();
-        jpa.setCard(JpaConverter.toCardJpa(vote.getCard(), true));
-        jpa.setGameSession(vote.getGameSession());
-        jpa.setTime(vote.getTime());
-        jpa.setUser(vote.getUser());
-        jpa.setVoteId(vote.getVoteId());
         return jpa;
     }
 }

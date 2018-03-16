@@ -1,7 +1,7 @@
 package be.kdg.kandoe.domain;
 
 import be.kdg.kandoe.domain.user.User;
-import be.kdg.kandoe.dto.gameSession.GameSessionDto;
+import be.kdg.kandoe.dto.gameSession.CreateGameSessionDto;
 import org.hibernate.annotations.Fetch;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -52,7 +52,7 @@ public class GameSession {
     public GameSession() {
     }
 
-    public GameSession(GameSessionDto gameSessionDto, User user){
+    public GameSession(CreateGameSessionDto gameSessionDto, User user){
         this.title = gameSessionDto.getTitle();
         this.isOrganisatorPlaying = gameSessionDto.isOrganisatorPlaying();
         this.allowUsersToAdd = gameSessionDto.isAllowUsersToAdd();
