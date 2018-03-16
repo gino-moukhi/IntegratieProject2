@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint( restAuthenticationEntryPoint).and()
                 .authorizeRequests()
-                .antMatchers("/api/public/**").permitAll()
+                .antMatchers("/api/public/**", "/chat/**").permitAll()
                 .antMatchers("/api/private/**").authenticated()
                 .anyRequest().authenticated().and()
                 //.addFilterBefore(new be.kdg.kandoe.configuration.cors.CorsFilter(), UsernamePasswordAuthenticationFilter.class)
